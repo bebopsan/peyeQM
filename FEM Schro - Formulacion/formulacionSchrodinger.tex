@@ -1,0 +1,281 @@
+\documentclass[12pt,letterpaper,final]{article}
+\usepackage[english]{babel}
+\usepackage[ansinew]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage[top=3cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\hyphenation{tem-pe-ra-tu-ra}
+\usepackage[pdftex,pdftitle={Formulaci\'on FEM para ecuaci\'on de Schr\"{o}dinger},pdfauthor={Monitores y el Nicolas},
+  pdfsubject={Deducci\'on FEM para Ec. Schr\"{o}dinger},pdfkeywords={Seminario, Proyecto, Semillero},
+  pdfpagemode=UseOutlines,bookmarks,bookmarksopen,pdfstartview=FitH,colorlinks,linkcolor=black,citecolor=black,
+  urlcolor=black,]{hyperref}
+\setlength{\parskip}{0.0mm}
+\parindent=0mm
+
+\begin{document}
+\title{\textbf{FEM formulation for Schr\"{o}dinger equation}}
+\author{ Nicol\'as Guar\'in
+}
+
+\date{\today}
+\maketitle
+
+\section{Weak form deduction}
+Consider the time-dependent Schr\"{o}dinger equation
+\[i \hslash \frac{\partial}{\partial t}\Psi = \hat{H}\Psi ,\]
+being $\hat{H}$ the Hamiltonian Operator ($-\frac{\hslash^2}{2m}\nabla^2 + V(\vec{x})$). $-\frac{\hslash^2}{2m}\nabla^2$ is the kinetic energy operator and $V(\vec{x})$ is the potential energy. \\
+
+If we assume 
+\[\Psi = \Psi e^{-i\omega t}\]
+we get 
+\[i \hslash (-i \omega e^{-i \omega t}\Psi)= \hat{H} e^{-i\omega t}\]
+which yields 
+\[\hslash \omega \Psi = \hat{H} \Psi\]
+
+and is the time-independent Shcr\"{o}dinger equation, usually written as
+\begin{equation}
+E \Psi = \hat{H}\Psi \quad (E=\hslash \omega = h \nu) \enspace .
+\end{equation}
+
+For the FEM solution, let's multiply by a test function $v$ and integrate over the domain $\Omega$
+
+\[\int\limits_{\Omega}E \Psi v d\Omega = \int\limits_{\Omega}\hat{H}\Psi v d\Omega\]
+or
+\begin{equation}
+E \int_{\Omega}\Psi (x)v(x)d\Omega = -\frac{\hslash^2}{2m}\int_{\Omega}\nabla^2\Psi(x)v(x)d\Omega + \int_{\Omega}V(x)\Psi(x)v(x)d\Omega \enspace .
+\label{fp}
+\end{equation}
+
+\eqref{fp} could be rewritten, via Green's theorem, as
+\[E \int\limits_{\Omega} \Psi(x) v(x) d\Omega  =
+\frac{\hslash^2}{2m} \int\limits_{\Omega}\nabla \Psi(x)\nabla v(x) d\Omega + \int\limits_{\Omega}V(x)\Psi(x)v(x)d\Omega - 
+\int\limits_{\Gamma}v(x)\frac{\partial \Psi (x)}{d \vec{n}} d\Gamma \quad \mbox{with } \Gamma=\partial\Omega\]
+The term $\int_{\Omega}v(x)\frac{\partial \Psi (x)}{d \vec{n}}\partial \Omega$ won't make any contribution to the discrete operators (matrices) of the system, so let us consider just
+
+\begin{equation}
+E \int\limits_{\Omega}\Psi (x)v(x)d\Omega  = \frac{\hslash^2}{2m} \int\limits_{\Omega}\nabla \Psi(x)\nabla v(x) d\Omega + \int\limits_{\Omega}V(x)\Psi(x)v(x)d\Omega
+\label{fd}
+\end{equation} 
+ 
+\section{Approximated functions: interpolation}
+Functions $\Psi (x)$ and $v(x)$ need to be approximated as
+
+$$\Psi (x) = \sum_{i=1}^{n}\Psi_iN_i(x), \quad \text{with } \Psi_i=\Psi(x_i);$$
+$$v (x) = \sum_{i=1}^{n}v_i N_i(x), \quad \text{with } v_i=v(x_i);$$
+being these interpolation calculated over the (disjoint) elements.
+
+Since $V(x)$ is the potential, it is known, and two approximations could be applied:
+
+\begin{itemize}
+\item Assume $V(x)$ constant over each element, or
+\item Interpolate it with the form functions $N_i(x)$.
+\end{itemize}
+
+Equation \eqref{fd} could be stated as
+
+\[\frac{\hslash^2}{2m} \sum_{el=1}^{N_{el}} \int\limits_{\Omega}\nabla \Psi(x)\nabla v(x) d\Omega + \sum_{el=1}^{N_{el}} \int\limits_{\Omega}V(x)\Psi(x)v(x)d\Omega  =  E \sum_{el=1}^{N_{el}} \int\limits_{\Omega}\Psi (x)v(x)d\Omega  \enspace ,  \]
+where $el$ is a label for the elements.
+
+Therefore, we need to compute it for a single element and then assemble.
+
+\[\frac{\hslash^2}{2m} \sum_{el=1}^{N_{el}} \int\limits_{\Omega}\nabla \Psi(x)\nabla v(x) d\Omega + \sum_{el=1}^{N_{el}} \int\limits_{\Omega}V(x)\Psi(x)v(x)d\Omega  =  E \sum_{el=1}^{N_{el}} \int\limits_{\Omega}\Psi (x)v(x)d\Omega  \enspace ,  \]
+
+So, for each element we have
+\begin{equation}
+\frac{\hslash}{2m}\int\limits_{\Omega_{el}}\nabla \Psi(x) \nabla v(x) d\Omega_{el} +
+\int\limits_{\Omega_{el}} V(x)\Psi(x) v(x) d\Omega_{el} =
+E\int\limits_{\Omega_{el}} \Psi(x) v(x)d\Omega_{el} \enspace .
+\label{eq:weak_form-element}
+\end{equation}
+
+Then, the approximate functions are replaced in \eqref{eq:weak_form-element}. Two approximated
+versions of equation \eqref{eq:weak_form-element} are given
+\begin{itemize}
+\item assuming the potential $V(x)$ constant over the element, or
+\item using the same interpolation functions for $V(x)$.
+\end{itemize}
+
+\subsection{Potential constant over the element}
+The resulting equation is
+\begin{equation}
+\frac{\hslash}{2m}\int\limits_{\Omega_{el}} \Psi_i v_j \nabla N_i(x) \nabla N_j(x) d\Omega_{el} +
+V(x_m)\int\limits_{\Omega_{el}} \Psi_i v_j N_i(x) N_j(x) d\Omega_{el} =
+E\int\limits_{\Omega_{el}} \Psi_i v_j N_i(x) N_j(x)d\Omega_{el} \enspace ,
+\label{eq:weak_form-constant}
+\end{equation}
+where $x_m$ is the centroid of the element.
+
+\subsection{Potential interpolated over the element}
+The resulting equation is
+\begin{equation}
+\frac{\hslash}{2m}\int\limits_{\Omega_{el}} \Psi_i v_j \nabla N_i(x) \nabla N_j(x) d\Omega_{el} +
+\int\limits_{\Omega_{el}} V_i \Psi_i v_j N_i^2(x) N_j(x) d\Omega_{el} =
+E\int\limits_{\Omega_{el}} \Psi_i v_j N_i(x) N_j(x)d\Omega_{el} \enspace .
+\label{eq:weak_form-varriable}
+\end{equation}
+
+\section{Discrete form}
+Equation \eqref{eq:weak_form-element} could be written in an abstract (inner-product) fashion
+like
+\[ \langle\mathbb{K}\bold{\Psi},\bold{v}\rangle + \langle\mathbb{V}\bold{\Psi},\bold{v}\rangle
+=E\langle\mathbb{M}\bold{\Psi},\bold{v}\rangle \enspace ,  \]
+this is the same that
+\[ \langle \mathbb{K}\bold{\Psi} + \mathbb{V}\bold{\Psi} - E\mathbb{M}\bold{\Psi} ,
+\bold{v} \rangle = 0 \enspace ,\]
+and since $v(x)$ is an \emph{arbitrary} function the vector $\bold{v}$ it's too. As a
+consequence we have
+\[\mathbb{K}\bold{\Psi} + \mathbb{V}\bold{\Psi} = E\mathbb{M}\bold{\Psi} ,\]
+
+The final discrete system, with boundary conditions, will take the form
+
+\[\mathbb{K}\bold{\Psi} + \mathbb{V}\bold{\Psi} = E \mathbb{M}\bold{\Psi} + \bold{d}+ \bold{q}\]
+
+where $\mathbb{K}$ is the equivalent \emph{kinetic energy operator} (stiffness matrix), $\mathbb{V}$ is the \emph{potential energy operator}, $\mathbb{M}$ is the \emph{momentum operator} (mass matrix), $\bold{d}$ is the vector with Dirichlet's conditions and $\bold{q}$ is the vector with Neumann's conditions.
+
+In quantum mechanics Neumann's boundary conditions don't have a great physical meaning and the
+most common Dirichlet's conditions are the homogeneous ones, furthermore one is interested in the values of $E$ and the functions $\Psi$ that satisfy the original equation. So the discrete
+system to solve is
+\begin{equation}
+\mathbb{K}\bold{\Psi}_n + \mathbb{V}\bold{\Psi}_n = E_n \mathbb{M}\bold{\Psi}_n \enspace ,
+\end{equation}
+or
+\[ \hat{\mathbb{K}}\bold{\Psi}_n = E_n \mathbb{M}\bold{\Psi}_n \enspace , \]
+where $E_n$ is the $n$th eigenvalue of the system and $\bold{\Psi}_n$ the $n$th eigenvector, and $\hat{\mathbb{K}}$ is an equivalent \emph{stiffness} matrix.
+
+\section{Matrix computation}
+The stiffness and mass matrices, for a single element, could be computed as
+$$\mathbb{K}_{ij}^{(el)}= \frac{\hslash}{2m} \int\limits_{\Omega_{el}} \nabla N_i \nabla N_j d\Omega_{el}$$
+$$\mathbb{M}_{ij}^{(el)}=\int\limits_{\Omega_{el}} N_i N_j d\Omega_{el}$$
+
+\subsection{Potential constant over the element}
+With constant $V(x)$ over each element, the potential matrix is
+
+$$\mathbb{V}_{ij}^{(el)}=V(x_m)\mathbb{M}_{ij}^{(el)}, \quad \text{with }x_m\text{ the centroid of each element} \enspace .$$
+
+\subsection{Potential interpolated over the element}
+In this case the potential energy operator is 
+$$\mathbb{V}_{ij}^{(el)} = \int\limits_{\Omega_{el}}V(x_i)N_i^2N_j d\Omega_{el}$$
+
+\subsection{1D - Linear elements}
+The functions $N(r)$ are
+\[ N =
+ \left(
+   \begin{array}{c}
+      1-r \\
+      r
+  \end{array}
+\right )\]
+
+so
+
+\[\mathbb{K}_{ij}^{(el)} = \frac{\hslash}{2m}  \begin{pmatrix}
+  1 & -1  \\
+  -1 & 1 
+ \end{pmatrix}, \quad \mathbb{M}_{ij}^{(el)} = \frac{1}{6}  \begin{pmatrix}
+  2 & 1 \\
+  1 & 2 \end{pmatrix} \enspace ,\]
+ 
+and 
+ \[\mathbb{V}_{\text{constant}}^{(el)} = V(x_m)\mathbb{M}^{(el)} \enspace .\]
+Making ${V}^{(el)} = (V_1,V_2)$, the value for the potential in each node, we get
+\[\mathbb{V}_{\text{interpolated}}^{(el)} = \frac{1}{12}  \begin{pmatrix}
+  3V_1 & V1 \\
+  V_2 & 3V_2 
+ \end{pmatrix} \enspace .\]
+
+\subsubsection{Global Matrices}
+
+(This is not clear in my mind)
+
+The global \emph{equivalent stiffness} matrix is computed as
+\begin{align*}
+&\mathbb{K}_{ii}=\left(\frac{1}{L_{i-1}} + \frac{1}{L_{i}}\right)\frac{\hslash}{2m} + \frac{1}{3}[V_{i-1} L_{i-1} + V_{i}L_{i}] \qquad \forall\ i\neq 1, i\neq n \enspace, \\
+&\mathbb{K}_{i i+1}=\left[ -\frac{1}{L_{i-1}}\frac{\hslash}{2m} + L_{i-1}\frac{V_{i-1}}{6} \right]=
+\mathbb{K}_{i+1 i} \qquad \forall\ i\neq n ,\ \text{and}\\
+&\mathbb{K}_{11}=\left[ \frac{1}{L_{1}}\frac{\hslash}{2m} + L_{1}\frac{V_{1}}{3} \right] \enspace ,\\
+&\mathbb{K}_{nn}=\left[ \frac{1}{L_{n-1}}\frac{\hslash}{2m} + L_{n-1}\frac{V_{n-1}}{3} \right] \enspace ,
+\end{align*}
+being $L_i$ the length of the $i$th element, if the mesh has a constant size so the previous expressions are simpler.
+
+The global mass matrix is computed as
+\begin{align*}
+&\mathbb{M}_{ii}=\frac{L_i+L_{i+1}}{3} \qquad \forall\ i\neq 1, i\neq n \enspace, \\
+&\mathbb{M}_{i i+1}=\frac{L_i}{6}=\mathbb{M}_{i+1 i} \qquad \forall\ i\neq n ,\ \text{and}\\
+&\mathbb{M}_{11}=\frac{L_1}{3} \enspace ,\\
+&\mathbb{K}_{nn}=\frac{L_{n-1}}{3} \enspace ,
+\end{align*}
+
+\subsection{2D - Linear elements}
+The functions $N(r,s)$ are
+\[ N =
+   \!\left(
+    \begin{array}{c}
+      1-r-s \\
+      r\\
+      s
+    \end{array}
+    \right )\]
+
+so
+\[\mathbb{K}_{ij}^{(el)} = \frac{\hslash}{4m}  \begin{pmatrix}
+  2 & -1 & -1 \\
+  -1 & 1 & 0 \\
+  -1 & 0 & 1  
+ \end{pmatrix}, \quad \mathbb{M}_{ij}^{(el)} = \frac{1}{24}  \begin{pmatrix}
+  2 & 1 & 1 \\
+  1 & 2 & 1 \\
+  1 & 1 & 2  
+ \end{pmatrix} \enspace ,\]
+ 
+and 
+ \[\mathbb{V}_{\text{constant}}^{(el)} = V(x_m) \mathbb{M}^{(el)} \enspace .\]
+Making ${V}^{(el)} = (V_1,V_2,V_3)$, the value for the potential in each node, we get
+\[\mathbb{V}_{\text{interpolated}}^{(el)} = \frac{1}{60}  \begin{pmatrix}
+  3V_1 & V_1 & V_1 \\
+  V_2  & 3V_2 & V_2 \\
+  V_3  & V_3 & 3V_3 
+ \end{pmatrix} \enspace .\]
+ 
+\subsection{3D - Linear elements} 
+The functions $N(r,s,t)$ are
+\[ N =
+ \left(
+   \begin{array}{c}
+      1-r-s-t \\
+      r\\
+      s\\
+      t
+  \end{array}
+\right )\]
+so
+\[\mathbb{K}_{ij}^{(el)} = \frac{\hslash}{6m}  \begin{pmatrix}
+  3 & -1 & -1 & -1 \\
+  -1 & 1 & 0 & 0 \\
+  -1 & 0 & 1 & 0  \\
+  -1 & 0 & 0 & 1
+ \end{pmatrix}, \quad \mathbb{M}_{ij}^{(el)} = \frac{1}{60}  \begin{pmatrix}
+  2 & -1 & 0 & -1 \\
+  -1 & 4 & 3/2 & 3 \\
+  0 & 3/2 & 2 & 3/2 \\
+  -1 & 3 & 3/2 & 4 
+ \end{pmatrix} \enspace ,\] 
+ 
+and 
+ \[\mathbb{V}_{\text{constant}}^{(el)} = V(x_m) \mathbb{M}^{(el)} \enspace .\]
+Making ${V}^{(el)} = (V_1,V_2,V_3,V4)$, the value for the potential in each node, we get
+\[\mathbb{V}_{\text{interpolated}}^{(el)} = \frac{1}{360}  \begin{pmatrix}
+   0    & 5V_1  & 2V_1 & 5V_1 \\
+  -5V_2 & 15V_2 & 4V_2 & 10V_2 \\
+   0    & 3V_3  & 6V_3 & 3V_3  \\
+  -5V_4 & 10V_4 & 4V_4 & 15V_4 
+ \end{pmatrix} \enspace . \]
+ 
+
+%%%%%%
+%\begin{thebibliography}{1}
+%\bibitem{lsf} Weisstein, Eric W. "Least Squares Fitting." From MathWorld--A Wolfram Web Resource.
+%\end{thebibliography}
+
+\end{document}

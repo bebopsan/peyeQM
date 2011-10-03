@@ -1,0 +1,12 @@
+\BOOKMARK [1][]{section.1}{Weak form deduction}{}% 1
+\BOOKMARK [1][]{section.2}{Approximated functions: interpolation}{}% 2
+\BOOKMARK [2][]{subsection.2.1}{Potential constant over the element}{section.2}% 3
+\BOOKMARK [2][]{subsection.2.2}{Potential interpolated over the element}{section.2}% 4
+\BOOKMARK [1][]{section.3}{Discrete form}{}% 5
+\BOOKMARK [1][]{section.4}{Matrix computation}{}% 6
+\BOOKMARK [2][]{subsection.4.1}{Potential constant over the element}{section.4}% 7
+\BOOKMARK [2][]{subsection.4.2}{Potential interpolated over the element}{section.4}% 8
+\BOOKMARK [2][]{subsection.4.3}{1D - Linear elements}{section.4}% 9
+\BOOKMARK [3][]{subsubsection.4.3.1}{Global Matrices}{subsection.4.3}% 10
+\BOOKMARK [2][]{subsection.4.4}{2D - Linear elements}{section.4}% 11
+\BOOKMARK [2][]{subsection.4.5}{3D - Linear elements}{section.4}% 12
