@@ -12,7 +12,7 @@ import math
 from numpy import zeros,array
 from meshUtils import*
 
-# Mesh construction related functions-----------------------------------------
+# ---------------- Mesh construction related functions  -----------------#
 def Mesh1D(Type,xmin,xmax,base=3,N=100):
     '''
         In the mesh function the user can decide wether to use an
@@ -149,7 +149,7 @@ def Mesh2D(Type,xmin,xmax,ymin,ymax,Nx=100,Ny=100,basex=3,basey=3,optionx='',opt
         print 'You entered a wrong Type parameter. Please try again, or read the\
               documentation'
 
-# Potential related functions ----------------------------------------------
+# ----------------  Potential related functions ---------------------------#
 def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1,lam=2.,D=1.):
     '''
         This funcion is meant to evaluate different types of one dimensional
