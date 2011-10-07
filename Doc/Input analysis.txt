@@ -1,0 +1,34 @@
+
+Input analysis
+--------------
+
+- Dimension:  1,2,3
+		
+- Mesh:   	(Nodes,Elems)
+- BC:   	(Node,Type,{NodeIm,NodeRef},{Value})
+		
+- Parameters:   
+		* MatProp (Elem,Porps)
+		* Potential (Elem,PotVal)
+
+- DiffEq:	Shro
+		Heat
+		Wave
+- AnalysisType: (Type)
+
+		Type:
+			-Stationary
+			-Transient
+			-Bloch
+			-Eigen
+
+- AnalysisParams:
+				
+		Stationary: none
+		Transient: (Nsteps,Deltat)
+		Bloch: (NKx,{NKy},{NKz},[kxmin,kxmax],{[kymin,kymax]},{[kzmin,kzmax]},EigVects(y,n),NeigVals,{NeigVects})
+		Eigen: (EigVals(y,n),EigVects(y,n),{NeigVals},{NeigVects})
+
+__________________________________________
+Note:
+	{} Optional input
