@@ -1,0 +1,117 @@
+
+Documentation template for python scripts of modules and functions
+
+
+Introduction:
+
+In order to improve user understanding of the proyect modules and functions
+and also to make the code easier to understand for programmers working on a 
+collaborative proyect, it is essential to adopt some form of code documentation.
+The present template purpose is to establish a guideline for the process of 
+making documentation of python modules and functions.
+
+
+
+About python built-in documentation tools:
+
+The main tool to be used for explaining a script is going to be 
+python's docstring.  docstring is a string literal placed right bellow the
+definition of an object. In our case, modules or functions.
+
+For a complete description of how docstring works please look on:
+
+http://www.python.org/dev/peps/pep-0257/#what-is-a-docstring
+
+It is important to note that the docstring becomes an attribute (__doc__) of 
+the object it belongs to.
+
+
+Implementation details:
+
+So, when creating a module "something" by the statement
+
+	## module  something
+ 
+the first thing to do is create the docstring of the module by inserting a 
+comment using triple quotes. Just by being below the definition statement 
+the string in quotes becomes the docstring of the object, in our case of the module:
+
+	## module something
+	""" A docstring """
+
+For this proyect the basic template for modules is going to be as follows:
+
+	## module name_of_the_module
+	# -*- coding: utf-8 -*- 
+	"""
+	Brief description of the purpose of the module and how it should
+	be used
+	"""
+	__all__=['function1',function2',...]
+
+	__author__="name of the programer"
+	
+
+The __all__ statement modifies the "__all__" attribute that lists the functions contained in the module. The list must contain the nameas of the functions as strings.
+Finally it is good to include the name of the programmer with the 
+__author__ statement.
+
+
+The basic template for functions is:
+
+	def name_of_the_function(parameters):
+		"""
+			brief description of the purpose of the function
+			
+			Parameters:
+			-----------
+				
+			parameter1:   description of parameter1
+			parameter2:   description of parameter2
+			
+			Returns:
+			--------
+			
+			output1:     description of output1
+
+			Raises:
+			-------
+			
+			Description of the posible errors that the 
+			function may give.
+
+			Notes:
+			------
+				if any.
+
+			Last modification: date --/--/----
+
+
+The basic idea is to give an overall idea of the purpose, inputs and outputs
+of the function.  
+
+The programmer is encouraged to add as many comments of the form:
+
+	# somthing
+	....
+or
+	
+	....   #somethg
+
+inside the program and in critical spots in order to explain the nature of the steps or procedures he makes.  
+
+Finally, we propose the use of delimiters in the code as means of a visual 
+structure for easier navigation inside long scripts of modules with many functions. For example:
+
+	#------------ Functions for this ---------------------
+
+	def function1():
+		...
+	def function2():
+		...
+	#------------ Functions for that ---------------------
+	
+	def function1():
+		...
+	def function2():
+		...
