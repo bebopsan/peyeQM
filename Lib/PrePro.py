@@ -5,11 +5,14 @@
     equations.
 '''
 
-__all__=['Mesh1D','Potential1D','well','finwell','xwell','poschl','oscil']
-__author__="Santiago Echeverri Chacï¿½n"
+__all__=['Mesh1D','meshPlot','Potential1D','well','finwell','xwell'\
+          ,'Mesh2D','poschl','oscil']
+__author__="Santiago Echeverri Chacón"
 import math
 from numpy import zeros,array
 from meshUtils import*
+
+# Mesh construction related functions-----------------------------------------
 def Mesh1D(Type,xmin,xmax,base=3,N=100):
     '''
         In the mesh function the user can decide wether to use an
@@ -145,10 +148,12 @@ def Mesh2D(Type,xmin,xmax,ymin,ymax,Nx=100,Ny=100,basex=3,basey=3,optionx='',opt
     else:
         print 'You entered a wrong Type parameter. Please try again, or read the\
               documentation'
-def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1,lam=2.,D=1):
+
+# Potential related functions ----------------------------------------------
+def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1,lam=2.,D=1.):
     '''
         This funcion is meant to evaluate different types of one dimensional
-        potentials for the solution of Schrï¿½dinger equation.
+        potentials for the solution of Schrödinger equation.
 
         Each potential represents a particular aproach to one dimensional
         quantum mechanical phenomena.
@@ -349,6 +354,15 @@ def oscil(X):
                     over each node on X
                  
     """
+    N=size(X)
+    V=zeros(N-1)
+    a=X[N-1]
+    for i in range(0,N-1):
+        x = (X[i]+X[i+1])/2.
+        v = (x-a/2)**2
+        V[i]=v
+    return V
+
 def morse(X,D,lam):
     """
 "morse":          Evaluates the Morse potential over the domain given by D
@@ -363,6 +377,16 @@ def morse(X,D,lam):
                  lam:  constant proportional to the well widht
                  X:   numpy 1D array output of the Mesh1D function. 
     """
+    N=size(X)
+    V=zeros(N-1)
+    a=X[N-1]
+    xe = a/2.
+    for i in range(0,N-1):
+        x = (X[i]+X[i+1])/2.
+        v = D*(1. - exp(-a*(x-xe)) )**2
+        V[i]=v
+
+# Other --------------------------------------------------------------------
 
 def meshPlot(Nodes,Elems,facecolor,coordnum,elemnum):
 
