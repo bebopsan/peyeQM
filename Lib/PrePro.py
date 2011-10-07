@@ -6,14 +6,16 @@
 '''
 
 __all__=['Mesh1D','Potential1D','well','finwell','xwell','poschl','oscil']
-__author__="Santiago Echeverri Chacón"
+__author__="Santiago Echeverri Chacï¿½n"
 import math
 from numpy import zeros,array
-def Mesh1D(Type,a=math.pi,N=100):
+from meshUtils import*
+def Mesh1D(Type,xmin,xmax,base=3,N=100):
     '''
         In the mesh function the user can decide wether to use an
-        homogeneus discretization of the line of lenght a in N elements,
-        or give the name of a .msh file that contains the discretized line.
+        homogeneus discretization of the line of lenght [xmin,xmax] in N elements,
+        or a logarithmically spaced discretization with more density of points in
+        a certain point.
 
         Parameters:
         ----------
@@ -32,78 +34,121 @@ def Mesh1D(Type,a=math.pi,N=100):
                             on a log scale with more density of values on
                             the middle.
         
-        a:  Lenght of the line
-        N:  Number of divisions
+        xmin:  coordinate of the beginning of the line segment
+        xmax:  coordinate of the end of the line segment
+        N:     Number of divisions
+        base:  For the case of a nonhomogeneus mesh, the parameter 'base' tells the
+               base for the logarithm used to distribute coordinates.
+               for base --> 1 like 1.0001 the logmesh tends to a equally
+                distributed mesh
 
-        The default values  for a and N are a=4 and N=100.
-        The user can define new values by assigning them as arguments of the
-        function e.g. a=10,N=100000.
+        The default value  for  N is N=100.
+        The user can define a new value by assigning them as arguments of the
+        function e.g. N=100000.
 
         Returns:
         --------
-        X:  numpy array like vector of the discretized domain with lenght N
+        Nodes:  numpy array like vector of the discretized domain with lenght N
+        Elems:  numpy array like vector of the relations between nodes.
 
         Raises:
         -------
         Error if the user gives a wrong Type argument
         
-        Last modification: 2/Oct/2011
+        Last modification: 6/Oct/2011
     '''
 
     if 'simple' in Type:
-
-        # L: size of each element
-        L=a/(N-1)
-        # Initilization of the coordinate vector
-        X=zeros((N))
-        # Coordinates values for each node in the domain
-        for i in range(0,N):
-            X[i]=i*L
-        
+        Nodes,Elems=mesh1D(xmin,xmax,N)
+        return Nodes,Elems
     elif 'left' in Type:
-        from numpy import sqrt,logspace
-        import matplotlib.pyplot as plt
-        X=logspace(0.001,math.pi,num=N)
-        X=X*math.pi/10**math.pi
-        plt.plot(X,zeros(X.size),'+')
-        plt.show()
-        return X
+        Nodes,Elems=logmesh1D(xmin,xmax,N,base,'L')
+        return Nodes,Elems   
     elif 'right' in Type:
-        from numpy import sqrt,logspace
-        import matplotlib.pyplot as plt
-        
-        X=logspace(0.001,math.pi,num=N)
-        X=X*math.pi/10**math.pi
-        disp=X[X.size-1]
-        X=X[::-1]
-        X=array(X)
-        X=X*-1+disp
-        plt.plot(X,zeros(X.size),'+')
-        plt.show()
-        return X
+        Nodes,Elems=logmesh1D(xmin,xmax,N,base,'R')
+        return Nodes,Elems
         
     elif 'center' in Type:
-        from numpy import sqrt,concatenate,copy,hstack,logspace
-        import matplotlib.pyplot as plt
-        X=logspace(0.001,math.pi,num=N)
-        X=X*math.pi/10**math.pi
-        disp=X[X.size-1]
-        Y=copy(X[::-1])
-        Y=X*-1+disp
-        X=X+disp
-        X=hstack((Y,X))
-        plt.plot(X,2*zeros(X.size),'+')
-        plt.show()
-        return X
+        Nodes,Elems=logmesh1D(xmin,xmax,N,base,'C')
+        return Nodes,Elems
     else:
         print 'You entered a wrong Type parameter. Please try again, or read the\
               documentation'
         
-    
+def Mesh2D(Type,xmin,xmax,ymin,ymax,Nx=100,Ny=100,basex=3,basey=3,optionx='',optiony=''):
+    '''
+        Mesh2D works like Mesh 1D but with a rectangular domain rather than a
+        line segment. The mesh is built using triangular elements, and the nodes
+        can be arranged in a homogeneus distribution or a logarithm-like non
+        homogeneus distribution for each coordinate. 
+
+        Parameters:
+        ----------
+        Type:  Is a string variable that will tell the kind
+                of Mesh to be made.
+
+		"simple":   Will execute the discretization using
+                            Nx divisions over the x side of lenght [xmin,xmax]
+                            and Ny divisions over y side of lenght [ymin,ymax] 
+		"center":   Creates a 2D domain with values spaced evenly
+                            on a log scale with more density of values on
+                            the middle. The user can define the base of the log
+                            function by modifiying the parameters basex and basey
+                "custom":   lets the user decide the orientation of the 2D logarithmic
+                            mesh over each axis. This parameter enables full
+                            customization over the parameters
+        
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        Nx:     Number of divisions over x
+        Ny:     Number of divisions over y
+        basex: the same base parameter but for the x coordinates of the rectangle
+        basey: the same base parameter but for the y coordinates of the rectangle
+        optionx:  Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the x axis. thi parameter can be
+                  L for more points on the left
+                  R for more points on the right
+                  C for more points on the center
+         optiony: Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the y axis. thi parameter can be
+                  L for more points on the top
+                  R for more points on the right
+                  C for more points on the bottom
+                    
+
+        Returns:
+        --------
+        Nodes:  numpy array like matrix of the discretized domain with shape Nx Ny
+        Elems:  numpy array like matrix of the relations between nodes.
+
+        Raises:
+        -------
+        Error if the user gives a wrong Type argument
+        
+        Last modification: 6/Oct/2011
+    '''
+
+    if 'simple' in Type:
+        Nodes,Elems= meshtr2D(xmin,xmax,ymin,ymax,Nx,Ny)
+        return Nodes,Elems
+    elif 'center' in Type:
+        Nodes,Elems=logmeshtr2D(xmin,xmax,ymin,ymax,Nx,Ny,'C','C',basex,basey)
+        return Nodes,Elems
+    elif 'custom' in Type:
+        if optionx ==''or optiony =='':
+            print 'Please enter the custom parameters optionx and optiony.'
+        else:
+            Nodes,Elems=logmeshtr2D(xmin,xmax,ymin,ymax,Nx,Ny,optionx,optiony,basex,basey)
+            return Nodes,Elems
+    else:
+        print 'You entered a wrong Type parameter. Please try again, or read the\
+              documentation'
 def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1,lam=2.,D=1):
     '''
         This funcion is meant to evaluate different types of one dimensional
-        potentials for the solution of Schrödinger equation.
+        potentials for the solution of Schrï¿½dinger equation.
 
         Each potential represents a particular aproach to one dimensional
         quantum mechanical phenomena.
@@ -257,9 +302,9 @@ def xwell(X,lam):
 
 def poschl(X,V0,lam):
     """
-"poschl":       Potential Well defined by G.Pöschl and Edward Teller
+"poschl":       Potential Well defined by G.Pï¿½schl and Edward Teller
                   described in:
-                    http://en.wikipedia.org/wiki/Pöschl-Teller_potential
+                    http://en.wikipedia.org/wiki/Pï¿½schl-Teller_potential
 
                  Parameters:
                  -----------
@@ -319,7 +364,29 @@ def morse(X,D,lam):
                  X:   numpy 1D array output of the Mesh1D function. 
     """
 
+def meshPlot(Nodes,Elems,facecolor,coordnum,elemnum):
 
+    if(Elems.shape[1]==2):
+        y = Nodes*0
+        plt.figure()
+        plt.plot(Nodes,y,'-k')
+        plt.plot(Nodes,y,'ob')
+        plt.axis('equal')
+        plt.show()
+    else:
+        plt.figure()
+        plt.hold(True)
+        for i in range(0,Elems.shape[0]):
+            xcoord = zeros( (size(Elems[i,:])))
+            ycoord = zeros( (size(Elems[i,:])))
+            for j in range(0,size(Elems[i,:])):
+                xcoord[j] = Nodes[Elems[i,j],0]
+                ycoord[j] = Nodes[Elems[i,j],1]
+            plt.fill(xcoord,ycoord,facecolor=facecolor,alpha=1.0, edgecolor='k')
+        plt.plot(Nodes[:,0],Nodes[:,1],'ob')
+        plt.axis('equal')
+        plt.axis('off')
+        plt.show()
 
 
 
