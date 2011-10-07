@@ -51,7 +51,7 @@ def mesh1D(xmin,xmax,npoints):
 """
 def logmesh1D(xmin,xmax,npoints,base,option):
     
-    if(option=="B"):
+    if(option=="C"):
         if(mod(npoints,2)==0):
             coords = zeros((npoints+1))
         else:
