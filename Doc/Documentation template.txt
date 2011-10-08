@@ -1,12 +1,11 @@
-
 Documentation template for python scripts of modules and functions
 
 
 Introduction:
 
-In order to improve user understanding of the proyect modules and functions
+In order to improve user understanding of the project modules and functions
 and also to make the code easier to understand for programmers working on a 
-collaborative proyect, it is essential to adopt some form of code documentation.
+collaborative project, it is essential to adopt some form of code documentation.
 The present template purpose is to establish a guideline for the process of 
 making documentation of python modules and functions.
 
@@ -103,13 +102,13 @@ inside the program and in critical spots in order to explain the nature of the s
 Finally, we propose the use of delimiters in the code as means of a visual 
 structure for easier navigation inside long scripts of modules with many functions. For example:
 
-	#------------ Functions for this ---------------------
+	# ------------ Functions for this --------------------- #
 
 	def function1():
 		...
 	def function2():
 		...
-	#------------ Functions for that ---------------------
+	# ------------ Functions for that --------------------- #
 	
 	def function1():
 		...
