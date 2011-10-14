@@ -70,3 +70,32 @@ def WriteMSH(Output,points,triangles):
     print triangles.shape
     np.savetxt(f,triangles,fmt='%d %d %d %d %d %d %d %d')
     f.write('$EndElements\n')
+def WriteSolverInput(Output,Dimension=1,BCType='Dir',params=[],Eq='Schro',\
+                     Type='Stationary'):
+
+    f=open(Output,'r+')
+    line=f.readline()
+    while '$Solver' not in line:
+        here=f.tell()
+        line=f.readline()
+        
+        if '$Solver' in line:
+            f.seek(here)
+            f.truncate()
+            break
+        
+        if line=='':
+            break
+    f.write('$Solver input\n')
+    Dimension =str(Dimension)
+    f.write(Dimension +'\n')
+    f.write(BCType +'\n')
+    if params !=[]:
+        np.savetxt(f,params)
+    f.write(Eq +'\n')
+    f.write(Type +'\n')
+    f.write('$End Solver input\n')
+
+    
+    
+        
