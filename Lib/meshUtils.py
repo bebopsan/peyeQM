@@ -1,5 +1,6 @@
 #! /usr/bin/python
 ## module meshUtils
+# -*- coding: utf-8 -*- 
 """
 
     This module contains functions for the generation of structured meshes
