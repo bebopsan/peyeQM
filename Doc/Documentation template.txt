@@ -46,7 +46,7 @@ For this proyect the basic template for modules is going to be as follows:
 	Brief description of the purpose of the module and how it should
 	be used
 	"""
-	__all__=['function1',function2',...]
+	__all__=['function1','function2',...]
 
 	__author__="name of the programer"
 	
