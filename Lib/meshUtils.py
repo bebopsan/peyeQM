@@ -14,8 +14,10 @@ __author__="Nicolas Guarin Z."
 from numpy import *
 import matplotlib.pyplot as plt
 
-### LINEAR MESH 1D ###
-"""
+# --------------------- 1D meshes --------------------- #
+
+def mesh1D(xmin,xmax,npoints):
+    """
 
     Generate a 1D mesh where the points ares equally spaced.
 
@@ -28,8 +30,7 @@ import matplotlib.pyplot as plt
     Created by: Nicolas Guarin
     Last modification: 1/Oct/2011
     
-"""
-def mesh1D(xmin,xmax,npoints):
+    """
     coords = linspace(xmin,xmax,npoints,endpoint=True)
     elems = zeros( (npoints-1,2) ,dtype=int )
     for i in range(0,npoints-1):
@@ -38,8 +39,8 @@ def mesh1D(xmin,xmax,npoints):
     return coords, elems
 
 
-### LOGARITHMICAL MESH 1D ###
-"""
+def logmesh1D(xmin,xmax,npoints,base,option):
+    """
 
     Generate a 1D mesh where the points are not equally spaced....
 
@@ -52,9 +53,7 @@ def mesh1D(xmin,xmax,npoints):
     Created by: Nicolas Guarin
     Last modification: 1/Oct/2011
     
-"""
-def logmesh1D(xmin,xmax,npoints,base,option):
-    
+    """    
     if(option=="C"):
         if(mod(npoints,2)==0):
             coords = zeros((npoints+1))
@@ -85,8 +84,12 @@ def logmesh1D(xmin,xmax,npoints,base,option):
     return coords, elems
 
 
-### LINEAR MESH 2D ###
-"""
+
+# --------------------- 2D meshes --------------------- #
+
+
+def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
+    """
 
     Generate a 2D mesh where the points are equally spaced.
 
@@ -99,9 +102,7 @@ def logmesh1D(xmin,xmax,npoints,base,option):
     Created by: Nicolas Guarin
     Last modification: 2/Oct/2011
     
-"""
-def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
-    
+    """    
     coordx, elem = mesh1D(xmin,xmax,nxpoints)
     coordy, elem = mesh1D(ymin,ymax,nypoints)
     npoints = nxpoints*nypoints
@@ -127,8 +128,9 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
     return coords, elems
 
 
-### LOG MESH 2D ###
-"""
+
+def logmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,optionx,optiony,basex,basey):
+    """
 
     Generate a 2D mesh where the points are not equally spaced.
 
@@ -141,9 +143,7 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
     Created by: Nicolas Guarin
     Last modification: 2/Oct/2011
     
-"""
-def logmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,optionx,optiony,basex,basey):
-    
+    """    
     coordx, elem = logmesh1D(xmin,xmax,nxpoints,basex,optionx)
     coordy, elem = logmesh1D(ymin,ymax,nypoints,basey,optiony)
     npoints = nxpoints*nypoints
@@ -169,8 +169,11 @@ def logmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,optionx,optiony,basex,base
     return coords, elems
 
 
-### LIN-LOG MESH 2D ###
-"""
+
+
+def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
+                   optiony,basey):
+    """
 
     Generate a 2D mesh where the points are not equally spaced.
 
@@ -183,10 +186,7 @@ def logmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,optionx,optiony,basex,base
     Created by: Nicolas Guarin
     Last modification: 2/Oct/2011
     
-"""
-def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
-                   optiony,basey):
-    
+    """    
     coordx, elem = mesh1D(xmin,xmax,nxpoints)
     coordy, elem = logmesh1D(ymin,ymax,nypoints,basey,optiony)
     npoints = nxpoints*nypoints
@@ -212,8 +212,12 @@ def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
     return coords, elems
 
 
-### MESH PLOT ###
-"""
+# --------------------- Other functionalities --------------------- #
+
+
+
+def meshPlot(coords,elems,facecolor,coordnum,elemnum):
+    """
 
     Plot a mesh....
 
@@ -226,9 +230,7 @@ def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
     Created by: Nicolas Guarin
     Last modification: 2/Oct/2011
     
-"""
-def meshPlot(coords,elems,facecolor,coordnum,elemnum):
-
+    """
     if(elems.shape[1]==2):
         y = coords*0
         plt.figure()
