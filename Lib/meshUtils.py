@@ -1,11 +1,15 @@
 #! /usr/bin/python
-## module Integral
+## module meshUtils
 """
 
     This module contains functions for the generation of structured meshes
-    in 1D and 2D.
+    in 1D and 2D .
     
 """
+
+__all__=['mesh1D','logmesh1D','meshtr2D','logmeshtr2D','linlogmeshtr2D','meshPlot']
+
+__author__="Nicolas Guarin Z."
 
 from numpy import *
 import matplotlib.pyplot as plt
