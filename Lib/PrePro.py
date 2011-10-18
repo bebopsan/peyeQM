@@ -8,8 +8,8 @@
 __all__=['Mesh1D','meshPlot','Potential1D','well','finwell','xwell'\
           ,'Mesh2D','poschl','oscil']
 __author__="Santiago Echeverri Chacón"
-import math
-from numpy import zeros,array
+from math import sin,pi,exp, cosh,sqrt
+from numpy import zeros,array,size
 from meshUtils import*
 
 # ---------------- Mesh construction related functions  -----------------#
