@@ -115,8 +115,73 @@ def ReadMesh(mesh,geometry=0):
     ##        if "Line" in f.readline():
     ##            stop=0
     ##        f.seek(back)
+ 
+    return Nodes, eLines#, eTriangles
+
+def ReadSolverInput(Input):
+    f=open(Input,'r')
+    line=f.readline()
+    while '$Solver' not in line:
+        line=f.readline()
+        if '$Solver' in line:
+            
+            Dimension=f.readline()
+            BCType=f.readline()
+            here=f.tell()
+            if f.readline ==[]:
+                params=[]
+            else:
+                f.seek(here)
+                parameter=np.array(numscan(f))
+                while True:
+                    here=f.tell()
+                    b=numscan(f)
+                    if b==[]:
+                        break
+                    parameter=np.vstack((parameter,b))
+            f.seek(here)
+            Eq=f.readline()
+            Type=f.readline()
+            SolverInput=[Dimension,BCType,parameter,Eq,Type]
+            return SolverInput
+            break
+        if line=='':
+            SolverInput=[]
+            print 'Found no input for solver module' 
+            return SolverInput
+            break
+            
         
-    return Nodes, eTriangles
+        
+        
     
-        
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
         
