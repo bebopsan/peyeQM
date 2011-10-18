@@ -7,7 +7,7 @@ In order to improve user understanding of the project modules and functions
 and also to make the code easier to understand for programmers working on a 
 collaborative project, it is essential to adopt some form of code documentation.
 The present template purpose is to establish a guideline for the process of 
-making documentation of python modules and functions.
+making documentation of Python modules and functions.
 
 
 
@@ -38,7 +38,7 @@ the string in quotes becomes the docstring of the object, in our case of the mod
 	## module something
 	""" A docstring """
 
-For this proyect the basic template for modules is going to be as follows:
+For this project the basic template for modules is going to be as follows:
 
 	## module name_of_the_module
 	# -*- coding: utf-8 -*- 
@@ -46,13 +46,13 @@ For this proyect the basic template for modules is going to be as follows:
 	Brief description of the purpose of the module and how it should
 	be used
 	"""
-	__all__=['function1',function2',...]
+	__all__=['function1','function2',...]
 
 	__author__="name of the programer"
 	
 
-The __all__ statement modifies the "__all__" attribute that lists the functions contained in the module. The list must contain the nameas of the functions as strings.
-Finally it is good to include the name of the programmer with the 
+The __all__ statement modifies the "__all__" attribute that lists the functions contained in the module.The list must
+contain the nameas of the functions as strings. Finally it is good to include the name of the programmer with the 
 __author__ statement.
 
 
@@ -84,6 +84,7 @@ The basic template for functions is:
 				if any.
 
 			Last modification: date --/--/----
+		"""
 
 
 The basic idea is to give an overall idea of the purpose, inputs and outputs
@@ -91,26 +92,26 @@ of the function.
 
 The programmer is encouraged to add as many comments of the form:
 
-	# somthing
+	# something
 	....
 or
 	
-	....   #somethg
+	....   #something
 
 inside the program and in critical spots in order to explain the nature of the steps or procedures he makes.  
 
 Finally, we propose the use of delimiters in the code as means of a visual 
 structure for easier navigation inside long scripts of modules with many functions. For example:
 
-	# ------------ Functions for this --------------------- #
+	# --------------------- Functions for this --------------------- #
 
 	def function1():
 		...
 	def function2():
 		...
-	# ------------ Functions for that --------------------- #
+	# --------------------- Functions for that --------------------- #
 	
-	def function1():
+	def function3():
 		...
-	def function2():
+	def function4():
 		...
