@@ -31,8 +31,8 @@ def mesh1D(xmin,xmax,npoints):
 
         Returns:
         --------
-        Nodes:  numpy array like vector of the discretized domain with lenght N
-        Elems:  numpy array like vector of the relations between nodes.
+        coords:  numpy array like vector of the discretized domain with lenght N
+        elems:  numpy array like vector of the relations between nodes.
     
     
         Raises:
@@ -65,20 +65,30 @@ def logmesh1D(xmin,xmax,npoints,base,option):
         base:    tells the base for the logarithm used to distribute coordinates.
                  for base --> 1 like 1.0001 the logmesh tends to a equally
                  distributed mesh
-        
+        option:  Is a string variable that will tell the kind
+                of Mesh to be made.
+		"L":     Creates a 1D domain with values spaced evenly
+                            on a log scale with more density of values on
+                            the left.
+		"R":    Creates a 1D domain with values spaced evenly
+                            on a log scale with more density of values
+                            on the right side.
+		"C":   Creates a 1D domain with values spaced evenly
+                            on a log scale with more density of values on
+                            the middle.        
 
         Returns:
         --------
+        coords:  numpy array like vector of the discretized domain with lenght N
+        elems:  numpy array like vector of the relations between nodes.
     
     
         Raises:
         -------
-    
-        Notes:
-	    ------
-
-    
-        Last modification: date 14/10/2011
+        Error if the user gives a wrong 'option' argument
+        Numerical error if base is chosen equal or less than 1
+   
+        Last modification: date 21/10/2011
     
     """    
     if(option=="C"):
@@ -122,20 +132,24 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
 
         Parameters:
         -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
 
 
         Returns:
         --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
     
     
         Raises:
         -------
     
-        Notes:
-	    ------
-
-    
-        Last modification: date 14/10/2011
+        Last modification: date 21/10/2011
     
     """    
     coordx, elem = mesh1D(xmin,xmax,nxpoints)
@@ -167,24 +181,43 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
 def logmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,optionx,optiony,basex,basey):
     """
 
-        Generate a 2D mesh where the points are not equally spaced.
+        Generate a 2D mesh where the points are logarithmally spaced in both, x and
+        y cordinates.
 
         Parameters:
         -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
+        basex: the same base parameter but for the x coordinates of the rectangle
+        basey: the same base parameter but for the y coordinates of the rectangle
+        optionx:  Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the x axis. thi parameter can be
+                  L for more points on the left
+                  R for more points on the right
+                  C for more points on the center
+         optiony: Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the y axis. thi parameter can be
+                  L for more points on the top
+                  R for more points on the right
+                  C for more points on the bottom
 
 
         Returns:
         --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
     
     
         Raises:
         -------
-    
-        Notes:
-	    ------
-
-    
-        Last modification: date 14/10/2011
+        Error if the user gives a wrong 'option' argument
+        Numerical error if base is chosen equal or less than 1
+   
+        Last modification: date 21/10/2011
     
     """    
     coordx, elem = logmesh1D(xmin,xmax,nxpoints,basex,optionx)
@@ -218,24 +251,38 @@ def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
                    optiony,basey):
     """
 
-        Generate a 2D mesh where the points are not equally spaced.
+        Generate a 2D mesh where the points are equally spaced in x direction
+        and logarithmally spaced in y direction.
 
         Parameters:
         -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
+        basey: the same base parameter but for the y coordinates of the rectangle
+         optiony: Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the y axis. thi parameter can be
+                  L for more points on the top
+                  R for more points on the right
+                  C for more points on the bottom
 
 
         Returns:
         --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
     
     
         Raises:
         -------
+        Error if the user gives a wrong 'option' argument
+        Numerical error if base is chosen equal or less than 1
     
-        Notes:
-	    ------
-
-    
-        Last modification: date 14/10/2011
+   
+        Last modification: date 21/10/2011
     
     """    
     coordx, elem = mesh1D(xmin,xmax,nxpoints)
@@ -269,10 +316,15 @@ def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
 
 def meshPlot(coords,elems,facecolor,coordnum,elemnum):
     """
-        Plot a mesh....
+        Plot mesh nodes (points) and elements (conectivities between nodes).
 
         Parameters:
         -----------
+        coords:    numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:     numpy array like matrix of the relations between nodes
+        facecolor: element face color in the drawing (just used in 2D meshes)
+        coordnum:  (STILL NOT USED) makes visible the nodes numbering
+        elemnum:   (STILL NOT USED) makes visible the elements numbering
 
 
         Returns:
@@ -281,12 +333,10 @@ def meshPlot(coords,elems,facecolor,coordnum,elemnum):
     
         Raises:
         -------
+        Error if 'facecolor' doesn't correspond with a color name
     
-        Notes:
-	    ------
-
-    
-        Last modification: date 14/10/2011
+   
+        Last modification: date 21/10/2011
     
     """
     if(elems.shape[1]==2):
