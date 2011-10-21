@@ -24,20 +24,22 @@ def mesh1D(xmin,xmax,npoints):
 
         Parameters:
         -----------
+        xmin:    coordinate of the beginning of the line segment
+        xmax:    coordinate of the end of the line segment
+        npoints: number of subdivisions
 
 
         Returns:
         --------
+        Nodes:  numpy array like vector of the discretized domain with lenght N
+        Elems:  numpy array like vector of the relations between nodes.
     
     
         Raises:
-	    -------
+	-------
     
-        Notes:
-	    ------
-
-    
-        Last modification: date 14/10/2011
+   
+        Last modification: date 21/10/2011
     
     """
     coords = linspace(xmin,xmax,npoints,endpoint=True)
@@ -57,7 +59,13 @@ def logmesh1D(xmin,xmax,npoints,base,option):
 
         Parameters:
         -----------
-
+        xmin:    coordinate of the beginning of the line segment
+        xmax:    coordinate of the end of the line segment
+        npoints: number of subdivisions
+        base:    tells the base for the logarithm used to distribute coordinates.
+                 for base --> 1 like 1.0001 the logmesh tends to a equally
+                 distributed mesh
+        
 
         Returns:
         --------
