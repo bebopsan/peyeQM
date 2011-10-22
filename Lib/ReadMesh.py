@@ -142,7 +142,12 @@ def ReadSolverInput(Input):
             f.seek(here)
             Eq=f.readline()
             Type=f.readline()
-            AnalisisParam=np.array(f.readline())
+            AnalisisParam=f.readline()
+            print 'normal\n', AnalisisParam
+            AnalisisParam=AnalisisParam.strip('[ ]\n')
+            print 'stripped\n', AnalisisParam
+            AnalisisParam=AnalisisParam.split(',')
+            print 'splited\n', AnalisisParam
             SolverInput=[Dimension,BCType,parameter,Eq,Type,AnalisisParam]
             return SolverInput
             break
