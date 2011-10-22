@@ -3,10 +3,11 @@ from ReadMesh import*
 from PrePro import Mesh1D,Potential1D,meshPlot,Mesh2D
 from Write import*
 from Solver import*
-Nodes,Elems=Mesh1D('simple',0,2)
-Pot=Potential1D('poschl',Nodes)
+from math import pi
+Nodes,Elems=Mesh1D('simple',0,2*pi)
+Pot=Potential1D('xwell',Nodes,V0=0.02)
 WriteMSH('lineSimple.msh',Nodes,Elems)
-WriteSolverInput('lineSimple.msh',parameter=Pot)
+WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Bloch')
 Schroedinger('lineSimple.msh')
 
 ##X=3
