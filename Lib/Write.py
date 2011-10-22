@@ -149,7 +149,7 @@ def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
         np.savetxt(f,Elems,fmt='%d %d %d %d %d %d %d %d')
     f.write('$EndElements\n')
 def WriteSolverInput(Output,Dimension=1,BCType='Dir',parameter=[],Eq='Schro',\
-                     Type='Stationary',AnalisisParam=['y','y',4,4]):
+                     Type='Stationary',AnalisisParam=['y','y',4,4,101]):
 
     f=open(Output,'r+')
     line=f.readline()
@@ -173,6 +173,7 @@ def WriteSolverInput(Output,Dimension=1,BCType='Dir',parameter=[],Eq='Schro',\
     f.write(Eq +'\n')
     f.write(Type +'\n')
     b=str(AnalisisParam)
+    b=b.replace("'","")
     f.write(b+'\n')
     f.write('$End Solver input\n')
 
