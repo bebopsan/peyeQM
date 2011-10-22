@@ -13,13 +13,13 @@ __author__='Santiago Echeverri Chacón'
 
 from ReadMesh import*
 from Write import*
-from numpy import zeros,shape
+from numpy import zeros,shape,linspace,cfloat,array
 from scipy import linalg
 from math import sin,pi,exp, cosh,sqrt
 import matplotlib.pyplot as plt
 
 def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
-                 ,Type='Stationary',Eq='Schro',AnalisisParam=['y','y',4,4]):
+                 ,Type='Stationary',Eq='Schro',AnalisisParam=['y','y',4,4,101]):
     """
         Function Schroedinger computes the solution for Schroedinger
         equation using the Finite Element Method.
@@ -115,19 +115,20 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
 
     #------------------------------  1D problem ------------------------------------       
     if '1' in Dimension:
-        
+        N=shape(Nodes)[0]
+        # Reinterpretation of the parameter as the potential
+        V=parameter
         #---------------------- With dirichlet boundary conditions ----------------
         if 'Dir' in BCType and 'Stationary' in Type: 
 
-            N=shape(Nodes)[0]   
+               
                         
             # Initialization of the equivalent stiffness matrix
             K=zeros((N,N))
             # Initialization of the equivalent mass matrix
             M=zeros((N,N))
             
-            # Reinterpretation of the parameter as the potential
-            V=parameter
+            
             
             # Value for the distance between the first 2 nodes and the last 2 nodes
             
@@ -161,15 +162,15 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
             print 'K shape is:\n',K.shape
 
             if 'y'in AnalisisParam[0] and 'n' in AnalisisParam[1]:
-                nVals=AnalisisParam[2]
+                nVals=int(AnalisisParam[2])
                 V=linalg.eigvalsh(Kd,Md,eigvals=(0,nVals-1))
                 V=V/2
                 print 'The Eigenvalues are:\n',V
                 return V
                 
-            elif 'y'in AnalisisParam[1] and 'y'in AnalisisParam[1]:
-                nVals=AnalisisParam[2]
-                nVects=AnalisisParam[3]
+            elif 'y'in AnalisisParam[0] and 'y'in AnalisisParam[1]:
+                nVals=int(AnalisisParam[2])
+                nVects=int(AnalisisParam[3])
                 n=max(nVals,nVects)
                 V,Dd=linalg.eigh(Kd,Md,eigvals=(0,n-1))
                 V=V/2
@@ -177,8 +178,8 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
                 D[1:N-1,:]=Dd
                 return V,D
 
-            elif 'n'in AnalisisParam[1] and 'y'in AnalisisParam[1]:
-                nVects=AnalisisParam[3]
+            elif 'n'in AnalisisParam[0] and 'y'in AnalisisParam[1]:
+                nVects=int(AnalisisParam[3])
                 V,Dd=linalg.eigh(Kd,Md,eigvals=(0,nVects-1))
                 D=zeros((N,nVects))
                 D[1:N-1,:]=Dd
@@ -188,6 +189,118 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
 
         #------------------ End Dirichlet conditions----------------------------
                 
+        #----------------- With Bloch periodic boundary conditions -------------        
+        elif 'Bloch' in BCType:
+            
+            import cmath
+
+            # Initialization of the equivalent stiffness matrix
+            K=zeros((N,N),dtype=cfloat)
+            # Initialization of the equivalent mass matrix
+            M=zeros((N,N),dtype=cfloat)
+
+            # Value for the distance between the first 2 nodes and the last 2 nodes
+            
+            Li=abs(Nodes[1,0]-Nodes[0,0])
+            Lf=abs(Nodes[N-1,0]-Nodes[N-2,0])
+            
+            K[0,0]= 1/Li + Li*V[0]/3
+            K[N-1,N-1]= 1/Lf + Lf*V[N-2]/3
+
+            for i in range(0,N-1):
+                L=abs(Nodes[i+1,0]-Nodes[i,0])       #Distance between nodes
+                if i!=0:
+                    K[i,i]=2/L + L*(V[i-1]+V[i])/3   # Central diagonal
+                K[i,i+1]= -1/L + L*V[i-1]/6          # Upper diagonal
+                K[i+1,i]= -1/L + L*V[i-1]/6          # Lower diagonal
+                
+            M[0,0]=Li/3
+            M[N-1,N-1]=Lf/3
+            for i in range(0,N-1):
+                L=abs(Nodes[i+1,0]-Nodes[i,0])      #Distance between nodes
+                if i!=0:
+                    M[i,i]=2*L/3                    # Central diagonal
+                M[i,i+1]=L/6                        # Upper diagonal  
+                M[i+1,i]=L/6                        # Lower diagonal                    
+
+            print 'K shape is:\n',K.shape
+
+                
+            # Bloch-Periodicity imposition
+
+            xi=Nodes[0,0]   # initial x
+            xf=Nodes[N-1,0]  # final x
+                                    
+            nVals =int(AnalisisParam[2])  # number of eigenvales to compute
+
+            nk = int(AnalisisParam[4]) # number of k to sweep
+            kmax = 4.*pi/Nodes[N-1,0]
+            kmin = -0.0
+            k_range = linspace(kmin, kmax, num=nk)
+            omega = zeros( (len(k_range),nVals) )
+            E = zeros( (len(k_range),nVals) )
+                              
+            print 'Number of eigenvales to compute: ', nVals,'\nNumber of wave numbers to sweep: ', nk, ' in ',  [k_range[0],k_range[nk-1]]
+
+            ll = 0
+
+            Kaux = K.copy()
+            Maux = M.copy()
+
+            for k in k_range:
+                fi=cmath.exp(1.0j*k*xi)
+                ff=cmath.exp(1.0j*k*xf)
+                K = Kaux.copy()
+                M = Maux.copy()
+
+
+                for i in range(0,N):
+                    K[0,i]=K[0,i]*fi.conjugate()
+                    K[i,0]=K[i,0]*fi
+                    K[N-1,i]=K[N-1,i]*ff.conjugate()
+                    K[i,N-1]=K[i,N-1]*ff
+                    
+                    M[0,i]=M[0,i]*fi.conjugate()
+                    M[i,0]=M[i,0]*fi
+                    M[N-1,i]=M[N-1,i]*ff.conjugate()
+                    M[i,N-1]=M[i,N-1]*ff
+                    
+                K[N-1,:] = K[0,:] + K[N-1,:]
+                K[:,N-1] = K[:,0] + K[:,N-1]
+
+                M[N-1,:] = M[0,:] + M[N-1,:]
+                M[:,N-1] = M[:,0] + M[:,N-1]
+
+
+                Kd=K[1:N,1:N]
+                Md=M[1:N,1:N]
+
+                vals = linalg.eigvalsh(Kd,Md,eigvals=(0,nVals-1) )
+                
+                for i in range(0,nVals):
+                    omega[ll,i] = sqrt( abs(vals[i]) )
+
+                for i in range(0,nVals):
+                    E[ll,i] = vals[i]
+                    
+                ll = ll + 1
+
+                
+            plt.figure(2)
+            plt.hold(True)
+            legend=[]
+            for i in range(0,nVals):
+                plt.plot(k_range,E[:,i])
+                legend.append('n = '+str(i+1))
+
+            plt.plot(k_range,(k_range)**2,'--k')
+            legend.append('Free Electron')
+            plt.title('Dispersion relation')
+            plt.legend(legend,loc=2)
+            plt.xlabel('Adimensional wave number - $a\kappa/\pi$')
+            plt.ylabel('Adimensional energy - $2ma^2E/\hslash^2$')
+            plt.grid()
+            plt.show()
         else:
             print 'Only Dirichlet for now sorry'
     #------------------------- End 1D problem ------------------------------------
