@@ -43,7 +43,7 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
 
         Nodes:	    Numpy array matrix of nodes containing the coordinates of
                     the nodes from the discretized domain.
-                    Nodes is an array like matrix of dimension (Nes,3).
+                    Nodes is an array like matrix of dimension (nNodes,3).
 
                     Where each column represents the value of the nodes on
                     one of the three coordinate axes x,y,z.
@@ -63,7 +63,7 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
                     to define a potential and what does it mean pleas read the
                     documentation of the Potential1D function in the module PrePro.
 
-        Dimension:  String parameter that tells the program wether to solve for a
+        Dimension:  int parameter that tells the program wether to solve for a
                     1D problem or a 2D problem (not supported yet)
 
         BCType:     String parameter for the selection of a border condition
@@ -92,11 +92,11 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
                         AnalisisParam[3]:  Integer  number of Eigen Vectors to save
 
 
-	Last modification: date 18/10/2011
+	Last modification: date 25/10/2011
     """
 #------------------------ Load from file if given -----------------------------------
     if File!='':      # If type is not blank 
-        Nodes,Elems=ReadMesh(File)                  # Import nodes and elements
+        Nodes,Elems=Readmsh(File)                  # Import nodes and elements
         SolverInput=ReadSolverInput(File)           # Import input parameters for
                                                     # the solution    
         if SolverInput !=[]:
@@ -114,7 +114,8 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
                              Type=Type,Eq=Eq,parameter=parameter)
 
     #------------------------------  1D problem ------------------------------------       
-    if '1' in Dimension:
+    
+    if Dimension==1:
         N=shape(Nodes)[0]
         # Reinterpretation of the parameter as the potential
         V=parameter

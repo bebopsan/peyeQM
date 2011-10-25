@@ -4,9 +4,22 @@ from PrePro import Mesh1D,Potential1D,meshPlot,Mesh2D
 from Write import*
 from Solver import*
 from math import pi
+import numpy as np
+
+
 Nodes,Elems=Mesh1D('simple',0,2*pi)
-Pot=Potential1D('xwell',Nodes,V0=0.02)
+
+
+Pot=Potential1D('morse',Nodes,V0=2)
+z=np.zeros((Nodes.size,3))
+z[:,0]=Nodes
+Nodes=z
+WriterVTK('test.vtk','thi shit','',Nodes,Elems,['SCALARS','Potential',Pot])
+
+Nodes=Nodes[:,0]
 WriteMSH('lineSimple.msh',Nodes,Elems)
+Nodes,Elems=ReadVTK('test.vtk')
+
 WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Bloch')
 Schroedinger('lineSimple.msh')
 

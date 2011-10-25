@@ -150,7 +150,7 @@ def Mesh2D(Type,xmin,xmax,ymin,ymax,Nx=100,Ny=100,basex=3,basey=3,optionx='',opt
               documentation'
 
 # ----------------  Potential related functions ---------------------------#
-def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1,lam=2.,D=1.):
+def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1.,lam=.2,D=1):
     '''
         This funcion is meant to evaluate different types of one dimensional
         potentials for the solution of Schrödinger equation.
@@ -182,12 +182,12 @@ def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1,lam=2.,D=1.):
     '''
    
     
-    if 'well' in Type:
+    if Type== 'well':
        
         V=well(X,V0)
         return V
     elif 'finwell' in Type:
-        V=finwell(X,V0,Vleft,Vright,widht)
+        V=finwell(X,V0,Vleft,Vright,width)
         return V
     elif 'xwell' in Type:
         V=xwell(X,lam)
@@ -234,8 +234,8 @@ well":          Defines a well with constant potential over the 1D domain
     for i in range(0,N-1):
         V[i]= V0
     return V
-
-def finwell(X,V0,Vleft,Vright,widht):
+    print 'V.size', V.size
+def finwell(X,V0,Vleft,Vright,width):
     """
 "finwell":	  Works like "well" but  with control over the height of
                   the left and right walls of the well:
@@ -262,14 +262,11 @@ def finwell(X,V0,Vleft,Vright,widht):
     N=size(X)
     V=zeros(N-1)
     a=X[N-1]
-    Vleft = -5.
-    V0=0.
-    Vright = -10.
-    widht = 1
+    print a
     for i in range(0,N-1):
-    	if  X[i]<(a/2.-widht/2.):
+    	if  X[i]<(a/2.-width/2.):
 		V[i]= Vleft
-	elif X[i]>(a/2.+widht/2.) :
+	elif X[i]>(a/2.+width/2.) :
 		V[i]= Vright
 	else:
 		V[i]= V0
@@ -361,8 +358,10 @@ def oscil(X):
         x = (X[i]+X[i+1])/2.
         v = (x-a/2)**2
         V[i]=v
-    return V
 
+   
+    return V
+    
 def morse(X,D,lam):
     """
 "morse":          Evaluates the Morse potential over the domain given by D
@@ -383,9 +382,10 @@ def morse(X,D,lam):
     xe = a/2.
     for i in range(0,N-1):
         x = (X[i]+X[i+1])/2.
-        v = D*(1. - exp(-a*(x-xe)) )**2
+        v = D*(1. - exp(-lam*(x-xe)) )**2
         V[i]=v
-
+    return V
+    
 # Other --------------------------------------------------------------------
 
 def meshPlot(Nodes,Elems,facecolor,coordnum,elemnum):
