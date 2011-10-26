@@ -6,7 +6,7 @@
 	console and read and write files (pre-defined file formats).
 """
 
-__all__=['Readmsh']
+__all__=['Readmsh','WriterVTK']
 __author__="Edward Y. Villegas"
 
 import numpy as np
@@ -173,6 +173,7 @@ def WriterVTK(filename,title,SET,points,cells,data):
 def typeMatrix(matrix):
 	"""
 		This function extract type of numpy array to use in VTK argument of datatype (int, float, double)
+		IN DEVELOPMENT
 	"""
 	TYPE = str(matrix.dtype).split('\'')
 	# regular expression to extract word below number 'int32'->'int' , 'float64'->'float' (in develop) 
