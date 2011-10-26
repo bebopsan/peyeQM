@@ -28,19 +28,21 @@ def Readmsh(filename):
             elm_triangles:  numpy array like matrix of physical entities and list of nodes of element (if triangle elements exist)
                             elm_triangles is returned as (nElm,4) where
                             elm_lines[x,:]=[3,node1,node2,node4]
-            Last modification: date 23/10/
+            Last modification: date 25/10/2011
     """
-    # Open file
+    # _________________________ Open file_________________________________
     fid = open(filename, 'r')
     stop = 0 # flag to continue (0) or stop (1) reading
     number = 0 # initialize variable (recognize as global)
-    # Search header file
+    
+    #_____________________ Search header file________________________________
+
     while stop == 0:
         line = fid.readline()
         if '$Mesh' in line:
                 line = fid.readline() # Gmsh information format
                 stop = 1
-    # Search nodes
+    #_______________________ Search nodes __________________________________
     stop = 0
     while stop == 0:
         line = fid.readline()
@@ -55,7 +57,7 @@ def Readmsh(filename):
         values = line.split()
         coords[count][0:] = values[1:] # Omit Node-number
         count = count + 1
-    # Search elements
+    #______________________ Search elements_________________________________
     stop = 0
     while stop == 0:
         line = fid.readline()
@@ -127,10 +129,12 @@ def ReadVTK(filename):
                            elm_lines is returned as (nElm,3) where
                            elm_lines[x,:]=[2,node1,node2 ]
                                 
-            elm_triangles: numpy array like matrix of physical entities and list of nodes of element (if triangle elements exist)
+            elm_triangles: numpy array like matrix of physical entities and list of nodes of
+                            element (if triangle elements exist)
                             elm_triangles is returned as (nElm,4) where
                             elm_lines[x,:]=[3,node1,node2,node4]
-                            
+            elm_scalars:    numpy array like matrix of scalar values asociated with the elements
+                                        
             Last modification: date 25/10/
     """
     
@@ -138,14 +142,14 @@ def ReadVTK(filename):
     fid = open(filename, 'r')
     stop = 0 # flag to continue (0) or stop (1) reading
     number = 0 # initialize variable (recognize as global)
-    # Search header file
+    # _______________________Search header file   ____________________________
     while stop == 0:
         line = fid.readline()
         if '# vtk' in line:
                 line = fid.readline() # Gmsh information format
                 Title =line
                 stop = 1    
-    # Search nodes
+    #___________________________ Search nodes __________________________________
     stop = 0
     while stop == 0:
         line = fid.readline()
@@ -160,7 +164,7 @@ def ReadVTK(filename):
         values = line.split()
         coords[count,0:] = values[:] # Omit Node-number
         count = count + 1
-    # Search elements
+    # ________________________ Search elements ______________________________
     stop = 0
     while stop == 0:
             line = fid.readline()
@@ -203,13 +207,45 @@ def ReadVTK(filename):
                     print "Type", values[0], "in element", count, "is not a supported element type."
             count = count + 1
             
+    # _______________________ Search Scalars _________________________________
+    stop = 0
+    flag_scalars = 0
+    while stop == 0:
+            line = fid.readline()
+            if 'CELL_DATA' in line:
+                number =int(line.split()[1]) # Number of scalars
+                stop = 1
+            else:
+                flag_scalars = 1
+                
+    if flag_scalars ==0:      
+        elm_scalars=np.zeros((number,1),dtype=float)
 
+        stop = 0
+        while stop == 0:
+                line = fid.readline()
+                if 'LOOKUP' in line:
+                    stop = 1
+        
+        count = 0
+        while count < number:
+            line = fid.readline()
+            values = line.split()
+            elm_scalars[count,:] = values[:]
+            count = count + 1
+            
+     
     fid.close()
-    
-    if not flag_triangles:
+    # ----------------------  Return  arrays -_________________________________
+    if not flag_triangles and not flag_scalars:
         
-        return coords, elm_lines[1:]
+        return coords, elm_lines[1:],elm_scalars
+    elif not flag_triangles and  flag_scalars:
         
+        return coords,elm_lines[1:]
+    elif flag_triangles and not flag_scalars:
+        
+        return coords, elm_lines[1:], elm_triangles[1:],elm_scalars
     else:
         return coords, elm_lines[1:], elm_triangles[1:]
         
@@ -269,6 +305,7 @@ def ReadSolverInput(filename):
                             AnalisisParam[2]:  Integer  number of Eigen Values to save
                             AnalisisParam[3]:  Integer  number of Eigen Vectors to save          
             
+         Last modification: date 25/10/2011
     """
     f=open(filename,'r')
     line=f.readline()

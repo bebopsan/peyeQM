@@ -5,23 +5,24 @@ from Write import*
 from Solver import*
 from math import pi
 import numpy as np
+from PostPro import* 
 
 
 Nodes,Elems=Mesh1D('simple',0,2*pi)
 
-
+##
 Pot=Potential1D('morse',Nodes,V0=2)
 z=np.zeros((Nodes.size,3))
 z[:,0]=Nodes
 Nodes=z
 WriterVTK('test.vtk','thi shit','',Nodes,Elems,['SCALARS','Potential',Pot])
-
-Nodes=Nodes[:,0]
-WriteMSH('lineSimple.msh',Nodes,Elems)
-Nodes,Elems=ReadVTK('test.vtk')
-
-WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Bloch')
-Schroedinger('lineSimple.msh')
+Plot1D('test.vtk')
+##Nodes=Nodes[:,0]
+##WriteMSH('lineSimple.msh',Nodes,Elems)
+##Nodes,Elems=ReadVTK('test.vtk')
+##
+##WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Bloch')
+##Schroedinger('lineSimple.msh')
 
 ##X=3
 ##Potential1D('hk',X).__doc__
