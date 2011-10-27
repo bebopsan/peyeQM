@@ -171,7 +171,7 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
             print 'K shape is:\n',K.shape
 
                 
-            # Bloch-Periodicity imposition
+            # Bloch analysis parameters
 
             xi=Nodes[0,0]   # initial x
             xf=Nodes[N-1,0]  # final x
@@ -179,7 +179,7 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
             nVals =int(AnalisisParam[2])  # number of eigenvales to compute
 
             nk = int(AnalisisParam[4]) # number of k to sweep
-            kmax = 4.*pi/Nodes[N-1,0]
+            kmax = 4.*pi/xf
             kmin = -0.0
             k_range = linspace(kmin, kmax, num=nk)
             omega = zeros( (len(k_range),nVals) )
@@ -187,12 +187,13 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
                               
             print 'Number of eigenvales to compute: ', nVals,'\nNumber of wave numbers to sweep: ', nk, ' in ',  [k_range[0],k_range[nk-1]]
 
+            # Bloch-Periodicity imposition
+            
             ll = 0
-
             Kaux = K.copy()
             Maux = M.copy()
 
-            for k in k_range:
+            for k in k_range:   # Loop over the different wave numbers k
                 fi=cmath.exp(1.0j*k*xi)
                 ff=cmath.exp(1.0j*k*xf)
                 K = Kaux.copy()
@@ -242,8 +243,8 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
             legend.append('Free Electron')
             plt.title('Dispersion relation')
             plt.legend(legend,loc=2)
-            plt.xlabel('Adimensional wave number - $a\kappa/\pi$')
-            plt.ylabel('Adimensional energy - $2ma^2E/\hslash^2$')
+            plt.xlabel('Nondimensional wave number - $a\kappa/\pi$')
+            plt.ylabel('Nondimensional energy - $2ma^2E/\hslash^2$')
             plt.grid()
             plt.show()
         else:
