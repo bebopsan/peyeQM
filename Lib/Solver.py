@@ -8,8 +8,8 @@ It should be able to take a file as input or the matrices and options directly
 from the main.
 """
 
-__all__=['Schroedinger']
-__author__='Santiago Echeverri Chacón'
+__all__=['Schroedinger','matAssembly1D']
+__author__=['Santiago Echeverri Chacón','Nicolas Guarin']
 
 from ReadMesh import*
 from Write import*
@@ -123,43 +123,14 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
         if 'Dir' in BCType and 'Stationary' in Type: 
 
                
-                        
-            # Initialization of the equivalent stiffness matrix
-            K=zeros((N,N))
-            # Initialization of the equivalent mass matrix
-            M=zeros((N,N))
-            
-            
-            
-            # Value for the distance between the first 2 nodes and the last 2 nodes
-            
-            Li=abs(Nodes[1,0]-Nodes[0,0])
-            Lf=abs(Nodes[N-1,0]-Nodes[N-2,0])
-            
-            K[0,0]= 1/Li + Li*V[0]/3
-            K[N-1,N-1]= 1/Lf + Lf*V[N-2]/3
+            K,M = matAssembly1D(Nodes,N)                               
 
-            for i in range(0,N-1):
-                L=abs(Nodes[i+1,0]-Nodes[i,0])       #Distance between nodes
-                if i!=0:
-                    K[i,i]=2/L + L*(V[i-1]+V[i])/3   # Central diagonal
-                K[i,i+1]= -1/L + L*V[i-1]/6          # Upper diagonal
-                K[i+1,i]= -1/L + L*V[i-1]/6          # Lower diagonal
-                
-            M[0,0]=Li/3
-            M[N-1,N-1]=Lf/3
-            for i in range(0,N-1):
-                L=abs(Nodes[i+1,0]-Nodes[i,0])      #Distance between nodes
-                if i!=0:
-                    M[i,i]=2*L/3                    # Central diagonal
-                M[i,i+1]=L/6                        # Upper diagonal  
-                M[i+1,i]=L/6                        # Lower diagonal                    
-
-            # These two matrices are called the dirichlet matrices
+            # These two matrices are called the Dirichlet matrices
             # of both the stiffness equivalent and mass equivalent matrices.
             
             Kd=K[1:N-1,1:N-1]
             Md=M[1:N-1,1:N-1]
+            
             print 'K shape is:\n',K.shape
 
             if 'y'in AnalisisParam[0] and 'n' in AnalisisParam[1]:
@@ -195,34 +166,7 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
             
             import cmath
 
-            # Initialization of the equivalent stiffness matrix
-            K=zeros((N,N),dtype=cfloat)
-            # Initialization of the equivalent mass matrix
-            M=zeros((N,N),dtype=cfloat)
-
-            # Value for the distance between the first 2 nodes and the last 2 nodes
-            
-            Li=abs(Nodes[1,0]-Nodes[0,0])
-            Lf=abs(Nodes[N-1,0]-Nodes[N-2,0])
-            
-            K[0,0]= 1/Li + Li*V[0]/3
-            K[N-1,N-1]= 1/Lf + Lf*V[N-2]/3
-
-            for i in range(0,N-1):
-                L=abs(Nodes[i+1,0]-Nodes[i,0])       #Distance between nodes
-                if i!=0:
-                    K[i,i]=2/L + L*(V[i-1]+V[i])/3   # Central diagonal
-                K[i,i+1]= -1/L + L*V[i-1]/6          # Upper diagonal
-                K[i+1,i]= -1/L + L*V[i-1]/6          # Lower diagonal
-                
-            M[0,0]=Li/3
-            M[N-1,N-1]=Lf/3
-            for i in range(0,N-1):
-                L=abs(Nodes[i+1,0]-Nodes[i,0])      #Distance between nodes
-                if i!=0:
-                    M[i,i]=2*L/3                    # Central diagonal
-                M[i,i+1]=L/6                        # Upper diagonal  
-                M[i+1,i]=L/6                        # Lower diagonal                    
+            K,M = matAssembly1D(Nodes,N)                   
 
             print 'K shape is:\n',K.shape
 
@@ -309,10 +253,61 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
         print 'only 1D for now. Sorry'
     
            
-            
-            
+def matAssembly1D(Nodes,N):
+    """
+        Assembly the equivalent stiffness and equivalent mass matrices for a right to left
+        numbered 1D mesh.
+
+        Parameters:
+        -----------
 
 
+        Nodes:	    Numpy array matrix of nodes containing the coordinates of
+                    the nodes from the discretized domain.
+                    Nodes is an array like matrix of dimension (nNodes,3).
+
+                    Where each column represents the value of the nodes on
+                    one of the three coordinate axes x,y,z.
+
+        N:          Number of degree of freedom
+
+  	Last modification: date 27/10/2011
+    """
+
+    # Initialization of the equivalent stiffness matrix
+    K=zeros((N,N))
+    # Initialization of the equivalent mass matrix
+    M=zeros((N,N))
+    
+    
+    
+    # Value for the distance between the first 2 nodes and the last 2 nodes
+    
+    Li=abs(Nodes[1,0]-Nodes[0,0])
+    Lf=abs(Nodes[N-1,0]-Nodes[N-2,0])
+
+
+    # Matrices assembly
+    K[0,0]= 1/Li + Li*V[0]/3
+    K[N-1,N-1]= 1/Lf + Lf*V[N-2]/3
+
+    for i in range(0,N-1):
+        L=abs(Nodes[i+1,0]-Nodes[i,0])       #Distance between nodes
+        if i!=0:
+            K[i,i]=2/L + L*(V[i-1]+V[i])/3   # Central diagonal
+        K[i,i+1]= -1/L + L*V[i-1]/6          # Upper diagonal
+        K[i+1,i]= -1/L + L*V[i-1]/6          # Lower diagonal
+        
+    M[0,0]=Li/3
+    M[N-1,N-1]=Lf/3
+    for i in range(0,N-1):
+        L=abs(Nodes[i+1,0]-Nodes[i,0])      #Distance between nodes
+        if i!=0:
+            M[i,i]=2*L/3                    # Central diagonal
+        M[i,i+1]=L/6                        # Upper diagonal  
+        M[i+1,i]=L/6                        # Lower diagonal
+
+    return K,M
 
 
 
