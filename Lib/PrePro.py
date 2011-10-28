@@ -181,31 +181,37 @@ def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1.,lam=.2,D=1):
                         Potential1D("well",X,V0=5)
     '''
    
+    error_flag=0
     
     if Type== 'well':
        
         V=well(X,V0)
-        return V
+  
     elif 'finwell' in Type:
         V=finwell(X,V0,Vleft,Vright,width)
-        return V
+        
     elif 'xwell' in Type:
         V=xwell(X,lam)
-        return V
+        
     elif "poschl" in Type:
         V=poschl(X,V0,lam)
-        return V
+        
     elif "oscil" in Type:
         V=oscil(X)
-        return V
+        
     elif "morse" in Type:
         V=morse(X,D,lam)
-        return V
+        
     else:
          print 'You entered a wrong Type parameter. Please try again, or read the\
               documentation'
-       
-
+         error_flag=1
+    if not error_flag:
+        z=zeros((V.size,1))
+        z[:,0]=V
+        V=z
+        
+        return V
 def well(X,V0):
     """
 well":          Defines a well with constant potential over the 1D domain

@@ -208,44 +208,111 @@ def ReadVTK(filename):
             count = count + 1
             
     # _______________________ Search Scalars _________________________________
-    stop = 0
+    
+    
+    
+           
+    
     flag_scalars = 0
-    while stop == 0:
+    flag_point_data=0
+    flag_cell_data=0
+    while flag_scalars==0:
+        stop=0
+        while stop == 0:
             line = fid.readline()
-            if 'CELL_DATA' in line:
-                number =int(line.split()[1]) # Number of scalars
+            
+            if 'POINT_DATA' in line and flag_point_data==0 :
+                number =int(line.split()[1]) # Number of point data scalars
+                flag_point_data=1  
+                stop==1
+                break
+            elif 'CELL_DATA' in line and flag_cell_data==0:
+                
+                number2 =int(line.split()[1]) # Number of cell data scalars
+                print number2
+                flag_cell_data=1   
                 stop = 1
+            elif len(line) == 0:
+                print 'If you want to plot scalars, you missed something...'
+                stop=1
+                flag_scalars = 1
             else:
                 flag_scalars = 1
                 
-    if flag_scalars ==0:      
-        elm_scalars=np.zeros((number,1),dtype=float)
-
-        stop = 0
-        while stop == 0:
-                line = fid.readline()
-                if 'LOOKUP' in line:
-                    stop = 1
-        
-        count = 0
-        while count < number:
+                
+        line = fid.readline()
+               
+        if '\\ The' in line:
             line = fid.readline()
-            values = line.split()
-            elm_scalars[count,:] = values[:]
-            count = count + 1
+            nSol=int(line.split()[1])
+        else:
+            nSol=1
+        
+        if flag_scalars ==0:
+
+            # ---------------- From here on are the point data scalars  -----------
+            if flag_point_data==1: 
+                elm_point_scalars=np.zeros((number,nSol),dtype=float)
+
+                count=0
+                while count<nSol:
+                    
+                    stop = 0
+                    while stop == 0:
+                            line = fid.readline()
+                            if 'LOOKUP' in line:
+                                stop = 1
+                            elif len(line)==0:
+                                stop=1
+                    
+                    count2 = 0
+                    while count2 < number:
+                        line = fid.readline()
+                        values = line.split()[0]
+                        elm_point_scalars[count2,count] = values
+                        count2 = count2 + 1
+                    count=count+1
+                flag_point_data=0
+            # ---------------- From here on are the cell data scalars  -----------
+            if flag_cell_data==1:
+                elm_cell_scalars=np.zeros((number2,nSol),dtype=float)
+                count=0
+                while count<nSol:
             
-     
+                    stop = 0
+                   
+                    while stop == 0:
+                            line = fid.readline()
+                            
+                            if 'LOOKUP' in line:
+                                stop = 1
+                            elif len(line)==0:
+                                stop=1
+                                       
+                    count2 = 0
+                    
+                    
+                    while count2 < number2:
+                        line = fid.readline()
+                        values = line.split()[0]
+                        elm_cell_scalars[count2,count] = values
+                        count2 = count2 + 1
+                    count=count+1
+                flag_cell_data=0
+          
+    elm_point_scalars=np.array(elm_point_scalars)
+   
     fid.close()
     # ----------------------  Return  arrays -_________________________________
-    if not flag_triangles and not flag_scalars:
+    if not flag_triangles and  flag_scalars:
         
-        return coords, elm_lines[1:],elm_scalars
-    elif not flag_triangles and  flag_scalars:
+        return coords, elm_lines[1:],elm_cell_scalars,elm_point_scalars
+    elif not flag_triangles and not  flag_scalars:
         
         return coords,elm_lines[1:]
     elif flag_triangles and not flag_scalars:
         
-        return coords, elm_lines[1:], elm_triangles[1:],elm_scalars
+        return coords, elm_lines[1:], elm_triangles[1:],elm_cell_scalars,elm_point_scalars
     else:
         return coords, elm_lines[1:], elm_triangles[1:]
         

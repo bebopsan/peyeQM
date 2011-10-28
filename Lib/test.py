@@ -9,19 +9,25 @@ from PostPro import*
 
 
 Nodes,Elems=Mesh1D('simple',0,2*pi)
+WriteMSH('lineSimple.msh',Nodes,Elems)
 
-##
 Pot=Potential1D('morse',Nodes,V0=2)
+
+WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Dir')
+
+V,D=Schroedinger('lineSimple.msh')
+
 z=np.zeros((Nodes.size,3))
 z[:,0]=Nodes
 Nodes=z
-WriterVTK('test.vtk','thi shit','',Nodes,Elems,['SCALARS','Potential',Pot])
+WriterVTK('test.vtk','thi shit','',Nodes,Elems,['SCALARS',['Pot','Psi'],[Pot,D]])
 Plot1D('test.vtk')
+
 ##Nodes=Nodes[:,0]
 ##WriteMSH('lineSimple.msh',Nodes,Elems)
 ##Nodes,Elems=ReadVTK('test.vtk')
-##
-##WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Bloch')
+
+
 ##Schroedinger('lineSimple.msh')
 
 ##X=3

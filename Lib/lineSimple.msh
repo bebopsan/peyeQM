@@ -210,7 +210,7 @@ $Elements
 $EndElements
 $Solver input
 1
-Bloch
+Dir
 0.744074
 0.704096
 0.665705

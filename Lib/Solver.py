@@ -121,9 +121,8 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
         V=parameter
         #---------------------- With dirichlet boundary conditions ----------------
         if 'Dir' in BCType and 'Stationary' in Type: 
-
-               
-            K,M = matAssembly1D(Nodes,N)                               
+                     
+            K,M = matAssembly1D(Nodes,N,V)                               
 
             # These two matrices are called the Dirichlet matrices
             # of both the stiffness equivalent and mass equivalent matrices.
@@ -254,7 +253,7 @@ def Schroedinger(File,Nodes=0,Elems=0,parameter=[],Dimension=1,BCType='Dir'\
         print 'only 1D for now. Sorry'
     
            
-def matAssembly1D(Nodes,N):
+def matAssembly1D(Nodes,N,V):
     """
         Assembly the equivalent stiffness and equivalent mass matrices for a right to left
         numbered 1D mesh.
@@ -271,6 +270,11 @@ def matAssembly1D(Nodes,N):
                     one of the three coordinate axes x,y,z.
 
         N:          Number of degree of freedom
+
+        V:	    numpy arraylike vector of dimension (nElems,1).
+                    For Schrödinger case represents the potential acting
+                    over the domain.
+                    
 
   	Last modification: date 27/10/2011
     """

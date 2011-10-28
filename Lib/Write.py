@@ -25,8 +25,8 @@ def WriterVTK(filename,title,SET,points,cells,data):
             cells:    Matrix of list of element nodes.
             data:     Matrixes of data with arguments. Each set of data has 3 arguments in a list (first add point_data and then cell_data)
                       * datatype:   SCALARS, VECTORS, NORMALS, TENSORS (from matrix future)
-                      * dataname:   String name of data (default option future)
-                      * datamatrix: Matrix of data
+                      * dataname:   List of string names of data (default option future)
+                      * datamatrix: list of matrices  with data
             Returns:
             --------
 
@@ -57,33 +57,72 @@ def WriterVTK(filename,title,SET,points,cells,data):
 	count = count + 1
     np.savetxt(fid,cellsvtk,fmt='%d')
     ndata = len(data)/3 # sets of data to visualize
+
+    
+    
     if not ndata:
-	print len(data),"arguments, but you need put 3 arguments by set of data."
+	print len(data),"arguments, but you need to put 3 arguments by set of data."
 	return
     count = 0
     point_data = 0
     cell_data = 0
+
+    # From this point it writes for each  type of data  SCALARS, VECTORS, NORMALS, TENSORS
+
+   
     while count < ndata:
-        p = data[3*count+2].shape
-	
-	if (p[0] == n) and (not point_data):
-		fid.write("POINT_DATA "+str(n)+"\n")
-		point_data = 1
-	elif (p[0]==m[0]) and (not cell_data):
-		fid.write("CELL_DATA "+str(m[0])+"\n")
-	elif (not point_data) and (not cell_data):
-		print "Data Matrix", count,"does not match size with nodes neither elements"
-		count = count + 1
-		continue
-	if data[3*count+1] == '':
-		data[3*count+1] = 'Data '+str(count+1)
-	TYPE = 'double'
-	fid.write(data[3*count]+' '+data[3*count+1]+' '+TYPE+'\n')
-	fid.write("LOOKUP_TABLE defaul\n")
-	np.savetxt(fid,data[3*count+2],fmt='%6.6f')
-	count = count + 1
+        
+        
+        
+        if len(data[1])!=len(data[2]):
+            print 'Wrong labeling, or... something else'
+            break
+        else:   # This else is made to avoid wrong labels
+
+            DataPerType=len(data[2])  # Is the number of data for each type
+
+            #------ Write over each element on a given category----------------------
+            k=0
+            while k<DataPerType:
+            
+                print k,DataPerType
+                p = data[3*count+2][k].shape
+                
+                #---------------------------Headers---------------------------------
+                if (p[0] == n) and (not point_data):
+            
+                    fid.write("POINT_DATA "+str(n)+"\n")
+                    point_data = 1
+                elif (p[0]==m[0]) and (not cell_data):
+                    fid.write("CELL_DATA "+str(m[0])+"\n")
+                elif (not point_data) and (not cell_data):
+                    print "Data Matrix", count,"does not match size with nodes neither elements"
+                    count = count + 1
+                    continue     
+         
+                
+                #----------------- When we have many sets: ---------------------------
+
+                fid.write("\\\ The following number tells the amount of Scalar vectors to read")
+                fid.write('\n'+'\\\  '+str(p[1])+'\n')
+                
+                count2=0
+                while count2<p[1]:
+                    
+                    if data[3*count+1] == '':
+                        data[3*count+1] = 'Data '+str(count+1)+str(count2)
+                    TYPE = 'double'
+                    fid.write(data[3*count]+' '+data[3*count+1][k]+'_'+str(count2)+' '+TYPE+'\n')
+                    fid.write("LOOKUP_TABLE defaul\n")
+
+                    
+                    np.savetxt(fid,data[3*count+2][k][:,count2],fmt='%6.6f')
+                    count2=count2+1
+                k=k+1
+        count = count + 1
     fid.close()
     return 0
+
 def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
     """
         This funtion intends to create a file of gmsh format containing
@@ -273,8 +312,7 @@ def WriteSolverInput(Output,Dimension=1,BCType='Dir',parameter=[],Eq='Schro',\
     Dimension =str(Dimension)
     f.write(Dimension +'\n')
     f.write(BCType +'\n')
-    if parameter !=[]:
-        np.savetxt(f,parameter,fmt='%f')
+    np.savetxt(f,parameter,fmt='%f')
     f.write(Eq +'\n')
     f.write(Type +'\n')
     b=str(AnalisisParam)
