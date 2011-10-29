@@ -97,6 +97,54 @@ def Readgeo(filename):
 		in develop
 	"""
 	return 0
+	
+def Writergeo(filename, points, options, addphys):
+	"""
+		Writergeo write geo files (gmsh input file to meshing) from ordered points matrix.
+		Parameters:
+		-----------
+		filename: String which contain filename and path of the output file.
+		points  : numpy array like matrix of ordered points.
+		options : Options of physical entity to create
+			   * 'p'   : Create physical points
+			   * 'l'   : Create physical lines
+			   * 's'   : Create physical surface
+			   * 'none': Not create phisical entities
+		addphys : 
+	"""
+	fid = open(filename,'w')
+	count = 1
+	numpoints = points.shape[0]
+	while count <= numpoints:
+		fid.write('Point('+str(count)+') = {'+str(points[count-1,0])+', '+str(points[count-1,1])+', '+str(points[count-1,2])+'};\n')
+		count = count + 1
+	count =1
+	while count <= numpoints:
+		fid.write('Line('+str(count)+') = {')
+		if count < points.shape[0]:
+			fid.write(str(count)+', '+str(count+1)+'};\n')
+		else:
+			fid.write(str(count)+', 1};\n')
+		count = count + 1
+	lines = 1
+	fid.write('Line Loop('+str(count)+') = {')
+	while lines <= numpoints:
+		if lines < numpoints:
+			fid.write(str(lines)+', ')
+		else:
+			fid.write(str(lines)+'};\n')
+		lines = lines + 1
+	notphys = count + 1
+	countphys = notphys + 1
+	fid.write('Plane Surface('+str(notphys)+') = {'+str(count)+'};\n')
+	count = 1
+	while count <= numpoints:
+		fid.write('Physical Line('+str(countphys)+') = {'+str(countphys-notphys)+'};\n')
+		count = count + 1
+		countphys = countphys + 1
+	fid.write('Physical Surface('+str(countphys)+') = {'+str(countphys-notphys+1)+'};\n')
+	fid.close()
+	return 0
 
 def WriterVTK(filename,title,SET,points,cells,data):
 	"""
@@ -133,18 +181,24 @@ def WriterVTK(filename,title,SET,points,cells,data):
 	m = cells.shape # number-of-elms and number-of-nodes by elm
 	fid.write('POLYGONS '+str(m[0])+' '+str(m[0]*(m[1]+1))+'\n') # elm, elm*(nodbyelm+1) +1 is because include number-of-nodes of polygon
 	count = 0
+	shiftnodes = np.ones((1,m[1]),dtype=int)
 	while count < m[0]:
 		new_elm = np.array(m[1],dtype=int)
-		new_elm = np.hstack([new_elm, cells[count,:]])
+		new_elm = np.hstack([new_elm, cells[count,:]-shiftnodes[0,:]])
 		if count:
 			cellsvtk = np.vstack([cellsvtk,new_elm.copy()])
 		else:
 			cellsvtk = new_elm.copy()
 		count = count + 1
 	np.savetxt(fid,cellsvtk,fmt='%d')
-	ndata = len(data)/3 # sets of data to visualize
+	tdata = str(type(data)).split('\'')
+	if tdata[1]== 'list':
+		ndata = len(data)/3 # sets of data to visualize
+	else:
+		print "DATA argument should be a list"
+		return
 	if not ndata:
-		print len(data),"arguments, but you need put 3 arguments by set of data."
+		print ndata,"sets. You need 3 arguments by set of data."
 		return
 	count = 0
 	point_data = 0
@@ -156,6 +210,7 @@ def WriterVTK(filename,title,SET,points,cells,data):
 			point_data = 1
 		elif (p[0]==m[0]) and (not cell_data):
 			fid.write("CELL_DATA "+str(m[0])+"\n")
+			cell_data = 1
 		elif (not point_data) and (not cell_data):
 			print "Data Matrix", count,"does not match size with nodes neither elements"
 			count = count + 1
