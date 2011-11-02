@@ -212,6 +212,52 @@ def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1.,lam=.2,D=1):
         V=z
         
         return V
+
+def potential_2d(st_type, arr_nodes, v0 = 1):
+    '''
+        This funcion is meant to evaluate different types of two dimensional
+        potentials for the solution of Schrödinger equation.
+
+        Each potential represents a particular aproach to 2D quantum mechanical 
+        phenomena.
+
+        The potential to be evaluated is selected by the user by giving
+        a string variable as the first argument of the function. The list
+        of available potentials is given below
+        
+        Parameters:
+        -----------
+        - st_type
+            - "well"
+        - arr_nodes
+        
+        The next argument is the vector of nodes X output from the "Mesh2D"
+        function of this module. this vector contains the coordinate for each
+        node of the domain to be evaluated.
+
+        All the other arguments are specific for each of the available
+        potentials. They are given with predefined values in order to ease
+        the procedure to the user, however this values can be modified
+        by assigning new ones as arguments of the function.
+        For example:
+                        Potential1D("well",X,V0=5)
+        Right now only well is working as a st_type
+    '''
+    error_flag =0
+    
+    if st_type == 'well':
+       
+        vec_v = well(arr_nodes, v0)
+    else:
+         print 'You entered a wrong Type parameter. Please try again, or read \
+                the documentation'
+                
+    if not error_flag:
+        z = zeros((vec_v.size, 1))
+        z[:, 0] = vec_v
+        vec_v = z
+        return vec_v
+
 def well(X,V0):
     """
 well":          Defines a well with constant potential over the 1D domain

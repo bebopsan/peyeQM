@@ -3,8 +3,8 @@
 	This module contains functions to read mesh files (pre-defined file formats).
 """
 
-__all__=['Readmsh','ReadSolverInput','ReadVTK']
-__author__="Edward Y. Villegas and Santiago Echeverri"
+__all__ = ['Readmsh','ReadSolverInput', 'ReadVTK']
+__author__ = "Edward Y. Villegas and Santiago Echeverri"
 
 from numscan import numscan
 import numpy as np

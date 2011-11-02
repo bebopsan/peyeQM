@@ -1,6 +1,6 @@
 #! /usr/bin/python
 from ReadMesh import*
-from PrePro import Mesh1D,Potential1D,meshPlot,Mesh2D
+from PrePro import Mesh1D, potential_2d, meshPlot, Mesh2D
 from Write import*
 from Solver import*
 from math import pi
@@ -8,21 +8,18 @@ import numpy as np
 from PostPro import* 
 
 
-Nodes,Elems=Mesh1D('simple',0,2*pi)
+nodes, lines, tria = Readmsh('square.msh')
 
-WriteMSH('lineSimple.msh',Nodes,Elems)
+pot = potential_2d('well', nodes, v0 = 2)
 
-Pot=Potential1D('morse',Nodes,V0=2)
+print pot, nodes, tria 
 
-WriteSolverInput('lineSimple.msh',parameter=Pot,BCType='Dir')
+#WriteSolverInput('lineSimple.msh', parameter = pot, BCType='Dir')
 
-V,D=Schroedinger('lineSimple.msh')
+v, d = Schroedinger('', Nodes = nodes, Elems = elems, parameter = pot, \
+                    Dimension = 2, BCType = 'Dir', Type = 'Stationary', \
+                    Eq = 'Schro', AnalisisParam = ['y', 'y', 4, 4, 101])
 
-z=np.zeros((Nodes.size,3))
-z[:,0]=Nodes
-Nodes=z
-WriterVTK('test.vtk','thi shit','',Nodes,Elems,['SCALARS',['Pot','Psi'],[Pot,D]])
-Plot1D('test.vtk')
 
 ##Nodes=Nodes[:,0]
 ##WriteMSH('lineSimple.msh',Nodes,Elems)

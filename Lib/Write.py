@@ -123,7 +123,7 @@ def WriterVTK(filename,title,SET,points,cells,data):
     fid.close()
     return 0
 
-def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
+def WriteMSH(Output, Nodes, Elems, physicalEnt = 'line'):
     """
         This funtion intends to create a file of gmsh format containing
         the characteristics of a given mesh and its inherent object.
@@ -144,9 +144,9 @@ def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
         Output.geo           Physical entities contained
     """
 
-    nEle=str(np.shape(Elems)[0])
-    sizeEle=str(np.size(Elems))
-    nNodes=Nodes.shape[0]
+    nEle = str(np.shape(Elems)[0])
+    sizeEle = str(np.size(Elems))
+    nNodes = Nodes.shape[0]
     # Creates the output file for the mesh
     f = open(Output, 'w')
     # Creates the output file for the geometry by stripping the original name
@@ -154,9 +154,9 @@ def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
     g = open(Output.strip('.msh')+'.geo','w')
     g.write('// Gmsh proyect\n')
 #-----------------Physical entities 1D-----------------------------------
-    if Nodes.ndim==1:
-        xmin=str(Nodes[0])
-        xmax=str(Nodes[Nodes.size-1])
+    if Nodes.ndim == 1:
+        xmin = str(Nodes[0])
+        xmax = str(Nodes[Nodes.size-1])
        
         g.write('Point(1)={'+xmin+',0,0,1.0};\n')
         g.write('Point(2)={'+xmax+',0,0,1.0};\n')
@@ -172,18 +172,18 @@ def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
 #------------------------ Nodes for the .msh file------------------------            
     
     f.write('$Nodes\n')
-    vec=np.zeros((np.shape(Nodes)[0],1))
+    vec = np.zeros((np.shape(Nodes)[0], 1))
     for i in range(0,np.shape(Nodes)[0]):
-        vec[i,0]=i+1      # Enumeration of nodes
+        vec[i,0] = i+1      # Enumeration of nodes
     if Nodes.ndim==1:
-        Nodes=np.array([Nodes]).T
+        Nodes = np.array([Nodes]).T
         
         # Conversion for coordinates with y and z
-        Nodes=hstack((Nodes,np.zeros((np.shape(Nodes)[0],2)))) 
-    nPoi=str(np.shape(Nodes)[0])
-    Nodes=hstack((vec,Nodes)) # Enumeration added to the array
+        Nodes = hstack((Nodes,np.zeros((np.shape(Nodes)[0], 2)))) 
+    nPoi = str(np.shape(Nodes)[0])
+    Nodes = hstack((vec, Nodes)) # Enumeration added to the array
     f.write(nPoi+'\n')
-    np.savetxt(f,Nodes,fmt='%d %f %f %f')
+    np.savetxt(f, Nodes, fmt = '%d %f %f %f')
     f.write('$EndNodes\n')
 #------------------------ Elements for the .msh file------------------------  
 
@@ -231,6 +231,7 @@ def WriteMSH(Output,Nodes,Elems,physicalEnt='line'):
     else:
         np.savetxt(f,Elems,fmt='%d %d %d %d %d %d %d %d')
     f.write('$EndElements\n')
+    
 def WriteSolverInput(Output,Dimension=1,BCType='Dir',parameter=[],Eq='Schro',\
                      Type='Stationary',AnalisisParam=['y','y',4,4,101]):
 
