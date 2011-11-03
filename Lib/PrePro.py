@@ -13,7 +13,7 @@ from numpy import zeros,array,size
 from meshUtils import*
 
 # ---------------- Mesh construction related functions  -----------------#
-def Mesh1D(Type,xmin,xmax,base=3,N=100):
+def Mesh1D(Type, xmin, xmax, base = 3, N = 100):
     '''
         In the mesh function the user can decide wether to use an
         homogeneus discretization of the line of lenght [xmin,xmax] in N elements,
@@ -78,7 +78,8 @@ def Mesh1D(Type,xmin,xmax,base=3,N=100):
         print 'You entered a wrong Type parameter. Please try again, or read the\
               documentation'
         
-def Mesh2D(Type,xmin,xmax,ymin,ymax,Nx=100,Ny=100,basex=3,basey=3,optionx='',optiony=''):
+def Mesh2D( Type, xmin, xmax, ymin, ymax, Nx = 100, Ny = 100, basex = 3, \
+            basey = 3, optionx = '', optiony = ''):
     '''
         Mesh2D works like Mesh 1D but with a rectangular domain rather than a
         line segment. The mesh is built using triangular elements, and the nodes
@@ -134,23 +135,26 @@ def Mesh2D(Type,xmin,xmax,ymin,ymax,Nx=100,Ny=100,basex=3,basey=3,optionx='',opt
     '''
 
     if 'simple' in Type:
-        Nodes,Elems= meshtr2D(xmin,xmax,ymin,ymax,Nx,Ny)
-        return Nodes,Elems
+        Nodes, Elems = meshtr2D( xmin, xmax, ymin, ymax, Nx, Ny)
+        return Nodes, Elems
     elif 'center' in Type:
-        Nodes,Elems=logmeshtr2D(xmin,xmax,ymin,ymax,Nx,Ny,'C','C',basex,basey)
-        return Nodes,Elems
+        Nodes, Elems = logmeshtr2D(xmin, xmax, ymin, ymax, Nx, Ny, 'C', 'C',
+                                   basex, basey)
+        return Nodes, Elems
     elif 'custom' in Type:
-        if optionx ==''or optiony =='':
+        if optionx == ''or optiony == '':
             print 'Please enter the custom parameters optionx and optiony.'
         else:
-            Nodes,Elems=logmeshtr2D(xmin,xmax,ymin,ymax,Nx,Ny,optionx,optiony,basex,basey)
-            return Nodes,Elems
+            Nodes, Elems = logmeshtr2D(xmin, xmax, ymin, ymax, Nx, Ny, optionx, \
+                                    optiony, basex, basey)
+            return Nodes, Elems
     else:
         print 'You entered a wrong Type parameter. Please try again, or read the\
               documentation'
 
 # ----------------  Potential related functions ---------------------------#
-def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1.,lam=.2,D=1):
+def Potential1D( Type, X, V0 = 1, Vleft = 0.0, Vright = 0.0, width = 1., \
+                lam = .2, D = 1):
     '''
         This funcion is meant to evaluate different types of one dimensional
         potentials for the solution of Schrödinger equation.
@@ -181,35 +185,36 @@ def Potential1D(Type,X,V0=1,Vleft=0.0,Vright=0.0,width=1.,lam=.2,D=1):
                         Potential1D("well",X,V0=5)
     '''
    
-    error_flag=0
+    error_flag =0
     
-    if Type== 'well':
+    if Type == 'well':
        
-        V=well(X,V0)
+        V = well(X, V0)
   
     elif 'finwell' in Type:
-        V=finwell(X,V0,Vleft,Vright,width)
+        V = finwell(X, V0, Vleft, Vright, width)
         
     elif 'xwell' in Type:
-        V=xwell(X,lam)
+        V = xwell(X, lam)
         
     elif "poschl" in Type:
-        V=poschl(X,V0,lam)
+        V = poschl(X, V0, lam)
         
     elif "oscil" in Type:
-        V=oscil(X)
+        V = oscil(X)
         
     elif "morse" in Type:
-        V=morse(X,D,lam)
+        V = morse(X, D, lam)
         
     else:
-         print 'You entered a wrong Type parameter. Please try again, or read the\
-              documentation'
-         error_flag=1
+         print 'You entered a wrong Type parameter. Please try again, or read \
+               the documentation'
+               
+         error_flag = 1
     if not error_flag:
-        z=zeros((V.size,1))
-        z[:,0]=V
-        V=z
+        z = zeros((V.size, 1))
+        z[:,0] = V
+        V = z
         
         return V
 
@@ -258,7 +263,7 @@ def potential_2d(st_type, arr_nodes, v0 = 1):
         vec_v = z
         return vec_v
 
-def well(X,V0):
+def well(X, V0):
     """
 well":          Defines a well with constant potential over the 1D domain
                  given by vector X
@@ -280,14 +285,14 @@ well":          Defines a well with constant potential over the 1D domain
                  Note: more info in square wells can be found at
                  http://en.wikipedia.org/wiki/Particle_in_a_box
     """
-    N=size(X)
-    V=zeros(N-1)
+    N = size(X)
+    V = zeros(N-1)
     V0 = 0.
-    for i in range(0,N-1):
-        V[i]= V0
+    for i in range(0, N-1):
+        V[i] = V0
     return V
     print 'V.size', V.size
-def finwell(X,V0,Vleft,Vright,width):
+def finwell( X, V0, Vleft, Vright, width):
     """
 "finwell":	  Works like "well" but  with control over the height of
                   the left and right walls of the well:
@@ -311,20 +316,20 @@ def finwell(X,V0,Vleft,Vright,width):
                  V: numpy array like vector with the values for the potential
                     over each node on X
     """
-    N=size(X)
-    V=zeros(N-1)
-    a=X[N-1]
+    N = size(X)
+    V = zeros(N-1)
+    a = X[N-1]
     print a
-    for i in range(0,N-1):
-    	if  X[i]<(a/2.-width/2.):
-		V[i]= Vleft
-	elif X[i]>(a/2.+width/2.) :
-		V[i]= Vright
+    for i in range(0, N-1):
+    	if  X[i] < (a/2.-width/2.):
+		V[i] = Vleft
+	elif X[i] > (a/2.+width/2.) :
+		V[i] = Vright
 	else:
-		V[i]= V0
+		V[i] = V0
     return V
 
-def xwell(X,lam):
+def xwell(X, lam):
     """
 "xwell":        Potential well defined as a straight line with slope given
                    by "lam"
@@ -344,17 +349,17 @@ def xwell(X,lam):
                  V: numpy array like vector with the values for the potential
                     over each node on X
     """
-    N=size(X)
-    V=zeros(N-1)
-    a=X[N-1]
+    N = size(X)
+    V = zeros(N-1)
+    a = X[N-1]
     lam = 1.
-    for i in range(0,N-1):
-        x = (X[i]+X[i+1])/2.
+    for i in range(0, N-1):
+        x = (X[i] + X[i+1])/2.
         v = lam*(x-a/2)
         V[i]=v
     return V
 
-def poschl(X,V0,lam):
+def poschl(X, V0, lam):
     """
 "poschl":       Potential Well defined by G.Pï¿½schl and Edward Teller
                   described in:
@@ -372,16 +377,16 @@ def poschl(X,V0,lam):
                     over each node on X
     """
 
-    N=size(X)
-    V=zeros(N-1)
-    a=X[N-1]
+    N = size(X)
+    V = zeros(N-1)
+    a = X[N-1]
     V0 = 1.0
     b = a/pi
-    lam=2.
-    for i in range(0,N-1):
+    lam =2.
+    for i in range(0, N-1):
             x = (X[i]+X[i+1])/2
             v = 2.*V0*lam*(lam-1)/( sin(x/b) )**2
-            V[i]=v
+            V[i] = v
     return V
 def oscil(X):
     """
@@ -403,18 +408,18 @@ def oscil(X):
                     over each node on X
                  
     """
-    N=size(X)
-    V=zeros(N-1)
-    a=X[N-1]
-    for i in range(0,N-1):
+    N = size(X)
+    V = zeros(N-1)
+    a = X[N-1]
+    for i in range(0, N-1):
         x = (X[i]+X[i+1])/2.
         v = (x-a/2)**2
-        V[i]=v
+        V[i] =v
 
    
     return V
     
-def morse(X,D,lam):
+def morse(X, D,lam):
     """
 "morse":          Evaluates the Morse potential over the domain given by D
                   with the constants D_e= V0 and a=lam. A partial description
@@ -428,38 +433,39 @@ def morse(X,D,lam):
                  lam:  constant proportional to the well widht
                  X:   numpy 1D array output of the Mesh1D function. 
     """
-    N=size(X)
-    V=zeros(N-1)
-    a=X[N-1]
+    N = size(X)
+    V = zeros(N-1)
+    a = X[N-1]
     xe = a/2.
-    for i in range(0,N-1):
+    for i in range(0, N-1):
         x = (X[i]+X[i+1])/2.
         v = D*(1. - exp(-lam*(x-xe)) )**2
-        V[i]=v
+        V[i] = v
     return V
     
 # Other --------------------------------------------------------------------
 
-def meshPlot(Nodes,Elems,facecolor,coordnum,elemnum):
+def meshPlot(Nodes, Elems, facecolor, coordnum, elemnum):
 
-    if(Elems.shape[1]==2):
+    if(Elems.shape[1] == 2):
         y = Nodes*0
         plt.figure()
-        plt.plot(Nodes,y,'-k')
-        plt.plot(Nodes,y,'ob')
+        plt.plot(Nodes, y, '-k')
+        plt.plot(Nodes, y, 'ob')
         plt.axis('equal')
         plt.show()
     else:
         plt.figure()
         plt.hold(True)
-        for i in range(0,Elems.shape[0]):
-            xcoord = zeros( (size(Elems[i,:])))
-            ycoord = zeros( (size(Elems[i,:])))
-            for j in range(0,size(Elems[i,:])):
-                xcoord[j] = Nodes[Elems[i,j],0]
-                ycoord[j] = Nodes[Elems[i,j],1]
-            plt.fill(xcoord,ycoord,facecolor=facecolor,alpha=1.0, edgecolor='k')
-        plt.plot(Nodes[:,0],Nodes[:,1],'ob')
+        for i in range(0, Elems.shape[0]):
+            xcoord = zeros( (size(Elems[i, :])))
+            ycoord = zeros( (size(Elems[i, :])))
+            for j in range(0,size(Elems[i, :])):
+                xcoord[j] = Nodes[Elems[i, j], 0]
+                ycoord[j] = Nodes[Elems[i, j], 1]
+            plt.fill(xcoord, ycoord, facecolor = facecolor, alpha = 1.0, \
+                     edgecolor = 'k')
+        plt.plot(Nodes[:, 0], Nodes[:, 1], 'ob')
         plt.axis('equal')
         plt.axis('off')
         plt.show()

@@ -178,7 +178,8 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
 
 
 
-def logmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,optionx,optiony,basex,basey):
+def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\ 
+                basex, basey):
     """
 
         Generate a 2D mesh where the points are logarithmally spaced in both, x and

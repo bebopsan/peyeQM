@@ -216,20 +216,20 @@ def WriteMSH(Output, Nodes, Elems, physicalEnt = 'line'):
     # Line elements 2D -----------------------------------------------------        
     else:
         for i in range(0,nEle):
-            vec[i,0]=i+1
-            vec[i,1:5]=[2,2,0,6]
-        Elems =Elems[:,1:5]
+            vec[i, 0] = i+1
+            vec[i, 1:5] = [2,2,0,6]
+        Elems = Elems[:, 1:5]
     #-----------------------------------------------------------------------
         
-    Elems=hstack((vec,Elems))
+    Elems = hstack((vec, Elems))
 
 
    
     if NodPerEl==2:
         
-        np.savetxt(f,Elems,fmt='%d %d %d %d %d %d %d')
+        np.savetxt(f, Elems, fmt = '%d %d %d %d %d %d %d')
     else:
-        np.savetxt(f,Elems,fmt='%d %d %d %d %d %d %d %d')
+        np.savetxt(f, Elems, fmt = '%d %d %d %d %d %d %d %d')
     f.write('$EndElements\n')
     
 def WriteSolverInput(Output,Dimension=1,BCType='Dir',parameter=[],Eq='Schro',\
