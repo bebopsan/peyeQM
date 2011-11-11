@@ -7,20 +7,21 @@
     
 """
 
-__all__=['surface','surfaceM', 'contourM','curveV']
+__all__=['surface','surf_matrix_vect', 'contour_vect','curve_vect']
 __author__="Edward Y. Villegas and Nicolas Guarin."
 
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib as mp
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 from numpy import *
 mp.text.usetex=True # Ever use tex engine to write text
 
 # --------------------- 2D plotting --------------------- #
-def curveV(v1,v2,labels,path):
+def curve_vect(v1,v2,labels,path):
     """
 
-        Plot a cuve....
+        Plot a cuve in a file, the format is specified as a part of the string
+        'path'.
 
         Parameters:
         -----------
@@ -43,11 +44,11 @@ def curveV(v1,v2,labels,path):
         Last modification: date 10/11/2011
     
     """
-    plot.plot(v1,v2)
-    plot.xlabel(labels[0])
-    plot.ylabel(labels[1])
-    plot.title(labels[2])
-    plot.savefig(path)
+    plt.plot(v1,v2)
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
+    plt.title(labels[2])
+    plt.savefig(path)
 
 # --------------------- 3D Plotting --------------------- #
 def surface(domain,fun,labels):
@@ -57,8 +58,11 @@ def surface(domain,fun,labels):
 
         Parameters:
         -----------
-        domain:     
-        fun:     List or array for y data.
+        domain: List or array [xmin,xmax,ymin,ymax] giving the information about
+                the domain.
+                List or array [xmin,xmax,ymin,ymax,dx,dy] giving the information
+                about the domain and discretization in x and y.
+        fun:    List or array for y data.
         labels: List with strings for the axes labels.
 
 
@@ -81,7 +85,7 @@ def surface(domain,fun,labels):
         else:
             print "Domain should be have 4 or 6 elements,"\
                   "but it have", len(domain)
-        return
+            return
     else:
         dx = domain[4]*1.
         dy = domain[5]*1.
@@ -89,8 +93,8 @@ def surface(domain,fun,labels):
     xmax = domain[1]*1.
     ymin = domain[2]*1.
     ymax = domain[3]*1.
-    figure = plot.figure()
-    axes = Axes3D(figure)
+    fig = plt.figure()
+    axes = Axes3D(fig)
     axes.set_xlabel(labels[0])
     axes.set_ylabel(labels[1])
     axes.set_zlabel(labels[2])
@@ -98,12 +102,12 @@ def surface(domain,fun,labels):
     x = arange(xmin,xmax,dx)
     y = arange(ymin,ymax,dy)
     x,y = meshgrid(x,y)
-    z=eval(fun)
+    z = eval(fun)
     axes.plot_surface(x, y, z, rstride=1, cstride=1, cmap=mp.cm.jet)
-    plot.show()
+    plt.show()
 
 
-def surfaceM(domain,Values,labels,path):
+def surf_matrix_vect(domain,Values,labels,path):
     """
 
         Plot a surface ...
@@ -128,18 +132,18 @@ def surfaceM(domain,Values,labels,path):
         Last modification: date 10/11/2011
     
     """
-    figure = plot.figure()
-    axes = Axes3D(figure)
+    fig = plt.figure()
+    axes = Axes3D(fig)
     axes.set_xlabel(labels[0])
     axes.set_ylabel(labels[1])
     axes.set_zlabel(labels[2])
     axes.set_aspect('equal')
     axes.plot_surface(domain[0],domain[1], Values.real, rstride=1, \
                       cstride=1, cmap=mp.cm.jet)
-    plot.savefig(path)
+    plt.savefig(path)
 
 
-def contourM(domain,values,labels,path):
+def contour_vect(domain,values,labels,path):
     """
 
         Plot a surface ...
@@ -165,11 +169,11 @@ def contourM(domain,values,labels,path):
         Last modification: date 10/11/2011
     
     """
-    figure = plot.figure()
-    plot.contourf(domain[0],domain[1],values.real)
-    plot.xlabel(labels[0])
-    plot.ylabel(labels[1])
-    plot.title(labels[2])
-    plot.savefig(path)
+    fig = plt.figure()
+    plt.contourf(domain[0],domain[1],values.real)
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
+    plt.title(labels[2])
+    plt.savefig(path)
     
 
