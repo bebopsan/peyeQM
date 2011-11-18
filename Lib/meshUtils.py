@@ -178,7 +178,7 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
 
 
 
-def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\ 
+def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
                 basex, basey):
     """
 
