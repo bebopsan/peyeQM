@@ -6543,6 +6543,6 @@ Bloch
 0.000000
 Schro
 Stationary
-[y, y, 2, 1, 2, 2, 1]
+[y, y, 4, 1, 15, 15, 1]
 test2.bc
 $End Solver input

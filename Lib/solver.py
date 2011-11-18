@@ -368,7 +368,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             #============= Discretize the wavenumber dommain ================== 
             nk_x = int(analysis_param[4]) # number of k to sweep in x
             nk_y = int(analysis_param[5]) # number of k to sweep in y
-            k_max = 4.*pi/float(analysis_param[6])
+            k_max = float(analysis_param[6])/4.*pi
             k_min = -k_max
             k_range_x = linspace(k_min, k_max, num = nk_x)
             k_range_y = linspace(k_min, k_max, num = nk_y)
