@@ -21,7 +21,7 @@ potential = potential_2d('well', nodes, v0 = 2)
 write_solver_input(glo_tag +'.msh', parameter = potential, dimension = 2, \
                    bc_type = 'Bloch', \
                    sol_type = 'Stationary', eq = 'Schro', \
-                   analysis_param = ['y', 'y', 2, 1, 2, 2, 1], \
+                   analysis_param = ['y', 'y', 2, 1, 10, 10, 1], \
                    bc_filename = 'test2.bc')
 
 #k = read_solver_input(glo_tag +'.msh')
