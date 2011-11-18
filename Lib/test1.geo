@@ -13,3 +13,6 @@ Physical Line(7) = {1};
 Physical Line(8) = {2};
 Physical Line(9) = {3};
 Physical Line(10) = {4};
+Physical Surface(11) = {6};
+
+Transfinite Surface {6};
