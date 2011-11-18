@@ -21,7 +21,7 @@ potential = potential_2d('well', nodes, v0 = 2)
 write_solver_input(glo_tag +'.msh', parameter = potential, dimension = 2, \
                    bc_type = 'Bloch', \
                    sol_type = 'Stationary', eq = 'Schro', \
-                   analysis_param = ['y', 'y', 4, 1, 15, 15, 1], \
+                   analysis_param = ['y', 'y', 4, 1, 20, 20, 1], \
                    bc_filename = 'test2.bc')
 
 #k = read_solver_input(glo_tag +'.msh')
@@ -37,6 +37,6 @@ nodes = z
 triangles = k[1]
  
 
-write_vtk(glo_tag + '_3.vtk', 'this shit', '', nodes, triangles, \
+write_vtk(glo_tag + '_4.vtk', 'this shit', '', nodes, triangles, \
             ['SCALARS', ['solution'], [solution]])
             

@@ -124,24 +124,24 @@ def bloch_multiplication(k_x, k_y, nodes, im_ref, *matrices):
      n_im_ref = len(im_ref)
      
      for bl in range(n_im_ref): # For each bloch condition in im_ref 
-         for i in range(im_ref[bl].shape[0]):
-            x_im = nodes[ im_ref[bl][i, 0] - 1, 0]
-            y_im = nodes[ im_ref[bl][i, 0] - 1, 1]
-            x_ref = nodes[ im_ref[bl][i, 1] - 1, 0]
-            y_ref = nodes[ im_ref[bl][i, 1] - 1, 1]
+         for i in range(im_ref.shape[0]):
+            x_im = nodes[ im_ref[i, 0] - 1, 0]
+            y_im = nodes[ im_ref[i, 0] - 1, 1]
+            x_ref = nodes[ im_ref[i, 1] - 1, 0]
+            y_ref = nodes[ im_ref[i, 1] - 1, 1]
             fi = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
             ff = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
             for matrix in matrices:
                 # Multiply the column of the image node by the phase factor
-                matrix[:, im_ref[bl][i, 0] - 1] = fi * matrix[:, im_ref[bl][i, 0]-1] 
+                matrix[:, im_ref[i, 0] - 1] = fi * matrix[:, im_ref[i, 0]-1] 
                 # Multiply the column of the image node by the comlex conjugate
                 #phase factor            
-                matrix[im_ref[bl][i, 0] - 1, :] = fi.conjugate() * \
-                                                  matrix[:, im_ref[bl][i, 0]-1]
+                matrix[im_ref[i, 0] - 1, :] = fi.conjugate() * \
+                                                  matrix[:, im_ref[i, 0]-1]
                # and the same for the reference node:  
-                matrix[:, im_ref[bl][i, 1] - 1] = ff * matrix[:, im_ref[bl][i, 1]-1] 
-                matrix[im_ref[bl][i, 1] - 1, :] = ff.conjugate() * \
-                                                  matrix[:, im_ref[bl][i, 1]-1]
+                matrix[:, im_ref[i, 1] - 1] = ff * matrix[:, im_ref[i, 1]-1] 
+                matrix[im_ref[i, 1] - 1, :] = ff.conjugate() * \
+                                                  matrix[:, im_ref[i, 1]-1]
      return matrices
      
 def bloch_sum(im_ref, *matrices ):

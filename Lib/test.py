@@ -1,8 +1,8 @@
 #! /usr/bin/python
-from ReadMesh import*
+from read_mesh import*
 from PrePro import Mesh1D,Potential1D,meshPlot,Mesh2D
-from Write import*
-from Solver import*
+from write import*
+from solver import*
 from math import pi
 import numpy as np
 from PostPro import* 

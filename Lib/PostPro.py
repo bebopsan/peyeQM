@@ -10,14 +10,14 @@ from the main.
 
 """
 
-__all__=['Plot1D']
+__all__=['plot_1d']
 __author__='Santiago Echeverri Chacón'
 
 from meshUtils import meshPlot
-from ReadMesh import ReadVTK
+from read_mesh import read_vtk
 import matplotlib.pyplot as plt
 
-def Plot1D(File,Nodes=0,Elems=0,parameter=[],BCType='Dir'):
+def plot_1d(filename, nodes = 0,elements = 0, parameter = [], bc_type = 'Dir'):
     """
         Function plot 1D is intended as a tool for visualizing the results
         from the procesing stage of a 1D Finite Difference Method solver.
@@ -28,23 +28,23 @@ def Plot1D(File,Nodes=0,Elems=0,parameter=[],BCType='Dir'):
         Parameters:
         -----------
 
-        File:	    String with the name of the file containing the
+        filename:	    String with the name of the file containing the
                     mesh and values.
 
-        Nodes:	    Numpy array matriNodes of nodes containing the coordinates of
+        nodes:      Numpy array matrix of nodes containing the coordinates of
                     the nodes from the discretized domain.
-                    Nodes is an array like matriNodes of dimension (nNodes,3).
+                    nodes is an array like matrix of dimension (n_nodes,3).
 
                     Where each column represents the value of the nodes on
                     one of the three coordinate aNodeses Nodes,y,z.
 
-        Elems:      Numpy array matriNodes of elements containing the relations
+        elements:      Numpy array matrix of elements containing the relations
                     between nodes from the discretized domain.
-                    Elems is an array like matriNodes of dimension (nElems,2)
-                    in the case of 1D, and (nElems,3) for 2D problems.
+                    elements is an array like matrix of dimension (n_elements,2)
+                    in the case of 1D, and (n_elements,3) for 2D problems.
                     
         parameter:  Is an array that describes the potential actuating over the
-                    the elements of the domain given by Elems. For each element in
+                    the elements of the domain given by elements. For each element in
                     Elems there is an associated potential value on the same
                     position in the array parameter.
 
@@ -53,7 +53,7 @@ def Plot1D(File,Nodes=0,Elems=0,parameter=[],BCType='Dir'):
                     to define a potential and what does it mean pleas read the
                     documentation of the Potential1D function in the module PrePro.
 
-         BCType:    String parameter for the selection of a border condition
+         bc_type:    String parameter for the selection of a border condition
                     that can be either:
 
                         'Dir'   For the Dirichlet border condition
@@ -66,27 +66,27 @@ def Plot1D(File,Nodes=0,Elems=0,parameter=[],BCType='Dir'):
 
     
 #------------------------ Load from file if given -----------------------------------
-    if File !='':      # If type is not blank
-        print File
-        Nodes,Elems,V,Sol=ReadVTK(File)
+    if filename != '':      # If type is not blank
+        print filename
+        nodes, elements, v, sol = read_vtk(filename)
         
-        nVals=Sol.shape[1]
-        N=Nodes.shape[0]
-        Nodes=Nodes[:,0]
+        n_vals = sol.shape[1]
+        n = nodes.shape[0]
+        nodes = nodes[:, 0]
         
-        Elems=Elems[:,1:]
-        if BCType=='Dir':
+        elements = elements[:, 1:]
+        if bc_type == 'Dir':
             # -----------------------  Potential plot -----------------------------
             plt.figure(1)
-            plt.plot( (Nodes[0:N-1]+Nodes[1:N])/2. ,V)
+            plt.plot( (nodes[0:n-1]+nodes[1:n])/2., v)
             plt.figure(1).suptitle('Potential')
             
             # ------------------------ Eigenvectors plot -----------------------
             plt.hold(True)
             plt.figure(2)
-            legend=[]
-            for i in range(0,nVals):
-                plt.plot(Nodes,Sol[:,i])
+            legend = []
+            for i in range(0, n_vals):
+                plt.plot(nodes, sol[:, i])
                 legend.append('n = '+str(i+1))
 
             plt.legend(legend)

@@ -309,7 +309,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
         
         
         
-            'Solving eigenvalue problem...\n'
+            print 'Solving eigenvalue problem...\n'
             if 'y'in analysis_param[0] and 'n' in analysis_param[1]:
                 n_vals = int(analysis_param[2])
                 v = linalg.eigvalsh(stif_d + v_d, mass_d, \
@@ -349,7 +349,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
         
         #---------------------- With Bloch boundary conditions ------------
         elif 'Bloch' in bc_type and 'Stationary' in sol_type:
-            from numpy import asarray, delete
+            from numpy import asarray, delete, vstack
             from vectors import  image_reference_bloch_vectors
             from utils import bloch_multiplication, bloch_sum
             # ==================== Build mass matrix =======================
@@ -364,11 +364,12 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             stif = stif + v
             #= Retrieve the list of image and reference bloch boundary nodes ==
             bloch = boundary[2]
+            
             im_ref = image_reference_bloch_vectors(bc_lines, bloch)
             #============= Discretize the wavenumber dommain ================== 
             nk_x = int(analysis_param[4]) # number of k to sweep in x
             nk_y = int(analysis_param[5]) # number of k to sweep in y
-            k_max = float(analysis_param[6])/4.*pi
+            k_max = pi/float(analysis_param[6])
             k_min = -k_max
             k_range_x = linspace(k_min, k_max, num = nk_x)
             k_range_y = linspace(k_min, k_max, num = nk_y)
@@ -382,16 +383,21 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                   [k_range_x[0],k_range_x[nk_x-1]], \
                   [k_range_y[0],k_range_y[nk_y-1]], '\n'
             #======== Define a new image reference matrix without vertices =====      
-            im_ref_mul = list(im_ref) # image(im) reference(ref) for complex
+            im_ref_aux = im_ref[0] # image(im) reference(ref) for complex
                                       # multimplication (mul) operations 
-            
-            for bl in range(len(im_ref)):
-                last = im_ref[bl].shape[0]-1
-                #=========== Delete first and last elements ====================                
-                im_ref_mul[bl] = delete(im_ref_mul[bl], \
-                                  [0, last], axis = 0)
-           
-            
+            print im_ref
+            for bl in range(1, len(im_ref)):
+                im_ref_aux = vstack((im_ref_aux, im_ref[bl]))
+                
+            print im_ref_aux
+            im_mul = list(set(list(im_ref_aux[:, 0])))
+            print 'im_mul', im_mul
+            ref_mul = []
+            for i in im_mul:
+                ref_mul.append(list(im_ref_aux[:, 1])[list(im_ref_aux[:, 0]).index(i)])
+            print 'ref_mul', ref_mul
+            im_ref_mul = array([im_mul, ref_mul]).T
+            print im_ref_mul
             #======================= Main cicles ===============================
             i = 0         
             print 'Calculating each of the ', nk_x * nk_y, \

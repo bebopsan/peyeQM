@@ -15,4 +15,3 @@ Physical Line(9) = {3};
 Physical Line(10) = {4};
 Physical Surface(11) = {6};
 
-Transfinite Surface {6};
