@@ -5,7 +5,8 @@ from write import write_solver_input, write_vtk
 from numpy import shape, zeros
 from solver import schroedinger
 from utils import substract_1
-
+from os import system
+from inform import inform
 glo_tag = 'test1' # Global tag for referencing all files
 
 nodes, elements = read_mesh(glo_tag +'.msh')
@@ -37,6 +38,8 @@ nodes = z
 triangles = k[1]
  
 
-write_vtk(glo_tag + '_4.vtk', 'this shit', '', nodes, triangles, \
+write_vtk(glo_tag + '_5.vtk', 'this shit', '', nodes, triangles, \
             ['SCALARS', ['solution'], [solution]])
             
+#inform('Termine')
+#system('shutdown -P now')
