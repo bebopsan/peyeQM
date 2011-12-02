@@ -5,7 +5,10 @@ from write import*
 from solver import*
 from math import pi
 import numpy as np
-from PostPro import* 
+from PostPro import*
+
+
+## Falta poner cometnarios
 
 
 Nodes,Elems=Mesh1D('simple',0,2*pi)
