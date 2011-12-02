@@ -6,7 +6,7 @@ from numpy import shape, zeros
 from solver import schroedinger
 from utils import substract_1
 
-glo_tag = 'test1' # Global tag for referencing all files
+glo_tag = 'square' # Global tag for referencing all files
 
 nodes, elements = read_mesh(glo_tag +'.msh')
 

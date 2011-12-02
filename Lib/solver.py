@@ -159,7 +159,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             if 'y'in analysis_param[0] and 'n' in analysis_param[1]:
                 n_vals = int(analysis_param[2])
                 v = linalg.eigvalsh(Kd, Md, eigvals = (0, n_vals-1))
-                v = v/2
+#                v = v/2
                 print 'The Eigenvalues are:\n', v
                 return v
 
@@ -168,8 +168,13 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                 n_vects = int(analysis_param[3])
                 n_solutions = max(n_vals,n_vects)
                 v, Dd = linalg.eigh(Kd, Md, eigvals = (0, n_solutions-1))
-                v = v/2
-                
+#                v = v/2
+                print 'The Eigenvalues are:\n', v
+                E1=zeros(4)
+                for i in range(0,4):
+                    E1[i]=(i+1)**2*pi**2/((2*pi)**2)
+                error=linalg.norm(E1-v)/linalg.norm(E1)
+                print 'error', error
                 D = zeros((n, n_vects))
                 print 'D', D.shape, 'Dd', Dd.shape
                 D[1:n-1, :] = Dd
@@ -272,6 +277,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             plt.legend(legend,loc=2)
             plt.xlabel('Nondimensional wave number - $a\kappa/\pi$')
             plt.ylabel('Nondimensional energy - $2ma^2E/\hslash^2$')
+            plt.xlim(xmax=2)
             plt.grid()
             plt.show()
         else:
@@ -290,7 +296,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
         boundary = read_bc(bc_filename)# Read boundary conditions from .bc file
         #===================== Build stiffness matrix ==================
         stif = global_stiffness_matrix(nodes, triangles)
-        stif = h/(4.*m)*stif
+        stif = h/(2.*m)*stif
             
         #---------------------- With dirichlet boundary conditions ------------
         if 'Dir' in bc_type and 'Stationary' in sol_type:
@@ -314,7 +320,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                 n_vals = int(analysis_param[2])
                 v = linalg.eigvalsh(stif_d + v_d, mass_d, \
                                         eigvals = (0, n_vals-1))
-                v = v/2
+#                v = v/2
                 print 'The Eigenvalues are:\n', v
                 return v
     
@@ -324,7 +330,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                 n_solutions = max(n_vals,n_vects)
                 v, dir_solution = linalg.eigh(stif_d + v_d, mass_d, \
                                          eigvals = (0, n_solutions-1))
-                v = v/2
+#                v = v/2
     
                 solution = zeros((n, n_vects))
                            

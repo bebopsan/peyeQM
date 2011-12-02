@@ -16,8 +16,9 @@ __author__='Santiago Echeverri Chacón'
 from meshUtils import meshPlot
 from read_mesh import read_vtk
 import matplotlib.pyplot as plt
+from math import pi
 
-def plot_1d(filename, nodes = 0,elements = 0, parameter = [], bc_type = 'Dir'):
+def plot_1d(filename, nodes = 0,elements = 0, parameter = [], bc_type = 'Dir', sol = 0):
     """
         Function plot 1D is intended as a tool for visualizing the results
         from the procesing stage of a 1D Finite Difference Method solver.
@@ -28,7 +29,7 @@ def plot_1d(filename, nodes = 0,elements = 0, parameter = [], bc_type = 'Dir'):
         Parameters:
         -----------
 
-        filename:	    String with the name of the file containing the
+        filename:	    String with the name of the file contaoteining the
                     mesh and values.
 
         nodes:      Numpy array matrix of nodes containing the coordinates of
@@ -77,22 +78,59 @@ def plot_1d(filename, nodes = 0,elements = 0, parameter = [], bc_type = 'Dir'):
         elements = elements[:, 1:]
         if bc_type == 'Dir':
             # -----------------------  Potential plot -----------------------------
-            plt.figure(1)
+            
+            plt.subplot(121)
             plt.plot( (nodes[0:n-1]+nodes[1:n])/2., v)
-            plt.figure(1).suptitle('Potential')
+            plt.xlabel('x position inside the well')
+            plt.ylabel('Magnitude of the potential')
+            plt.title('Potential $\hat{V}$')
             
             # ------------------------ Eigenvectors plot -----------------------
-            plt.hold(True)
-            plt.figure(2)
+            
+            plt.subplot(122)
             legend = []
             for i in range(0, n_vals):
                 plt.plot(nodes, sol[:, i])
                 legend.append('n = '+str(i+1))
 
             plt.legend(legend)
+            plt.title('Wave functions $\Psi_n$')
+            plt.xlabel('x position inside the well')
+            plt.ylabel('Amplitude of the probability function $\psi$')
             plt.show()
+            
+    n_vals = sol.shape[1]
+    n = nodes.shape[0]
+    nodes = nodes[:, 0]
+    elements = elements[:, 1:]
+    v = parameter
+    if bc_type == 'Dir':
+        # -----------------------  Potential plot -----------------------------
+        plt.figure(figsize=(11, 4))
+        plt.subplot(121)
+        plt.plot( (nodes[0:n-1]+nodes[1:n])/2., v)
+        plt.xlabel('x position inside the well')
+        plt.ylabel('Magnitude of the potential')
+       
+        plt.xlim(xmax=2*pi)
+        plt.title('Potential $\hat{V}$')
         
+        # ------------------------ Eigenvectors plot -----------------------
         
+        plt.subplot(122)
+        
+        legend = []
+        for i in range(0, n_vals):
+            plt.plot(nodes, sol[:, i])
+            legend.append(str(i+1))
+    
+        plt.legend(legend,bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.title('Wave functions $\Psi_n$')
+        plt.xlabel('x position inside the well')
+        plt.xlim(xmax=2*pi)
+        plt.ylabel('Amplitude of the probability function $\psi$')
+        plt.subplots_adjust(wspace = 0.4)
+        plt.show()    
 
 
 
