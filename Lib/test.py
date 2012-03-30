@@ -8,7 +8,7 @@ import numpy as np
 from PostPro import*
 
 
-## Falta poner cometnarios
+## Falta poner comentarios
 
 
 Nodes,Elems=Mesh1D('simple',0,2*pi)
