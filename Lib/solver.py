@@ -35,13 +35,15 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
     Parameters:
     -----------
 
-    filename:        String with the name of the file that contains the
+    filename:    String with the name of the file that contains the
                  information regarding the geometry, mesh, border
                  conditions, and other parameters necessary for the
                  solution of the problem.
 
                  This file is a modified Gmsh output file with extension
                  .msh
+                 An empty string " " as imput implies that the user is going to 
+                 input manually.
 
     nodes:	Numpy array matrix of nodes containing the coordinates of
                 the nodes from the discretized domain.
