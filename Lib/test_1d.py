@@ -7,6 +7,7 @@ from math import pi
 import numpy as np
 from PostPro import plot_1d 
 from time import time 
+
 t0 = time()
 nodes, elements = Mesh1D('simple',0,2*pi)
 

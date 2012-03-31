@@ -142,12 +142,11 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
 
     if dimension == 1:
         
+        K, M = mat_assembly_1d(nodes, n, v)
 
         #---------------------- With dirichlet boundary conditions ------------
         if 'Dir' in bc_type and 'Stationary' in sol_type:
-
-            K, M = matAssembly1D(nodes, n, v)
-
+            
             # These two matrices are called the Dirichlet matrices
             # of both the stiffness equivalent and mass equivalent matrices.
 
@@ -195,8 +194,6 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
 
             import cmath 
             from numpy import asarray
-
-            K, M = matAssembly1D(nodes, n, v)
             K = asarray(K, dtype = complex)
             M = asarray(M, dtype = complex)
             print 'K shape is:\n', K.shape
@@ -262,8 +259,6 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                     E[ll, i] = vals[i]
 
                 ll = ll + 1
-
-
             plt.figure(2)
             plt.hold(True)
             legend = []
@@ -355,7 +350,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
         
         #---------------------- With Bloch boundary conditions ------------
         elif 'Bloch' in bc_type and 'Stationary' in sol_type:
-            from numpy import asarray, delete, vstack
+            from numpy import asarray,vstack
             from vectors import  image_reference_bloch_vectors
             from utils import bloch_multiplication, bloch_sum
             # ==================== Build mass matrix =======================
@@ -445,7 +440,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
         print 'Only 1D and 2D for now. Sorry'
     print 'done'
 
-def matAssembly1D(nodes, n, v):
+def mat_assembly_1d(nodes, n, v):
     """
         Assembly the equivalent stiffness and equivalent mass matrices for a
         right to left numbered 1D mesh.
