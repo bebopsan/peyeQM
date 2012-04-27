@@ -97,7 +97,7 @@ def read_mesh(filename):
                 else:
                         elm_points = new_elm
                         flag_points = 1
-                number=number+1
+                #number=number+1
         elif values[1] == '1':
                 if flag_lines == 1:
                         elm_lines = np.vstack((elm_lines,new_elm))
@@ -434,29 +434,63 @@ def read_solver_input(filename):
 #==================  Boundary conditions reader ==============
             
 def read_bc(filename):
+    """
+    Reads the boundary conditions given by a .bc file.    
+    Where D stands for Dirichlet boundaries, N to Newman, and B for Bloch
+    periodic. Physical lines have to be created in order to asociate boundary
+    nodes to their corresponding lines.    
+    Each boundary condistion consist in three lines like the following example:
+    
+    8
+    B 1
+    0 10 1          
+    
+    For Dirichlet and Newman conditions:    
+    The initial number refers to the tag of the physical line, the letter of the 
+    second line tells the type of condition, and the third line has the
+    number of degrees of freedom and the value for each.
+    
+    However for Bloch periodic conditions:
+    The initial number refers to the tag of the physical line, the first number 
+    of the third line holds no meaning, the second number of the third line 
+    tells which is the "partner" of the curent physical line, and the third 
+    term of the third line tells if it is an "image" or "reference" entity. 
+    
+    Parameters:
+    -----------
+     filename: String which contain filename and path of the output file.
+     
+    Returns:
+    --------
+    
+    bloch_2: Is a list of lists where each of the inner lists represents a pair 
+             of image and reference physical line entities. 
+    
+    Note: This file should not have empty lines.
+    
+    Last modification: date 27/04/2012
+    """
     from numpy import zeros
     assert isinstance(filename, str) 
     fid = open(filename, 'r')
     stop = 0  # flag to continue (0) or stop (1) reading
+    #======Create empty lists =========
     dirichlet = []   
     newman = []
     bloch = []
     bloch_flag = 0
     bc_type = ''
     ndf = 0
-   
-    while stop == 0:
-        
+    while stop == 0:      
         line = fid.readline().split()
-        if len(line) == 0:
-            stop = 1        
-        elif len(line) == 1:
-           
-           tag =  int(line[0])
+        if len(line) == 0:  # Is this line empty? Is this the end of the file?
+            stop = 1         
+        elif len(line) == 1:    # This should tell that you are over the tag.     
+           tag =  int(line[0]) 
            count = 0
            deg_of_fre = []
            
-        elif len(line) == 2:
+        elif len(line) == 2:  # This is the second line of a boundary condition.
             bc_type = line[0]    # Name of the border condition type 
             ndf = int(line[1])        # Number of degrees of freedom
             
@@ -483,7 +517,7 @@ def read_bc(filename):
         
         n_bloch = len(bloch)
         bloch_2 = zeros((n_bloch/2, 4), dtype = int) 
-        
+        print "bloch: ", bloch
         assert n_bloch % 2 == 0   # Make sure that bloch conditions are paired
         it_bloch = range(n_bloch)    # Iteration (it) list for bloch conditions   
         for i in it_bloch:
@@ -495,8 +529,8 @@ def read_bc(filename):
                     bloch_2[i, 3] = int(bloch[j][2])
                     it_bloch.pop(j)
         
-                
+        print "bloch_2: ", bloch_2       
         return dirichlet, newman, bloch_2
     else:
         return dirichlet, newman
- 
+        
