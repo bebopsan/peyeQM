@@ -7,7 +7,7 @@ from solver import schroedinger
 from utils import substract_1
 from os import system
 from inform import inform
-glo_tag = 'test1' # Global tag for referencing all files
+glo_tag = 'test2' # Global tag for referencing all files
 
 nodes, elements = read_mesh(glo_tag +'.msh')
 
@@ -22,7 +22,7 @@ potential = potential_2d('well', nodes, v0 = 2)
 write_solver_input(glo_tag +'.msh', parameter = potential, dimension = 2, \
                    bc_type = 'Bloch', \
                    sol_type = 'Stationary', eq = 'Schro', \
-                   analysis_param = ['y', 'y', 4, 1, 20, 20, 1], \
+                   analysis_param = ['y', 'y', 10, 1, 50, 50, 1], \
                    bc_filename = 'test2.bc')
 
 #k = read_solver_input(glo_tag +'.msh')

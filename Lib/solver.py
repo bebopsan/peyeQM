@@ -365,7 +365,6 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             stif = stif + v
             #= Retrieve the list of image and reference bloch boundary nodes ==
             bloch = boundary[2]
-            
             im_ref = image_reference_bloch_vectors(bc_lines, bloch)
             #============= Discretize the wavenumber dommain ================== 
             nk_x = int(analysis_param[4]) # number of k to sweep in x
@@ -378,27 +377,44 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             #================ Initiate global variable =======================
             energy = zeros( (nk_x * nk_y, n_vals) )
             
-            print 'Number of eigenvales to compute: ', n_vals, \
-                  '\nNumber of wave numbers to sweep: ', 'in x: ', nk_x, \
-                  ' and in y: ', nk_y, ' in ', \
-                  [k_range_x[0],k_range_x[nk_x-1]], \
-                  [k_range_y[0],k_range_y[nk_y-1]], '\n'
-            #======== Define a new image reference matrix without vertices =====      
+#            print 'Number of eigenvales to compute: ', n_vals, \
+#                  '\nNumber of wave numbers to sweep: ', 'in x: ', nk_x, \
+#                  ' and in y: ', nk_y, ' in ', \
+#                  [k_range_x[0],k_range_x[nk_x-1]], \
+#                  [k_range_y[0],k_range_y[nk_y-1]], '\n'
+            #======== Define a new image reference ===========================      
             im_ref_aux = im_ref[0] # image(im) reference(ref) for complex
                                       # multimplication (mul) operations 
-            print im_ref
+            
             for bl in range(1, len(im_ref)):
                 im_ref_aux = vstack((im_ref_aux, im_ref[bl]))
                 
-            print im_ref_aux
+            #=============== Find who are the corners =======================
+            for corner in list(im_ref_aux[:, 0]):
+                if list(im_ref_aux[:, 0]).count(corner) == 2:
+                    break
+            for corner2 in list(im_ref_aux[:, 1]):
+                if list(im_ref_aux[:, 1]).count(corner2) == 2:
+                    break
+            #==== Relate the corners and delete their previous links===========            
+            
             im_mul = list(set(list(im_ref_aux[:, 0])))
-            print 'im_mul', im_mul
             ref_mul = []
             for i in im_mul:
                 ref_mul.append(list(im_ref_aux[:, 1])[list(im_ref_aux[:, 0]).index(i)])
-            print 'ref_mul', ref_mul
-            im_ref_mul = array([im_mul, ref_mul]).T
-            print im_ref_mul
+            im_ref_mul = array([im_mul, ref_mul]).T # Rearranged without 
+                                                    # repeated reference 
+                                                    # to corner
+            im_ref_sum = im_ref_mul
+            from numpy import delete
+            for i in range(2):#Delete the links between conrner2 and other nodes
+                im_ref_sum=delete(im_ref_sum, list(im_ref_sum[:, 1]).index(corner2), 0)
+            # Make corner2 the image of corner
+            im_ref_sum[list(im_ref_mul[:, 0]).index(corner), 1] = corner2    
+            
+            print im_ref_sum, im_ref_mul
+            im_ref_mul[list(im_ref_mul[:, 0]).index(corner), 1] = corner2
+            print im_ref_sum, im_ref_mul           
             #======================= Main cicles ===============================
             i = 0         
             print 'Calculating each of the ', nk_x * nk_y, \
@@ -412,7 +428,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                                                     k_y, nodes, \
                                                     im_ref_mul, stif.copy(), \
                                                     mass.copy())
-                    new_stif, new_mass = bloch_sum(im_ref, new_stif, new_mass)
+                    new_stif, new_mass = bloch_sum(im_ref_mul, new_stif, new_mass)
                     
                     vals = linalg.eigvalsh(new_stif, new_mass, \
                                            eigvals = (0, n_vals-1))
@@ -424,18 +440,9 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             from meshUtils import meshtr2D
             k_mesh = meshtr2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
             return k_mesh, energy       
-                    
-               
-                  
-           
-            
-        #------------------ If they ask for something we don't have-----------
+       #------------------ If they ask for something we don't have-----------
         else: 
             print 'Hang on, we are currently working on more options.'
-            
-
-    
-    
     else:
         print 'Only 1D and 2D for now. Sorry'
     print 'done'

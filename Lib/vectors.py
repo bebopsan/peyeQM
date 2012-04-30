@@ -208,7 +208,7 @@ def image_reference_bloch_vectors(bc_lines, bloch):
     
     bc_lines:   Array of line elements.
 
-    bloch:      List of bloch conditions as read by a '.bc' file.__class__
+    bloch:      List of bloch conditions as read by a '.bc' file.
 
     Returns:
     --------

@@ -517,7 +517,6 @@ def read_bc(filename):
         
         n_bloch = len(bloch)
         bloch_2 = zeros((n_bloch/2, 4), dtype = int) 
-        print "bloch: ", bloch
         assert n_bloch % 2 == 0   # Make sure that bloch conditions are paired
         it_bloch = range(n_bloch)    # Iteration (it) list for bloch conditions   
         for i in it_bloch:
@@ -528,8 +527,6 @@ def read_bc(filename):
                     bloch_2[i, 1] = int(bloch[j][0])
                     bloch_2[i, 3] = int(bloch[j][2])
                     it_bloch.pop(j)
-        
-        print "bloch_2: ", bloch_2       
         return dirichlet, newman, bloch_2
     else:
         return dirichlet, newman

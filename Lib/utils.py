@@ -121,27 +121,30 @@ def bloch_multiplication(k_x, k_y, nodes, im_ref, *matrices):
      """
      from cmath import exp
      
-     n_im_ref = len(im_ref)
+     # For each bloch condition in im_ref 
+     im = im_ref[:,0]
+     ref = list(set(list(im_ref[:, 1])))
      
-     for bl in range(n_im_ref): # For each bloch condition in im_ref 
-         for i in range(im_ref.shape[0]):
-            x_im = nodes[ im_ref[i, 0] - 1, 0]
-            y_im = nodes[ im_ref[i, 0] - 1, 1]
-            x_ref = nodes[ im_ref[i, 1] - 1, 0]
-            y_ref = nodes[ im_ref[i, 1] - 1, 1]
-            fi = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
-            ff = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
-            for matrix in matrices:
-                # Multiply the column of the image node by the phase factor
-                matrix[:, im_ref[i, 0] - 1] = fi * matrix[:, im_ref[i, 0]-1] 
-                # Multiply the column of the image node by the comlex conjugate
-                #phase factor            
-                matrix[im_ref[i, 0] - 1, :] = fi.conjugate() * \
-                                                  matrix[:, im_ref[i, 0]-1]
-               # and the same for the reference node:  
-                matrix[:, im_ref[i, 1] - 1] = ff * matrix[:, im_ref[i, 1]-1] 
-                matrix[im_ref[i, 1] - 1, :] = ff.conjugate() * \
-                                                  matrix[:, im_ref[i, 1]-1]
+     for i in im:
+        x_im = nodes[ i - 1, 0]
+        y_im = nodes[ i - 1, 1]
+        
+        fi = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
+        for matrix in matrices:
+            # Multiply the column of the image node by the phase factor
+            matrix[:, i - 1] = fi * matrix[:, i - 1] 
+            # Multiply the column of the image node by the comlex conjugate
+            #phase factor            
+            matrix[i - 1, :] = fi.conjugate() * matrix[:, i - 1]
+     for i in ref:        
+        x_ref = nodes[ i - 1, 0]
+        y_ref = nodes[ i - 1, 1]
+        
+        ff = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
+        for matrix in matrices:
+           # and the same for the reference node:  
+            matrix[:, i - 1] = ff * matrix[:, i - 1] 
+            matrix[i - 1, :] = ff.conjugate() * matrix[:, i - 1]
      return matrices
      
 def bloch_sum(im_ref, *matrices ):
@@ -166,25 +169,22 @@ def bloch_sum(im_ref, *matrices ):
                and the image nodes columns and rows removed. 
     
     """
-    from numpy import delete
+    from numpy import delete, shape
     remove = []
     n_bl = len(im_ref)
-    for bl in range(n_bl):
-        n_nodes = im_ref[bl].shape[0]
-        for i in range(n_nodes):
-            for matrix in matrices:
-                # Sum image node row to reference node row 
-                matrix[im_ref[bl][i, 1]-1, :] = matrix[im_ref[bl][i, 1]-1, :]+ \
-                                                matrix[im_ref[bl][i, 0]-1, :]
-                # Sum image node column to reference node column
-                matrix[:, im_ref[bl][i, 1]-1] = matrix[:, im_ref[bl][i, 1]-1]+ \
-                                                matrix[:, im_ref[bl][i, 0]-1]
-                #== stack the values of nodes in vertices for further removal===
-                remove.append(int(im_ref[bl][i, 0])-1)
-                
-    
+    for i in im_ref[:, 0]:
+        for matrix in matrices:
+            j = im_ref[list(im_ref[:, 0]).index(i), 1]
+            # Sum image node row to reference node row 
+            matrix[i - 1, :] = matrix[i - 1, :]+ \
+                               matrix[j - 1, :]
+            # Sum image node column to reference node column
+            matrix[:, i - 1] = matrix[:, i - 1]+ matrix[:, j -1]
+            #== stack the values of nodes in vertices for further removal===
+            remove.count(j-1)       
+            if remove.count(j-1) == 0:
+                remove.append(j-1)
     remove.sort()
-    remove = list(set(remove))
     for matrix in matrices:
         matrix = delete(matrix, remove, 0)
         matrix = delete(matrix, remove, 1)
