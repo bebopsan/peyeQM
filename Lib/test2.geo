@@ -9,7 +9,6 @@ Line(3) = {3, 4};
 Line(4) = {4, 1};
 Line Loop(6) = {2, 3, 4, 1};
 Plane Surface(6) = {6};
-Transfinite Surface {6};
 Physical Line(7) = {4};
 Physical Line(8) = {1};
 Physical Line(9) = {2};

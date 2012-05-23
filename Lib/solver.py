@@ -307,8 +307,10 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             
             #===================== Build potential matrix ==================
             v_d = global_potential_matrix(nodes, triangles, v, remove)
-        
-        
+#            print "nodes",nodes
+#            print "stif",stif
+#            print "mass",mass_d
+#            print "v_d", v_d
         
             print 'Solving eigenvalue problem...\n'
             if 'y'in analysis_param[0] and 'n' in analysis_param[1]:
@@ -351,7 +353,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
         #---------------------- With Bloch boundary conditions ------------
         elif 'Bloch' in bc_type and 'Stationary' in sol_type:
             from numpy import asarray,vstack
-            from vectors import  image_reference_bloch_vectors
+            from vectors import  reference_image_bloch_vectors
             from utils import bloch_multiplication, bloch_sum
             # ==================== Build mass matrix =======================
             mass = global_mass_matrix(nodes, triangles) 
@@ -365,7 +367,7 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
             stif = stif + v
             #= Retrieve the list of image and reference bloch boundary nodes ==
             bloch = boundary[2]
-            im_ref = image_reference_bloch_vectors(bc_lines, bloch)
+            ref_im = reference_image_bloch_vectors(bc_lines, bloch)
             #============= Discretize the wavenumber dommain ================== 
             nk_x = int(analysis_param[4]) # number of k to sweep in x
             nk_y = int(analysis_param[5]) # number of k to sweep in y
@@ -383,38 +385,38 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
 #                  [k_range_x[0],k_range_x[nk_x-1]], \
 #                  [k_range_y[0],k_range_y[nk_y-1]], '\n'
             #======== Define a new image reference ===========================      
-            im_ref_aux = im_ref[0] # image(im) reference(ref) for complex
+            ref_im_aux = ref_im[0] # image(im) reference(ref) for complex
                                       # multimplication (mul) operations 
             
-            for bl in range(1, len(im_ref)):
-                im_ref_aux = vstack((im_ref_aux, im_ref[bl]))
+            for bl in range(1, len(ref_im)):
+                ref_im_aux = vstack((ref_im_aux, ref_im[bl]))
                 
             #=============== Find who are the corners =======================
-            for corner in list(im_ref_aux[:, 0]):
-                if list(im_ref_aux[:, 0]).count(corner) == 2:
+            for corner in list(ref_im_aux[:, 0]):
+                if list(ref_im_aux[:, 0]).count(corner) == 2:
                     break
-            for corner2 in list(im_ref_aux[:, 1]):
-                if list(im_ref_aux[:, 1]).count(corner2) == 2:
+            for corner2 in list(ref_im_aux[:, 1]):
+                if list(ref_im_aux[:, 1]).count(corner2) == 2:
                     break
             #==== Relate the corners and delete their previous links===========            
             
-            im_mul = list(set(list(im_ref_aux[:, 0])))
+            im_mul = list(set(list(ref_im_aux[:, 1])))
             ref_mul = []
             for i in im_mul:
-                ref_mul.append(list(im_ref_aux[:, 1])[list(im_ref_aux[:, 0]).index(i)])
-            im_ref_mul = array([im_mul, ref_mul]).T # Rearranged without 
+                ref_mul.append(list(ref_im_aux[:, 0])[list(ref_im_aux[:, 1]).index(i)])
+            ref_im_mul = array([ref_mul, im_mul]).T # Rearranged without 
                                                     # repeated reference 
-                                                    # to corner
-            im_ref_sum = im_ref_mul
-            from numpy import delete
-            for i in range(2):#Delete the links between conrner2 and other nodes
-                im_ref_sum=delete(im_ref_sum, list(im_ref_sum[:, 1]).index(corner2), 0)
-            # Make corner2 the image of corner
-            im_ref_sum[list(im_ref_mul[:, 0]).index(corner), 1] = corner2    
+                                                    # to corner        
+#            ref_im_sum = ref_im_mul
+#            from numpy import delete
+#            for i in range(2):#Delete the links between conrner2 and other nodes
+#                ref_im_sum=delete(ref_im_sum, list(ref_im_sum[:, 1]).index(corner2), 0)
+#            # Make corner2 the image of corner
+#            ref_im_sum[list(ref_im_mul[:, 0]).index(corner), 1] = corner2    
             
-            print im_ref_sum, im_ref_mul
-            im_ref_mul[list(im_ref_mul[:, 0]).index(corner), 1] = corner2
-            print im_ref_sum, im_ref_mul           
+            ref_im_mul[list(ref_im_mul[:, 1]).index(corner2), 0] = corner
+           
+            print "ref_im_mul", ref_im_mul          
             #======================= Main cicles ===============================
             i = 0         
             print 'Calculating each of the ', nk_x * nk_y, \
@@ -423,12 +425,11 @@ def schroedinger(filename, nodes = 0, elements = 0, parameter = [], \
                     
                 for k_y in k_range_y: # Loop over the different wave numbers k in y
                     # Multiply boundary nodes of each matrix by phase factor                   
-                    mass
                     new_stif, new_mass = bloch_multiplication(k_x, \
                                                     k_y, nodes, \
-                                                    im_ref_mul, stif.copy(), \
+                                                    ref_im_mul, stif.copy(), \
                                                     mass.copy())
-                    new_stif, new_mass = bloch_sum(im_ref_mul, new_stif, new_mass)
+                    new_stif, new_mass = bloch_sum(ref_im_mul, new_stif, new_mass)
                     
                     vals = linalg.eigvalsh(new_stif, new_mass, \
                                            eigvals = (0, n_vals-1))

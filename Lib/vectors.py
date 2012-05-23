@@ -197,7 +197,7 @@ def build_solution(dir_solution, g, remove):
    
 # Construct the image and reference vectors needed for imposing bloch conditions
 
-def image_reference_bloch_vectors(bc_lines, bloch):
+def reference_image_bloch_vectors(bc_lines, bloch):
     """
     This function loads the lines of the boundary and the list that contains 
     bloch periodicity conditions, and builds a list of arrays that relate
@@ -213,9 +213,9 @@ def image_reference_bloch_vectors(bc_lines, bloch):
     Returns:
     --------
     
-    im_ref:     Each array in the list 'im_ref', has in it's first column the 
-                image node and on it's second collumn the reference node for 
-                that particular image node.
+    ref_im:     Each array in the list 'ref_im', has in it's first column the 
+                reference node and on it's second collumn the image node for 
+                that particular reference node.
     """
     from numpy import zeros, copy
     n_bloch = bloch.shape[0]
@@ -223,9 +223,9 @@ def image_reference_bloch_vectors(bc_lines, bloch):
     n_lines = bc_lines.shape[0]
     print 'n_lines', n_lines
     #=========== Create a list of arrays ======================================
-    im_ref = []    
+    ref_im = []    
     for i in it_bloch:    
-        im_ref.append(zeros((n_lines/(2*n_bloch)+1,2), dtype = int))  
+        ref_im.append(zeros((n_lines/(2*n_bloch)+1,2), dtype = int))  
     #=============== Loop and fill the lists ================================== 
     count = 0
     i = 0
@@ -237,14 +237,14 @@ def image_reference_bloch_vectors(bc_lines, bloch):
             
             
             if bc_lines[j, 0] == bloch[bl, 0]:
-                im_ref[bl][i, 0] = bc_lines[j, 1]
+                ref_im[bl][i, 0] = bc_lines[j, 1]
                 if i == n_lines/(2*n_bloch)-1:
-                    im_ref[bl][i+1, 0] = bc_lines[j, 2]
+                    ref_im[bl][i+1, 0] = bc_lines[j, 2]
                 
             elif bc_lines[j, 0] == bloch[bl, 1]:
-                im_ref[bl][i, 1] = bc_lines[j, 1]
+                ref_im[bl][i, 1] = bc_lines[j, 1]
                 if i == n_lines/(2*n_bloch)-1:
-                    im_ref[bl][i+1, 1] = bc_lines[j, 2]
+                    ref_im[bl][i+1, 1] = bc_lines[j, 2]
         i = i+1
         j = j+1
 
@@ -256,10 +256,10 @@ def image_reference_bloch_vectors(bc_lines, bloch):
     
     for bl in it_bloch:
         if bloch[bl, 2]*bloch[bl, 3] == -1:
-            im_ref[bl][:,1] = copy(im_ref[bl][::-1,1])
+            ref_im[bl][:,1] = copy(ref_im[bl][::-1,1])
     
     
-    return im_ref
+    return ref_im
                 
     
     

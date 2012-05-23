@@ -14,7 +14,6 @@ def local_stiffness_matrix(lines):
     for i in range(n):
         for j in range(n):
             lo_stiff[i, j] = dot(lines[i], lines[j]) # / (4*area) 
-            
     return lo_stiff
 #======================== Local Mass matrix  2D P1 ===========================
 def local_mass_matrix():
@@ -70,14 +69,15 @@ def global_stiffness_matrix(nodes, triangles):
     for el in range(n_triangles):
          
         pt_a, pt_b, pt_c = create_points(nodes, triangles, el)
-               
+        #print pt_a, pt_b, pt_c
         ln_ab = pt_b - pt_a    
         ln_bc = pt_c - pt_b
         ln_ca = pt_a - pt_c    
-        lines = [ln_ab, ln_bc, ln_ca]
+        lines = [ln_bc, ln_ca, ln_ab]
         
         area = calculate_area(lines)
         
+       
         lo_stif = local_stiffness_matrix(lines)
         lo_stif = lo_stif/(4*area)
        

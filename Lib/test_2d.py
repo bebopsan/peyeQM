@@ -1,4 +1,4 @@
-        #! /usr/bin/python
+#! /usr/bin/python
 from read_mesh import read_mesh, read_solver_input
 from PrePro import potential_2d
 from write import write_solver_input, write_vtk
@@ -7,7 +7,7 @@ from solver import schroedinger
 from utils import substract_1
 from os import system
 from inform import inform
-glo_tag = 'test2' # Global tag for referencing all files
+glo_tag = 'square2' # Global tag for referencing all files
 
 nodes, elements = read_mesh(glo_tag +'.msh')
 
@@ -15,14 +15,14 @@ n = shape(nodes)[0]                 #Number of nodes
 bc_lines = elements[1]      # Boundary condition is (bc) lines
 triangles = elements[2]
 
-potential = potential_2d('well', nodes, v0 = 2)
+potential = potential_2d('well', nodes, v0 = 0)
 
 
 
 write_solver_input(glo_tag +'.msh', parameter = potential, dimension = 2, \
                    bc_type = 'Bloch', \
                    sol_type = 'Stationary', eq = 'Schro', \
-                   analysis_param = ['y', 'y', 10, 1, 50, 50, 1], \
+                   analysis_param = ['y', 'n', 3, 1, 50, 50, 2], \
                    bc_filename = 'test2.bc')
 
 #k = read_solver_input(glo_tag +'.msh')

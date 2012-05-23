@@ -1,12 +1,12 @@
 #! /usr/bin/python
 from read_mesh import read_mesh, read_solver_input
-from PrePro import potential_2d
+from PrePro import potential_2d, test_sol
 from write import write_solver_input, write_vtk
 from numpy import shape, zeros
 from solver import schroedinger
 from utils import substract_1
-
-glo_tag = 'square' # Global tag for referencing all files
+from math import pi
+glo_tag = 'circle2' # Global tag for referencing all files
 
 nodes, elements = read_mesh(glo_tag +'.msh')
 
@@ -14,11 +14,11 @@ n = shape(nodes)[0]                 #Number of nodes
 bc_lines = elements[1]      # Boundary condition is (bc) lines
 triangles = elements[2]
 
-potential = potential_2d('well', nodes, v0 = 2)
+potential = potential_2d('well', nodes, v0 = 0)
 write_solver_input(glo_tag +'.msh', parameter = potential, dimension = 2, \
                    bc_type = 'Dir', \
                    sol_type = 'Stationary', eq = 'Schro', \
-                   analysis_param = ['y', 'y', 10, 10, 15, 15, 1], \
+                   analysis_param = ['y', 'y', 20, 20, 15, 15, 1], \
                    bc_filename = glo_tag+'.bc')
 
 k = read_solver_input(glo_tag +'.msh')
@@ -35,5 +35,8 @@ triangles = triangles[:, 1:]
  
 print v
 write_vtk(glo_tag + '_dir.vtk', 'this shit', '', nodes, triangles, \
-            ['SCALARS', ['solution'], [solution]])
-            
+            ['SCALARS', ['solution'], [solution]])           
+print solution.shape
+sol = test_sol(nodes, pi, 3*pi)
+write_vtk(glo_tag + '_sol.vtk', 'this shit', '', nodes, triangles, \
+            ['SCALARS', ['sol'], [sol]])       

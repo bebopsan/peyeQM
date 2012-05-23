@@ -292,6 +292,23 @@ well":          Defines a well with constant potential over the 1D domain
         V[i] = V0
     return V
     print 'V.size', V.size
+
+def test_sol(nodes, k_x, k_y):
+    """
+    gives a solution vector for the infinite square potential by assigning 
+    a value for each node given the general solution 
+    
+    psi = A*sin(k_x*x)*A*sin(k_y*y)
+    
+    """
+    sol = zeros((nodes.shape[0],1))
+    k = 0
+    for i in nodes:
+        sol[k] = 2*sin(k_x*i[0])*sin(k_y*i[1])
+        k = k + 1
+    print "sol",sol.shape
+    return sol
+
 def finwell( X, V0, Vleft, Vright, width):
     """
 "finwell":	  Works like "well" but  with control over the height of

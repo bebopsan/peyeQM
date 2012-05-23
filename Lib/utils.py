@@ -47,14 +47,14 @@ def create_points(nodes, triangles, el):
     pt_a = zeros(2)
     pt_b = zeros(2)
     pt_c = zeros(2)
-
+    
     pt_a[0] = nodes[triangles[el, 1] - 1, 0]
     pt_a[1] = nodes[triangles[el, 1] - 1, 1]
     pt_b[0] = nodes[triangles[el, 2] - 1, 0]
     pt_b[1] = nodes[triangles[el, 2] - 1, 1]
     pt_c[0] = nodes[triangles[el, 3] - 1, 0]
     pt_c[1] = nodes[triangles[el, 3] - 1, 1]
-
+    
     return pt_a, pt_b, pt_c
 
 def calculate_area(lines):
@@ -92,7 +92,7 @@ def substract_1(triangles):
     return triangles
     
     
-def bloch_multiplication(k_x, k_y, nodes, im_ref, *matrices):
+def bloch_multiplication(k_x, k_y, nodes, ref_im, *matrices):
      """
      This function multiplies a given matrix 
      (in a future a given set of matrices), multiplies each Bloch boundary 
@@ -107,9 +107,9 @@ def bloch_multiplication(k_x, k_y, nodes, im_ref, *matrices):
      nodes:     Numpy array like matrix of node coordinates (n_nodes,3) where 
                 coorsd(x,:)= x,y,z components of the node.
      
-     im_ref:    A list of 2-column numpy arrays. Each array in the list 
-                'im_ref', has in it's first column the image node and on it's 
-                second column the reference node for that particular image node.
+     ref_im:    A list of 2-column numpy arrays. Each array in the list 
+                'ref_im', has in it's first column the reference node and on it's 
+                second column the image node for that particular reference node.
      
      matrices:  Matrices to be operated.
      
@@ -121,10 +121,9 @@ def bloch_multiplication(k_x, k_y, nodes, im_ref, *matrices):
      """
      from cmath import exp
      
-     # For each bloch condition in im_ref 
-     im = im_ref[:,0]
-     ref = list(set(list(im_ref[:, 1])))
-     
+     # For each bloch condition in ref_im 
+     im = ref_im[:,1]
+     ref = list(set(list(ref_im[:, 0])))
      for i in im:
         x_im = nodes[ i - 1, 0]
         y_im = nodes[ i - 1, 1]
@@ -147,7 +146,7 @@ def bloch_multiplication(k_x, k_y, nodes, im_ref, *matrices):
             matrix[i - 1, :] = ff.conjugate() * matrix[:, i - 1]
      return matrices
      
-def bloch_sum(im_ref, *matrices ):
+def bloch_sum(ref_im, *matrices ):
     """
     This function takes the value of the image nodes in bloch periodicity 
     boundaries, and sums it to the value of the reference node.
@@ -155,9 +154,9 @@ def bloch_sum(im_ref, *matrices ):
     Parameters:
     -----------
     
-    im_ref:    A list of 2-column numpy arrays. Each array in the list 
-                'im_ref', has in it's first column the image node and on it's 
-                second column the reference node for that particular image node.
+    ref_im:    A list of 2-column numpy arrays. Each array in the list 
+                'ref_im', has in it's first column the reference node and on it's 
+                second column the image node for that particular reference node.
     
         
     matrices:  Matrices to be operated.
@@ -169,12 +168,13 @@ def bloch_sum(im_ref, *matrices ):
                and the image nodes columns and rows removed. 
     
     """
-    from numpy import delete, shape
+    from numpy import delete
     remove = []
-    n_bl = len(im_ref)
-    for i in im_ref[:, 0]:
+    
+    for k in range(len(ref_im[:, 0])):
+        i = ref_im[k, 0]
+        j = ref_im[k, 1]
         for matrix in matrices:
-            j = im_ref[list(im_ref[:, 0]).index(i), 1]
             # Sum image node row to reference node row 
             matrix[i - 1, :] = matrix[i - 1, :]+ \
                                matrix[j - 1, :]
