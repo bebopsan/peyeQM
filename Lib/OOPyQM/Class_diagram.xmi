@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMI verified="false" xmi.version="1.2" timestamp="2013-01-25T13:29:03" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
+ <XMI.header>
+  <XMI.documentation>
+   <XMI.exporter>umbrello uml modeller http://uml.sf.net</XMI.exporter>
+   <XMI.exporterVersion>1.6.1</XMI.exporterVersion>
+   <XMI.exporterEncoding>UnicodeUTF8</XMI.exporterEncoding>
+  </XMI.documentation>
+  <XMI.metamodel xmi.version="1.3" href="UML.xml" xmi.name="UML"/>
+ </XMI.header>
+ <XMI.content>
+  <UML:Model isSpecification="false" isAbstract="false" isLeaf="false" xmi.id="m1" isRoot="false" name="UML Model">
+   <UML:Namespace.ownedElement>
+    <UML:Stereotype visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="folder" name="folder"/>
+    <UML:Stereotype visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="datatype" name="datatype"/>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Logical View" name="Logical View">
+     <UML:Namespace.ownedElement>
+      <UML:Package stereotype="folder" visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Datatypes" name="Datatypes">
+       <UML:Namespace.ownedElement>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="lFCkdrexxuS5" name="int"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="jFgaK0iKigCg" name="char"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="cmEH5kVqzhYb" name="bool"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="WCWR6xXpCDOW" name="float"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="B6ptk1YKokbr" name="double"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="U6hRoF0IRXkW" name="short"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="UHJgShBbl0UT" name="long"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="z0nnkPeCVJcH" name="unsigned int"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="WcYw9ISbXlIx" name="unsigned short"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="RRYCP2gO3RAl" name="unsigned long"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="qmyK6YbaA9WK" name="string"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="PwvugBr7aPHz" name="array"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="QvORNWCBI8VM" name="tuple"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="g7xrER9cO2W2" name="dict"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="CO7mnOkDI6cf" name="object"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="cpquvKFaPAPd" name="set"/>
+       </UML:Namespace.ownedElement>
+      </UML:Package>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="bWFxYmzi86Vv" name="Simulation">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="xtnUgcD5fmZe" type="TF7lLjOvWCnQ" name="domain"/>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="CYv5EDG38wgQ" type="qmyK6YbaA9WK" initialValue="'QM'" name="sim_type"/>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="TSfs0Pv9K1vz" type="qmyK6YbaA9WK" initialValue="'Stationary'" name="time_dependency "/>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="TF7lLjOvWCnQ" name="Domain">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="i64gYtdL07Tu" type="W20vANZmtmhP" name="nodes"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="QouxAXSqiSWX" name="read_mesh_file">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="pQ3GOEDE0T4v" type="qmyK6YbaA9WK" value="''" name="filename"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="W20vANZmtmhP" name="Nodes">
+       <UML:Classifier.feature>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Wf8ejbYCqfv9" comment="def __init__(self):" name="add">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="bw1PZuYuEYli" type="qmyK6YbaA9WK"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="MJ2rWpH2qFw0" type="qmyK6YbaA9WK" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="cTkVFSuk70Oo" type="qmyK6YbaA9WK" value="" name="_nodes"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+       <UML:Namespace.ownedElement>
+        <UML:Class visibility="public" isSpecification="false" namespace="W20vANZmtmhP" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="O0iEFeCp7xIL" name="Triangles"/>
+       </UML:Namespace.ownedElement>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="itjy3OHWKsVY" name="Interpreter">
+       <UML:Classifier.feature>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="KVC9AOfYJxB6" name="global_stiffness_matrix">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="D1BWxKaY4dME" type="qmyK6YbaA9WK"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="dj5oA4ksyTrz" type="qmyK6YbaA9WK" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="p6U8wzeHUqOd" type="qmyK6YbaA9WK" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
+     </UML:Namespace.ownedElement>
+     <XMI.extension xmi.extender="umbrello">
+      <diagrams>
+       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="class diagram" font="Sans Serif,9,-1,0,50,0,0,0,0,0" canvasheight="728" canvaswidth="1092" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="100" xmi.id="2kyuyyaXhIYD" documentation="" showscope="1" snapgrid="0" showatts="1" type="1">
+        <widgets>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="390" showattsigs="601" showstereotype="1" y="423" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="265" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="W20vANZmtmhP" showscope="1" height="35" showopsigs="601"/>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="0" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="0" showpubliconly="1" showpackage="1" x="451" showattsigs="601" showstereotype="1" y="117" showattributes="1" font="Sans Serif,9,-1,5,75,0,0,0,0,0" width="131" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="bWFxYmzi86Vv" showscope="1" height="81" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="525" showattsigs="601" showstereotype="1" y="276" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="247" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="TF7lLjOvWCnQ" showscope="1" height="61" showopsigs="601"/>
+        </widgets>
+        <messages/>
+        <associations>
+         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="TF7lLjOvWCnQ" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="bWFxYmzi86Vv" visibilityA="1" visibilityB="1" usefillcolor="1" fillcolor="#000000" changeabilityA="900" xmi.id="xtnUgcD5fmZe" changeabilityB="900" type="510">
+          <linepath>
+           <startpoint startx="582" starty="198"/>
+           <endpoint endx="582" endy="276"/>
+          </linepath>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="523" showstereotype="1" y="256" text="domain" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="57" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="x0Jw1JJLaHsy" height="18"/>
+         </assocwidget>
+         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="W20vANZmtmhP" linewidth="none" textcolor="none" usesdiagramusefillcolor="32" totalcounta="2" totalcountb="2" widgetaid="TF7lLjOvWCnQ" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="i64gYtdL07Tu" changeabilityB="900" type="510">
+          <linepath>
+           <startpoint startx="594" starty="337"/>
+           <endpoint endx="594" endy="423"/>
+          </linepath>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="544" showstereotype="1" y="389" text="nodes" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="48" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="gD2iqMwWRyAx" height="32"/>
+         </assocwidget>
+        </associations>
+       </diagram>
+      </diagrams>
+     </XMI.extension>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Use Case View" name="Use Case View">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Component View" name="Component View">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Deployment View" name="Deployment View">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+    <UML:Model stereotype="folder" visibility="public" isSpecification="false" namespace="m1" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Entity Relationship Model" name="Entity Relationship Model">
+     <UML:Namespace.ownedElement/>
+    </UML:Model>
+   </UML:Namespace.ownedElement>
+  </UML:Model>
+ </XMI.content>
+ <XMI.extensions xmi.extender="umbrello">
+  <docsettings viewid="2kyuyyaXhIYD" uniqueid="pQ3GOEDE0T4v" documentation=""/>
+  <listview>
+   <listitem open="1" type="800" id="Views">
+    <listitem open="1" type="821" id="Component View"/>
+    <listitem open="1" type="827" id="Deployment View"/>
+    <listitem open="1" type="836" id="Entity Relationship Model"/>
+    <listitem open="1" type="801" id="Logical View">
+     <listitem open="0" type="807" id="2kyuyyaXhIYD" label="class diagram"/>
+     <listitem open="0" type="830" id="Datatypes">
+      <listitem open="1" type="829" id="PwvugBr7aPHz"/>
+      <listitem open="1" type="829" id="cmEH5kVqzhYb"/>
+      <listitem open="1" type="829" id="jFgaK0iKigCg"/>
+      <listitem open="1" type="829" id="g7xrER9cO2W2"/>
+      <listitem open="1" type="829" id="B6ptk1YKokbr"/>
+      <listitem open="1" type="829" id="WCWR6xXpCDOW"/>
+      <listitem open="1" type="829" id="lFCkdrexxuS5"/>
+      <listitem open="1" type="829" id="UHJgShBbl0UT"/>
+      <listitem open="1" type="829" id="CO7mnOkDI6cf"/>
+      <listitem open="1" type="829" id="cpquvKFaPAPd"/>
+      <listitem open="1" type="829" id="U6hRoF0IRXkW"/>
+      <listitem open="1" type="829" id="qmyK6YbaA9WK"/>
+      <listitem open="1" type="829" id="QvORNWCBI8VM"/>
+      <listitem open="1" type="829" id="z0nnkPeCVJcH"/>
+      <listitem open="1" type="829" id="RRYCP2gO3RAl"/>
+      <listitem open="1" type="829" id="WcYw9ISbXlIx"/>
+     </listitem>
+     <listitem open="1" type="813" id="TF7lLjOvWCnQ">
+      <listitem open="0" type="814" id="i64gYtdL07Tu"/>
+      <listitem open="0" type="815" id="QouxAXSqiSWX"/>
+     </listitem>
+     <listitem open="0" type="813" id="itjy3OHWKsVY">
+      <listitem open="0" type="815" id="KVC9AOfYJxB6"/>
+     </listitem>
+     <listitem open="1" type="813" id="W20vANZmtmhP">
+      <listitem open="0" type="815" id="Wf8ejbYCqfv9"/>
+      <listitem open="0" type="813" id="O0iEFeCp7xIL"/>
+     </listitem>
+     <listitem open="1" type="813" id="bWFxYmzi86Vv">
+      <listitem open="0" type="814" id="xtnUgcD5fmZe"/>
+      <listitem open="0" type="814" id="CYv5EDG38wgQ"/>
+      <listitem open="0" type="814" id="TSfs0Pv9K1vz"/>
+     </listitem>
+    </listitem>
+    <listitem open="1" type="802" id="Use Case View"/>
+   </listitem>
+  </listview>
+  <codegeneration>
+   <codegenerator language="Python">
+    <sourcecode value=":&#xa;Elements for now counts the number f line and triangle elements&#xa;in a format imported from a file by using function read_mesh().&#xa;The Idea is that the instance elements contains all the attributes&#xa;associated with elements&#xa;def add(self,_elements):&#xa;  from numpy import shape&#xa;  self.lines=_elements['Lines']&#xa;  self.n_lines=shape(self.lines)[0]&#xa;  if'Triangles'in _elements:&#xa;    self.triangles=Triangles(_elements['Triangles'])&#xa;&#xa;&#xa;" id="Wf8ejbYCqfv9"/>
+    <sourcecode value=":&#xa;Funtion for the assembly of the global stiffnes matrix of a&#xa;simulation file.&#xa;Parameters:&#xa;  -----------&#xa;  simulation:Instance of class Simulation()which contains all&#xa;  of the information needed for an analysis.Read more about the structure of this class somewhere.Returns:&#xa;    --------&#xa;    glo_stif:Matrix like array of size(n_nodes,n_nodes).Represents&#xa;    the global stiffness matrix of the system from numpy import zeros&#xa;    if isinstance(simulation,Simulation):&#xa;      nodes_coords=simulation.domain.nodes.coords&#xa;      n_nodes=simulation.domain.nodes.n&#xa;      sim_elements=simulation.domain.elements&#xa;      if simulation.dimension==1:&#xa;        elements=sim_elements.lines&#xa;&#xa;      elif simulation.dimension==2:&#xa;        if'triangles'in sim_elements.__dict__:&#xa;          elements=sim_elements.triangles&#xa;&#xa;        else:&#xa;          print'Wait untill other elements are supported'&#xa;&#xa;&#xa;      else:&#xa;        print'No 3 dimensional simulations supperted'&#xa;&#xa;      n_elements=elements.n_elements&#xa;      el_set=elements.el_set&#xa;      glo_stif=zeros((n_nodes,n_nodes))&#xa;      for el in range(n_elements):&#xa;        lo_stif=elements.build_local_stiffness(nodes_coords,el)&#xa;        for i in range(1,lo_stif.shape[0]+1):&#xa;          for j in range(1,lo_stif.shape[0]+1):&#xa;            glo_stif[el_set[el,i]-1,el_set[el,j]-1]=\&#xa;            glo_stif[el_set[el,i]-1,el_set[el,j]-1]+\&#xa;            lo_stif[i-1,j-1]&#xa;&#xa;&#xa;&#xa;      return glo_stif&#xa;&#xa;    else:&#xa;      print'Wrong class. input argument should be an instance of simulation.'&#xa;&#xa;&#xa;  def dirichlet_vector(self,simulation,glo_stif):&#xa;    This function computes the d vector associated to Dirichlet&#xa;    boundary conditions on certain nodes of the domain.&#xa;    Parameters:&#xa;      -----------&#xa;      bc_lines:numpy array of dimension(n_lines,3),where the first column&#xa;      is the label that refers to the physical entity where each node belongs,and the other two columns represent node 1 and 2 of the line element dirichlet:list of lists.the first index refers to lists that describe&#xa;      one particular Dirichlet condition,where the first elements of this list is the tag of the physical entity,and the second is an array that has the values over each degree of freedom.glo_stiff:matrix like array of size(n_nodes,n_nodes)called&#xa;      the stiffness matrix of the system.Returns:&#xa;        --------&#xa;        glo_stif_d:global stiffness matrix reduced by removing the rows and&#xa;        columns asociated with the dirichlet conditions.d:Vector associated with siffness matrix over dirichlet nodes.&#xa;        remove:List with the numbers of columns to be removed.&#xa;        &quot; software libre;from numpy import zeros&#xa;        assert isinstance(simulation,Simulation):&#xa;        assert'lines'in simulation.domain.elements.__dict__&#xa;        bc_lines=simulation.domain.elements.lines&#xa;        n_nodes=glo_stif.shape[0]&#xa;        n_lines=simulation.domain.elements.n_lines&#xa;        n_bc_d=len(dirichlet)&#xa;        remove=[]&#xa;        g=zeros(n_nodes)&#xa;        for bc in range(n_bc_d):&#xa;          tag=dirichlet[bc][0]&#xa;          value=dirichlet[bc][1][0][0]&#xa;          for ln in range(n_lines):&#xa;            if bc_lines[ln,0]==tag:&#xa;              g[bc_lines[ln,1]-1]=value&#xa;              g[bc_lines[ln,2]-1]=value&#xa;              if bc_lines[ln,1]-1 not in remove:&#xa;                remove.append(bc_lines[ln,1]-1)&#xa;&#xa;              if bc_lines[ln,2]-1 not in remove:&#xa;                remove.append(bc_lines[ln,2]-1)&#xa;&#xa;&#xa;&#xa;&#xa;        d=dot(glo_stif,g)&#xa;        d=delete(d,remove)&#xa;        glo_stif=delete(glo_stif,remove,0)&#xa;        glo_stif=delete(glo_stif,remove,1)&#xa;        return glo_stif,d,remove,g&#xa;&#xa;      def global_mass_matrix(self,simulation):&#xa;        funtion for the assembly of the global mass matrix.&#xa;        Parameters:&#xa;          -----------&#xa;          simulation:Instance of class Simulation()which contains all&#xa;          of the information needed for an analysis.Read more about the structure of this class somewhere.remove:List with the numbers of columns to be removed&#xa;          Returns:&#xa;            --------&#xa;            glo_mass:Global mass matrix where the dirichlet positions have&#xa;            been" id="KVC9AOfYJxB6"/>
+   </codegenerator>
+  </codegeneration>
+ </XMI.extensions>
+</XMI>
