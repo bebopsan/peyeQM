@@ -45,18 +45,19 @@ class Simulation():
                         'Bloch' For the periodic formulation of the problem.
                                 (Electron in a periodic material )
                 
-        parameter:  Is an array that describes the potential actuating over the
-                    the elements of the domain given by Elems. For each element in
-                    Elems there is an associated potential value on the same
-                    position in the array parameter.
-    
-                    The potential in Scroedinger equation defines the specific
-                    nature of the problem to be solved. For more details on how
-                    to define a potential and what does it mean pleas read the
-                    documentation of the Potential1D function in the module PrePro.
+        body_parameter:  
+                Is an array that describes the potential actuating over the
+                the elements of the domain given by Elems. For each element in
+                Elems there is an associated potential value on the same
+                position in the array parameter.
+
+                The potential in Scroedinger equation defines the specific
+                nature of the problem to be solved. For more details on how
+                to define a potential and what does it mean pleas read the
+                documentation of the Potential1D function in the module PrePro.
     
        
-        eq:         Can be 'Schroedinger' or another not implemented yet
+        sim_type: Can be 'QM' from Quantum Mechanics, or another not implemented yet
         
     
         sol_type:       String that tells wether to solve the stationary version of
@@ -64,7 +65,7 @@ class Simulation():
     
                     'Stationary'   
     
-        analysis_param:   Array that contains the information regarding the number
+        solver_param:   Array that contains the information regarding the number
                          of solutions to be computed and wether to save the values
                          or not.
     
@@ -84,7 +85,7 @@ class Simulation():
         bc_filename:    string that tells where to look for the boundary 
                         conditions  
                             
-         Last modification: date 14/11/2011
+         Last modification: date 12/02/2013
         """
         from read_mesh import read_solver_input
         solver_input = read_solver_input(filename) 
@@ -94,7 +95,7 @@ class Simulation():
             self.body_parameter = solver_input[2]                # Reasign
             self.sim_type = solver_input[3]
             self.time_dependency = solver_input[4]
-            self.bloch_param = solver_input[5]         # the solution 
+            self.solver_param = solver_input[5]         # the solution 
             self.bc_filename = solver_input[6]
         else:
             print 'Pending implementation'

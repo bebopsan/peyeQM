@@ -21,26 +21,27 @@ class Interpreter():
         [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif)
         mass_d = self.global_mass_matrix(simulation, remove)
         v_d = self.global_potential_matrix(simulation, remove)
-        equation = {'left_side': stif_d + v_d,'right_side':mass_d}
+        equation = {'left_side': stif_d + v_d, 'right_side':mass_d, \
+                    'sol_vec':g, 'dir_positions':remove}
         return equation
         
-    def build_QM_bloch_eq(self, simulation):
-        from numpy import asarray,vstack
-        h = 1.
-        m = 1.        
-        print 'Building matrices...\n'        
-        stif = self.global_stiffness_matrix(simulation)
-        stif = h/(2.*m)*stif 
-        mass = self.global_mass_matrix(simulation)
-        v = self.global_potential_matrix(simulation)
-        #================ Convert to complex matrices ====================
-        stif = asarray(stif, dtype = complex)
-        mass = asarray(mass, dtype = complex) 
-        v = asarray(v, dtype = complex)
-         #===== Sum kinetic and potential matrices of the Hamiltonian ======
-        stif = stif + v
-        bloch = simu.domain.boundaries.bloch      
-        #Will continue...
+#    def build_QM_bloch_eq(self, simulation):
+#        from numpy import asarray,vstack
+#        h = 1.
+#        m = 1.        
+#        print 'Building matrices...\n'        
+#        stif = self.global_stiffness_matrix(simulation)
+#        stif = h/(2.*m)*stif 
+#        mass = self.global_mass_matrix(simulation)
+#        v = self.global_potential_matrix(simulation)
+#        #================ Convert to complex matrices ====================
+#        stif = asarray(stif, dtype = complex)
+#        mass = asarray(mass, dtype = complex) 
+#        v = asarray(v, dtype = complex)
+#         #===== Sum kinetic and potential matrices of the Hamiltonian ======
+#        stif = stif + v
+#        bloch = simu.domain.boundaries.bloch      
+#        #Will continue...
         
     def global_stiffness_matrix(self, simulation):
         """
@@ -267,4 +268,67 @@ class Interpreter():
              
         else:
             print 'Wrong class. input argument should be an instance of simulation.'
+    def reference_image_bloch_vectors(simulation, bc_lines, bloch):
+        """
+        This function loads the lines of the boundary and the list that contains 
+        bloch periodicity conditions, and builds a list of arrays that relate
+        image nodes with their corresponding reference nodes.
         
+        Paprameters:
+        -----------
+        
+        bc_lines:   Array of line elements.
+    
+        bloch:      List of bloch conditions as read by a '.bc' file.
+    
+        Returns:
+        --------
+        
+        ref_im:     Each array in the list 'ref_im', has in it's first column the 
+                    reference node and on it's second collumn the image node for 
+                    that particular reference node.
+        """
+        from numpy import zeros, copy
+        bc_lines = simulation.domain
+        n_bloch = bloch.shape[0]
+        it_bloch = range(n_bloch)    
+        n_lines = bc_lines.shape[0]
+        print 'n_lines', n_lines
+        #=========== Create a list of arrays ======================================
+        ref_im = []    
+        for i in it_bloch:    
+            ref_im.append(zeros((n_lines/(2*n_bloch)+1,2), dtype = int))  
+        #=============== Loop and fill the lists ================================== 
+        count = 0
+        i = 0
+        j = 0
+        
+        while count == 0:
+            
+            for bl in it_bloch:
+                
+                
+                if bc_lines[j, 0] == bloch[bl, 0]:
+                    ref_im[bl][i, 0] = bc_lines[j, 1]
+                    if i == n_lines/(2*n_bloch)-1:
+                        ref_im[bl][i+1, 0] = bc_lines[j, 2]
+                    
+                elif bc_lines[j, 0] == bloch[bl, 1]:
+                    ref_im[bl][i, 1] = bc_lines[j, 1]
+                    if i == n_lines/(2*n_bloch)-1:
+                        ref_im[bl][i+1, 1] = bc_lines[j, 2]
+            i = i+1
+            j = j+1
+    
+    	
+            if i == n_lines/(2*n_bloch):
+                i = 0
+            if j >= n_lines:
+                count = 1
+        
+        for bl in it_bloch:
+            if bloch[bl, 2]*bloch[bl, 3] == -1:
+                ref_im[bl][:,1] = copy(ref_im[bl][::-1,1])
+        
+        
+        return ref_im
