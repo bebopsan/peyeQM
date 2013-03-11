@@ -263,6 +263,7 @@ class Quadrilaterals():
             print 'No elements parsed, do something else'
     def numeric_J(self, node_coords, r,s):
         from numpy import dot, zeros
+        from numpy.linalg import det
         if self.order == 2:
             J_mat = zeros((2,2))
             dhdr = [1.0/4.0*(s**2 + s +2*r*(s+ 1)), \
@@ -289,7 +290,7 @@ class Quadrilaterals():
         J_mat[1, 0] = dot(node_coords[1], dhdr)
         J_mat[0, 1] = dot(node_coords[0], dhds)
         J_mat[1, 1] = dot(node_coords[1], dhds)
-        det_J = J_mat.det()    
+        det_J = det(J_mat)
         inv_J = zeros((2,2))
         inv_J[0, 0] = J_mat[1,1]
         inv_J[1, 1] = J_mat[0, 0]
@@ -307,10 +308,10 @@ class Quadrilaterals():
         It returns a matrix that gets added to the global mass matrix.
         """
         
-        from numpy import zeros
+        from numpy import zeros, dot
         from scipy.special.orthogonal import p_roots
         epsilon = 1
-        node_coords = self.extract_el_points(self, nodes, el_id)
+        node_coords = self.extract_el_points(nodes, el_id)
         
         if self.order == 2:               
             h8 = self.h
@@ -321,27 +322,30 @@ class Quadrilaterals():
             # Generation of Gauss-Legendre points using scypys's function:
             r, weights_r  = p_roots(deg_r)
             s, weights_s  = p_roots(deg_s)
+            if self.vectorial:
+                lo_mass = zeros((16,16))     
+            else:
+                lo_mass = zeros((8,8))
             for i in range(deg_r):
                 for j in range(deg_s):
-                    det_J = self.numeric_J(self, node_coords, r[i], s[j])[1] 
+                    det_J = self.numeric_J(node_coords, r[i], s[j])[1] 
                     if self.vectorial:
-                        lo_mass = zeros((16,16))        
                         H8 = zeros((2,16)) 
                         H8[0, 0] = h8[0](r[i], s[j])
                         H8[1, 1] = h8[0](r[i], s[j])
-                        for i in range(1,8):
-                            H8[0, 2*i] = h8[i](r[i], s[j])
-                            H8[1,2*i+1]= h8[i](r[i], s[j])
-                        lo_mass[i, j] =lo_mass[i, j] + \
-                                        weights_r[i]*weights_s[j]*epsilon*\
-                                        H8[j,i]*H8[i,j]*det_J 
+                        for k in range(1,8):
+                            H8[0, 2*k] = h8[k](r[i], s[j])
+                            H8[1,2*k+1]= h8[k](r[i], s[j])
                     else:
-                        H8 = h8
-                        lo_mass = zeros((8,8))
-                        lo_mass[i, j] =lo_mass[i, j] + \
-                                        weights_r[i]*weights_s[j]*epsilon*\
-                                        H8[j]*H8[i]*det_J 
-                
+                        H8 = zeros(8)
+                        for k in range(8):
+                            H8[i] = h8[k](r[i], s[j])                      
+                    print H8,H8.transpose()
+                    print dot(H8.transpose(),H8)
+                    lo_mass = lo_mass + weights_r[i]*weights_s[j]*epsilon*\
+                                        dot(H8.transpose(),H8)*det_J 
+            return lo_mass
+                    
     
 class Triangles():
     """
