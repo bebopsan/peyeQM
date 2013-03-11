@@ -37,7 +37,7 @@ def dirichlet_vector(bc_lines, dirichlet, glo_stif):
         --------
         glo_stif_d:  global stiffness matrix reduced by removing the rows and 
                      columns asociated with the dirichlet conditions.
-        d:  
+        d:        Vector associated with siffness matrix over dirichlet nodes.
         remove:   List with the numbers of columns to be removed.
         
     """ 
