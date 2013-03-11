@@ -159,11 +159,17 @@ class Elements():
   #  def __init__(self, _elements):
     def add(self, _elements):
         from numpy import shape
-        self.lines = _elements['Lines']
-        self.n_lines = shape(self.lines)[0]
+        if 'lin_Lines' in _elements:
+            self.lines = _elements['lin_Lines']
+            self.n_lines = shape(self.lines)[0]
+        elif 'cuad_Lines' in _elements:
+            self.lines = _elements['cuad_Lines']
+            self.n_lines = shape(self.lines)[0]
+            
         if 'Triangles' in _elements:
             self.triangles = Triangles(_elements['Triangles'])
-            
+        if 'cuad_Quads' in _elements:
+            self.quads = Quadrilaterals(_elements['cuad_Quads'])
             
     #It doesn't look so hard to implement square elements
 
@@ -174,6 +180,19 @@ class Elements():
     #   * Area, or other shape attributes like jacobian
     #   * Local matrices...
     
+class Quadrilaterals():
+    """ Quadrilateral elements give better accuracy and resistance to 
+        locking than triangular elements. They can also be more economic
+        when meshing compared to their equivalent triangular peers."""
+    
+    def __init__(self,raw_quads):
+        from numpy import shape
+        self.el_set = raw_quads
+        self.n_elements = shape(self.el_set)[0]
+        if shape(self.el_set)[1] == 5:
+            self.order = 1
+        elif shape(self.el_set)[1] == 9:
+            self.order = 2
     
 class Triangles():
     """
