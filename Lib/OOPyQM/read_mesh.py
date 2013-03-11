@@ -75,53 +75,71 @@ def read_mesh(filename):
     count = 0
     #------------------------ Flags definition-----------------------------
     flag_points = 0         # zero if points elements not added
-    flag_lines = 0          # zero if line elements not added
+    flag_lines_lin = 0          # zero if line elements not added
+    flag_lines_cuad = 0    # zero if cuadratic line elements not present
     flag_triangles = 0      # zero if triangle elements not added 
-    
+    flag_quad_cuad = 0    #zero if cuadratic quadrilateral elements not added
     #------------------------- Array initialization ---------------------    
-    elm_points = np.zeros((1,2),dtype=int)
-    elm_lines = np.zeros((1,3),dtype=int) #phys_ent node1-2
-    elm_triangles = np.zeros((1,4),dtype=int) #phys_ent node1-2-3
+    elm_points = np.zeros((1,2), dtype = int)
+    elm_lines_lin = np.zeros((1,3), dtype = int) #phys_ent node1-2
+    elm_lines_cuad = np.zeros((1,4), dtype = int) #Tag for cuadratic 1D elemen
+    elm_triangles = np.zeros((1,4), dtype = int) #phys_ent node1-2-3
+    elm_quad_cuad = np.zeros((1,9), dtype = int) #Tag for cuadratic quad elem 
     while count < number:
         line = fid.readline()
         values = line.split()
         number_tags = int(values[2]) # Number-of-tags (tags still not used)
         new_elm = [values[3]]
-        new_elm.extend(values[3+number_tags:])
-        new_elm = np.array(new_elm,dtype=int)
-        
+        new_elm.extend(values[3 + number_tags:])
+        new_elm = np.array(new_elm, dtype = int)
+        #print values
         if values[1] == '15':
-                if flag_lines == 1:
-                        elm_points = np.vstack((elm_lines,new_elm))
-                        
+                if flag_lines_lin == 1:
+                        elm_points = np.vstack((elm_lines_lin, new_elm))           
                 else:
                         elm_points = new_elm
                         flag_points = 1
                 #number=number+1
         elif values[1] == '1':
-                if flag_lines == 1:
-                        elm_lines = np.vstack((elm_lines,new_elm))
+                if flag_lines_lin == 1:
+                        elm_lines_lin = np.vstack((elm_lines_lin, new_elm))                        
                 else:
-                        elm_lines = new_elm
-                        flag_lines = 1
+                        elm_lines_lin = new_elm
+                        flag_lines_lin = 1
+        elif values[1] == '8':
+                if flag_lines_cuad == 1:
+                        elm_lines_cuad = np.vstack((elm_lines_cuad, new_elm))                        
+                else:
+                        elm_lines_cuad = new_elm
+                        flag_lines_cuad = 1
         elif values[1] == '2':
                 if flag_triangles == 1:
-                        elm_triangles = np.vstack((elm_triangles,new_elm))
+                        elm_triangles = np.vstack((elm_triangles, new_elm))
                 else:
                         elm_triangles = new_elm
                         flag_triangles = 1
+        elif values[1] == '16':
+                if flag_quad_cuad == 1:
+                        elm_quad_cuad = np.vstack((elm_quad_cuad, new_elm))
+                else:
+                        elm_quad_cuad = new_elm
+                        flag_quad_cuad = 1
         else:
                 print "sol_type", values[1], "in element", values[0], \
                       "is not supported element type."
         count = count + 1
     fid.close()
-    if not flag_triangles:
-        
-        elements = {'Lines': elm_lines}
-            
-    else:
-        elements = { 'Lines': elm_lines, 'Triangles': elm_triangles}
-       
+    elements = {}
+    if flag_points:
+        elements['Points'] = elm_points
+    if flag_lines_lin:     
+        elements['lin_Lines'] = elm_lines_lin
+    if flag_lines_cuad:
+        elements['cuad_Lines'] = elm_lines_cuad
+    if flag_triangles:
+        elements['Triangles'] = elm_triangles
+    if flag_quad_cuad:
+        elements['cuad_Quads'] = elm_quad_cuad 
     return coords, elements
 
 def read_vtk(filename):
