@@ -183,9 +183,13 @@ class Elements():
 class Quadrilaterals():
     """ Quadrilateral elements give better accuracy and resistance to 
         locking than triangular elements. They can also be more economic
-        when meshing compared to their equivalent triangular peers."""
+        when meshing compared to their equivalent triangular peers.
+        Option vectorial will initiate base functions and nodal 
+        representation that accounts for components of the solution function.
+        This means that there will be x and y components of the solution.
+    """
     
-    def __init__(self,raw_quads):
+    def __init__(self,raw_quads, vectorial = True):
         from numpy import shape
         self.el_set = raw_quads
         self.n_elements = shape(self.el_set)[0]
@@ -193,6 +197,151 @@ class Quadrilaterals():
             self.order = 1
         elif shape(self.el_set)[1] == 9:
             self.order = 2
+        if vectorial:
+            self.vectorial = vectorial
+        #Definition of second shape functions according to order and type
+        if self.order == 2:
+            self.h =[lambda r, s: 1.0/4.0*(1+r)*(1+s)-1.0/4.0*(1-r**2)*(1+s)\
+                                                 -1.0/4.0*(1-s**2)*(1+r),\
+                 lambda r, s: 1.0/4.0*(1-r)*(1+s)-1.0/4.0*(1-r**2)*(1+s)\
+                                                 -1.0/4.0*(1-s**2)*(1-r),\
+                 lambda r, s: 1.0/4.0*(1-r)*(1-s)-1.0/4.0*(1-r**2)*(1-s)\
+                                                 -1.0/4.0*(1-s**2)*(1-r),\
+                 lambda r, s: 1.0/4.0*(1+r)*(1-s)-1.0/4.0*(1-r**2)*(1-s)\
+                                                 -1.0/4.0*(1-s**2)*(1+r),\
+                 lambda r, s: 1.0/2.0*(1-r**2)*(1+s),\
+                 lambda r, s: 1.0/2.0*(1-s**2)*(1-r),\
+                 lambda r, s: 1.0/2.0*(1-r**2)*(1-s),\
+                 lambda r, s: 1.0/2.0*(1-s**2)*(1+r)
+                ] 
+        elif self.order == 1:
+            self.h =[lambda r, s: 1.0/4.0*(1+r)*(1+s),\
+                 lambda r, s: 1.0/4.0*(1-r)*(1+s),\
+                 lambda r, s: 1.0/4.0*(1-r)*(1-s),\
+                 lambda r, s: 1.0/4.0*(1+r)*(1-s)
+                ] 
+        else:
+            raise NameError('Not a defined order...')
+    def extract_el_points(self, _nodes, el_id):
+        """
+        Extracts the coordinates of the nodes in each quad element and
+        retrieves an array of node coordinates.
+        
+        Parameters:
+        -----------
+        nodes:  numpy array of dimension (n_nodes, 3), where n_nodes is the 
+                number of nodes forming the mesh, and the three columns 
+                represent coordinates (x, y, z).
+                    
+        el_id:   integer value of the current element
+        
+        Returns:
+        --------
+        node_coor: Array with coordinates of coordinate node. 
+                   If the element is 8 node then array is 2*8
+                   If it is a 4 node element then 2*4.
+        """
+        from numpy import zeros
+        if 'el_set' in self.__dict__:
+            if self.order == 2:
+                p2_quads = self.el_set   
+                node_coords = zeros((2,8))
+                for i in range(8):
+                    node_coords[0,i] = _nodes[p2_quads[el_id, i] - 1,0]
+                    node_coords[1,i] = _nodes[p2_quads[el_id, i] - 1,1]
+                return node_coords   
+            elif self.order == 1:
+                p1_quads = self.el_set                            
+                node_coords = zeros((2,4))
+                for i in range(4):
+                    node_coords[0,i] = _nodes[p1_quads[el_id, i] - 1,0]
+                    node_coords[1,i] = _nodes[p1_quads[el_id, i] - 1,1]
+                return node_coords   
+            else:
+                print 'No higher order elements yet, there must be an error'
+        else:
+            print 'No elements parsed, do something else'
+    def numeric_J(self, node_coords, r,s):
+        from numpy import dot, zeros
+        if self.order == 2:
+            J_mat = zeros((2,2))
+            dhdr = [1.0/4.0*(s**2 + s +2*r*(s+ 1)), \
+                    1.0/4.0*(-s**2 - s +2*r*(s+ 1)), \
+                    1.0/4.0*(-s**2 + s +2*r*(-s+ 1)), \
+                    1.0/4.0*(s**2 - s +2*r*(-s+ 1)), \
+                    -r*(s+ 1), \
+                    -1.0/2.0*(-s**2+ 1), \
+                    -r*(-s+ 1),\
+                    1.0/2.0*(-s**2+ 1)]
+            
+            dhds = [1.0/4.0*(r**2 + r +2*s*(r+ 1)), \
+                    1.0/4.0*(r**2 - r +2*s*(-r+ 1)), \
+                    1.0/4.0*(-r**2 + r +2*s*(-r+ 1)), \
+                    1.0/4.0*(-r**2 - r +2*s*(r+ 1)), \
+                    1.0/2.0*(-r**2 + 1), \
+                    -s*(-r+ 1), \
+                    -1.0/2.0*(-r**2+ 1), \
+                    -s*(r+ 1)]
+        else:
+            print 'linear quad functions pending'
+    
+        J_mat[0, 0] = dot(node_coords[0], dhdr)
+        J_mat[1, 0] = dot(node_coords[1], dhdr)
+        J_mat[0, 1] = dot(node_coords[0], dhds)
+        J_mat[1, 1] = dot(node_coords[1], dhds)
+        det_J = J_mat.det()    
+        inv_J = zeros((2,2))
+        inv_J[0, 0] = J_mat[1,1]
+        inv_J[1, 1] = J_mat[0, 0]
+        inv_J[1, 0] = -J_mat[0, 1]
+        inv_J[0, 1] = -J_mat[1, 0]
+        inv_J = 1.0/det_J * inv_J
+        
+        return J_mat, det_J, inv_J
+
+
+    def local_mass_matrix(self, nodes, el_id):
+        """ 
+        This function calculates the local matrix for a quad element using
+        Gauss Legendre   quadratures as means for integration.
+        It returns a matrix that gets added to the global mass matrix.
+        """
+        
+        from numpy import zeros
+        from scipy.special.orthogonal import p_roots
+        epsilon = 1
+        node_coords = self.extract_el_points(self, nodes, el_id)
+        
+        if self.order == 2:               
+            h8 = self.h
+            # My own non general purpose integration scheme:
+            # Definition of integration degree for each of the coordinates
+            deg_r = 3
+            deg_s = 3
+            # Generation of Gauss-Legendre points using scypys's function:
+            r, weights_r  = p_roots(deg_r)
+            s, weights_s  = p_roots(deg_s)
+            for i in range(deg_r):
+                for j in range(deg_s):
+                    det_J = self.numeric_J(self, node_coords, r[i], s[j])[1] 
+                    if self.vectorial:
+                        lo_mass = zeros((16,16))        
+                        H8 = zeros((2,16)) 
+                        H8[0, 0] = h8[0](r[i], s[j])
+                        H8[1, 1] = h8[0](r[i], s[j])
+                        for i in range(1,8):
+                            H8[0, 2*i] = h8[i](r[i], s[j])
+                            H8[1,2*i+1]= h8[i](r[i], s[j])
+                        lo_mass[i, j] =lo_mass[i, j] + \
+                                        weights_r[i]*weights_s[j]*epsilon*\
+                                        H8[j,i]*H8[i,j]*det_J 
+                    else:
+                        H8 = h8
+                        lo_mass = zeros((8,8))
+                        lo_mass[i, j] =lo_mass[i, j] + \
+                                        weights_r[i]*weights_s[j]*epsilon*\
+                                        H8[j]*H8[i]*det_J 
+                
     
 class Triangles():
     """
@@ -205,7 +354,7 @@ class Triangles():
         #== Assign a local stiffness for the elements given the order===
         if shape(self.el_set)[1] == 4:
             self.order = 1
-
+            
     def extract_el_points(self, _nodes, el_id):
         """
         Extracts the coordinates of the nodes in each triangular element and
