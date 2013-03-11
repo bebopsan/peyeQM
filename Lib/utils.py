@@ -82,14 +82,14 @@ def calculate_area(lines):
     area = sqrt(s*(s-mg_ab)*(s-mg_bc)*(s-mg_ca))
     return area
     
-def substract_1(triangles):
+def substract_1(matrix):
    
-    n_rows = triangles.shape[0]
-    n_cols = triangles.shape[1]
+    n_rows = matrix.shape[0]
+    n_cols = matrix.shape[1]
     for i in range(n_rows):
         for j in range(1, n_cols):
-            triangles[i,j] = triangles[i,j] - 1
-    return triangles
+            matrix[i,j] = matrix[i,j] - 1
+    return matrix
     
     
 def bloch_multiplication(k_x, k_y, nodes, ref_im, *matrices):
