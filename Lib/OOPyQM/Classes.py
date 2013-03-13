@@ -125,7 +125,6 @@ class Domain():
         
         self.nodes.add(_nodes)
         self.elements.add(_elements)
-     
     
     def read_bc_file(self, filename):
         from read_mesh import read_bc
@@ -246,22 +245,23 @@ class Quadrilaterals():
             if self.order == 2:
                 p2_quads = self.el_set   
                 node_coords = zeros((2,8))
-                for i in range(8):
-                    node_coords[0,i] = _nodes[p2_quads[el_id, i] - 1,0]
-                    node_coords[1,i] = _nodes[p2_quads[el_id, i] - 1,1]
+                for i in range(1,9):
+                    node_coords[0,i-1] = _nodes[p2_quads[el_id, i] - 1,0]
+                    node_coords[1,i-1] = _nodes[p2_quads[el_id, i] - 1,1]
+                   
                 return node_coords   
             elif self.order == 1:
                 p1_quads = self.el_set                            
                 node_coords = zeros((2,4))
-                for i in range(4):
-                    node_coords[0,i] = _nodes[p1_quads[el_id, i] - 1,0]
-                    node_coords[1,i] = _nodes[p1_quads[el_id, i] - 1,1]
+                for i in range(1,5):
+                    node_coords[0,i- 1] = _nodes[p1_quads[el_id, i] - 1,0]
+                    node_coords[1,i- 1] = _nodes[p1_quads[el_id, i] - 1,1]
                 return node_coords   
             else:
                 print 'No higher order elements yet, there must be an error'
         else:
             print 'No elements parsed, do something else'
-    def numeric_J(self, node_coords, r,s):
+    def numeric_J(self, node_coords, r,s, dHdrs = False):
         from numpy import dot, zeros
         from numpy.linalg import det
         if self.order == 2:
@@ -297,8 +297,11 @@ class Quadrilaterals():
         inv_J[1, 0] = -J_mat[0, 1]
         inv_J[0, 1] = -J_mat[1, 0]
         inv_J = 1.0/det_J * inv_J
-        
-        return J_mat, det_J, inv_J
+        if dHdrs:
+            from numpy import array
+            return J_mat, det_J, inv_J, array([dhdr,dhds])
+        else:
+            return J_mat, det_J, inv_J
 
 
     def local_mass_matrix(self, nodes, el_id):
@@ -306,19 +309,28 @@ class Quadrilaterals():
         This function calculates the local matrix for a quad element using
         Gauss Legendre   quadratures as means for integration.
         It returns a matrix that gets added to the global mass matrix.
+        
+        Parameters:
+            nodes:  Array of nodes, attribute node_coord from class Nodes()
+            el_id: Integer that points to a certain element in the el_set
+        output: 
+            lo_mass: Array defining the local mass matrix of the problem
+                    given by:
+                        int_{\Omega} H^T \bar{\bar{\epsilon}} H det(J) d \Omega_{el}
+                    Where H = interpolation functions according to whether
+                              the formulation of the problem is scalar or vectorial
         """
         
         from numpy import zeros, dot
         from scipy.special.orthogonal import p_roots
         epsilon = 1
         node_coords = self.extract_el_points(nodes, el_id)
-        
         if self.order == 2:               
             h8 = self.h
             # My own non general purpose integration scheme:
             # Definition of integration degree for each of the coordinates
             deg_r = 3
-            deg_s = 3
+            deg_s = 3 
             # Generation of Gauss-Legendre points using scypys's function:
             r, weights_r  = p_roots(deg_r)
             s, weights_s  = p_roots(deg_s)
@@ -328,7 +340,7 @@ class Quadrilaterals():
                 lo_mass = zeros((8,8))
             for i in range(deg_r):
                 for j in range(deg_s):
-                    det_J = self.numeric_J(node_coords, r[i], s[j])[1] 
+                    J,det_J,invJ = self.numeric_J(node_coords, r[i], s[j]) 
                     if self.vectorial:
                         H8 = zeros((2,16)) 
                         H8[0, 0] = h8[0](r[i], s[j])
@@ -340,12 +352,68 @@ class Quadrilaterals():
                         H8 = zeros(8)
                         for k in range(8):
                             H8[i] = h8[k](r[i], s[j])                      
-                    print H8,H8.transpose()
-                    print dot(H8.transpose(),H8)
+                  
                     lo_mass = lo_mass + weights_r[i]*weights_s[j]*epsilon*\
                                         dot(H8.transpose(),H8)*det_J 
             return lo_mass
-                    
+    def build_local_stiffness(self, nodes, el_id):
+        """
+         This function calculates the local stiffness matrix for a 
+         quad element using Gauss Legendre   quadratures as means for 
+         integration.
+         It returns a matrix that gets added to the global stiffness matrix.
+        
+        Parameters:
+            nodes:  Array of nodes, attribute node_coord from class Nodes()
+            el_id: Integer that points to a certain element in the el_set
+        output: 
+            lo_stiff: Array defining the local stiffness matrix of the problem
+                    given by:
+                        \[\integrate_\Omega\nabla^2\mathbf{E} \mathbf{E} d\Omega = \integrate_\Gamma \mathbf{W}\cdot (\grad\mathbf{E}\cdot \hat{n})d\Gamma
+                        - \integrate_\Omega \nabla\mathbf{E} : \nabla\mathbf{W} d\Omega  \]
+        """
+        from numpy import zeros, dot
+        from scipy.special.orthogonal import p_roots
+        mu = 1
+        node_coords = self.extract_el_points(nodes, el_id)
+        if self.order == 2:               
+            # My own non general purpose integration scheme:
+            # Definition of integration degree for each of the coordinates
+            deg_r = 3
+            deg_s = 3 
+            # Generation of Gauss-Legendre points using scypys's function:
+            r, weights_r  = p_roots(deg_r)
+            s, weights_s  = p_roots(deg_s)
+            if self.vectorial:
+                lo_stiff = zeros((16,16))     
+            else:
+                lo_stiff = zeros((8,8))
+            for i in range(deg_r):
+                for j in range(deg_s):
+                    J,det_J,invJ, dHdr = self.numeric_J(node_coords, r[i], s[j], dHdrs = True) 
+                    dHdx = dot(invJ, dHdr)                    
+                    if self.vectorial:
+                        B8 = zeros((4,16)) 
+                        B8[0, 0] = dHdx[0, 0]
+                        B8[1,1] = dHdx[1, 0]
+                        B8[2,0] = dHdx[1, 0]
+                        B8[3, 1] = dHdx[0, 0]
+                        for k in range(1,8):
+                            B8[0, 2*k] = dHdx[0, k]
+                            B8[1, 2*k+1]= dHdx[1, k]
+                            B8[2, 2*k] = dHdx[1, k]
+                            B8[3, 2*k+1]= dHdx[0, k]
+                    else:
+                        B8 = zeros((2,8))
+                        B8[0, 0] = dHdx[0, 0]
+                        B8[1,1] = dHdx[1, 0]
+                        for k in range(1,9):
+                            B8[0, 2*k] = dHdx[0, k]
+                            B8[1, 2*k+1]= dHdx[1, k]
+                    lo_stiff = lo_stiff + weights_r[i]*weights_s[j]*mu*\
+                                        dot(B8.transpose(), B8)*det_J 
+            return lo_stiff                 
+            
     
 class Triangles():
     """

@@ -43,7 +43,7 @@ class Interpreter():
 #        bloch = simu.domain.boundaries.bloch      
 #        #Will continue...
         
-    def global_stiffness_matrix(self, simulation):
+    def global_stiffness_matrix(self, simulation, vectorial = False):
         """
         Funtion for the assembly of the global stiffnes matrix of a 
         simulation file. 
@@ -76,30 +76,47 @@ class Interpreter():
             elif simulation.dimension == 2:
                 if 'triangles' in sim_elements.__dict__:
                     elements = sim_elements.triangles
+                elif 'quads' in sim_elements.__dict__:
+                    elements = sim_elements.quads
                 else:
                     print 'Wait untill other elements are supported'
             else:
                 print 'No 3 dimensional simulations supperted'
+            if vectorial:
+                n_elements = elements.n_elements   
+                el_set = elements.el_set
+                glo_stif = zeros((2*n_nodes, 2*n_nodes))
+                for el in range(n_elements):
+                    lo_stif = elements.build_local_stiffness(nodes_coords, el)
+                    
+                    for i in range(1, lo_stif.shape[0]/2+1):
+                        for j in range(1, lo_stif.shape[0]/2+1):                            
+                            glo_stif[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
+                            glo_stif[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
+                            lo_stif[2*(i-1),2*(j-1)]
+                            glo_stif[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
+                            glo_stif[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
+                            lo_stif[2*(i-1)+1,2*(j-1)+1]
+            else:
+                n_elements = elements.n_elements
+                el_set = elements.el_set
             
-            n_elements = elements.n_elements
-            el_set = elements.el_set
-        
-            glo_stif = zeros((n_nodes, n_nodes))            
-            
-            for el in range(n_elements):
-                lo_stif = elements.build_local_stiffness(nodes_coords, el)
-                for i in range(1, lo_stif.shape[0]+1):
-                    for j in range(1, lo_stif.shape[0]+1):
-                        
-                        glo_stif[el_set[el, i]-1, el_set[el, j]-1] = \
-                        glo_stif[el_set[el, i]-1, el_set[el, j]-1] + \
-                        lo_stif[i-1,j-1]
-                        #                      ^ due to python's 0 base numbering
+                glo_stif = zeros((n_nodes, n_nodes))            
+                
+                for el in range(n_elements):
+                    lo_stif = elements.build_local_stiffness(nodes_coords, el)
+                    for i in range(1, lo_stif.shape[0]+1):
+                        for j in range(1, lo_stif.shape[0]+1):
+                            
+                            glo_stif[el_set[el, i]-1, el_set[el, j]-1] = \
+                            glo_stif[el_set[el, i]-1, el_set[el, j]-1] + \
+                            lo_stif[i-1,j-1]
+                            #                      ^ due to python's 0 base numbering
             return glo_stif
         else:
             print 'Wrong class. input argument should be an instance of simulation.'
             
-    def dirichlet_vector(self, simulation, glo_stif):
+    def dirichlet_vector(self, simulation, glo_stif, vectorial = False):
         """
         This function computes the d vector associated to Dirichlet
         boundary conditions on certain nodes of the domain. 
@@ -137,25 +154,47 @@ class Interpreter():
         dirichlet = simulation.domain.boundaries.dirichlet
         n_nodes = glo_stif.shape[0]         # Number (n) of nodes
         n_lines = simulation.domain.elements.n_lines         # Number of lines
-        
+        nodes_line = bc_lines.shape[1]
 #not needed        n_bc_d = len(dirichlet)  # Number of Dirichlet boundary conditions
         remove = []              # This vector will tell which rows and columns
                                  # should be removed 
+       
         g = zeros(n_nodes)
-        for tag in dirichlet:
-            value = dirichlet[tag][0][0]
-            
-            for ln in range(n_lines):
+        if vectorial:
+            for tag in dirichlet:
+                xvalue = dirichlet[tag][0][0]
+                yvalue = dirichlet[tag][0][1]
+                for ln in range(n_lines):
+                    #print bc_lines[ln, 0]
+                    if bc_lines[ln, 0] == int(tag):
+                        #print bc_lines[ln, 0],'look here'
+                        print bc_lines[ln,1:nodes_line]
+                        for node in bc_lines[ln,1:nodes_line]:
+                            print node-1
+                            g[2*(node - 1)] = xvalue
+                            g[2*(node - 1)+1] = yvalue
+                            if 2*(node-1) not in remove: # makes a list for removing
+                                remove.append(2*(node- 1))# lines and columns.
+                                remove.append(2*(node- 1)+1)
+                            print remove
+#                    else:      
+                    # so here I found a bug...  if there are no tags defined 
+                    # it will inmediatly assume a zero value.
+        else:            
+            g = zeros(n_nodes)
+            for tag in dirichlet:
+                value = dirichlet[tag][0][0]
                 
-                if bc_lines[ln, 0] == int(tag):
-                    g[bc_lines[ln, 1]-1] = value
-                    g[bc_lines[ln, 2]-1] = value
+                for ln in range(n_lines):
                     
-                    if bc_lines[ln, 1]-1 not in remove: # makes a list for removing
-                        remove.append(bc_lines[ln, 1]-1)# lines and columns.
-                    if bc_lines[ln, 2]-1 not in remove:
-                        remove.append(bc_lines[ln, 2]-1)
-            
+                    if bc_lines[ln, 0] == int(tag):
+                        g[bc_lines[ln, 1]-1] = value
+                        g[bc_lines[ln, 2]-1] = value
+                        
+                        if bc_lines[ln, 1]-1 not in remove: # makes a list for removing
+                            remove.append(bc_lines[ln, 1]-1)# lines and columns.
+                        if bc_lines[ln, 2]-1 not in remove:
+                            remove.append(bc_lines[ln, 2]-1)
         d = dot(glo_stif, g)
         d = delete(d, remove)
         
@@ -164,7 +203,7 @@ class Interpreter():
         
         return glo_stif, d, remove, g
         
-    def global_mass_matrix(self, simulation, *remove):
+    def global_mass_matrix(self, simulation, vectorial = False, *remove):
         """
         funtion for the assembly of the global mass matrix.
         
@@ -192,27 +231,42 @@ class Interpreter():
             elif simulation.dimension == 2:
                 if 'triangles' in sim_elements.__dict__:
                     elements = sim_elements.triangles
+                elif 'quads' in sim_elements.__dict__:
+                    elements = sim_elements.quads
                 else:
                     print 'Wait untill other elements are supported'
             else:
                 print 'No 3 dimensional simulations supperted'
-            n_elements = elements.n_elements
+            n_elements = elements.n_elements   
             el_set = elements.el_set
-            glo_mass = zeros((n_nodes, n_nodes))# Initiate Global (glo) mass matrix
-            
-            for el in range(n_elements):
-                #pending for iteration over elements }
-                # call to local_mass_matrix
-                lo_mass = elements.local_mass_matrix(nodes_coords, el)
-                for i in range(1, lo_mass.shape[0]+1):
-                    for j in range(1, lo_mass.shape[0]+1):                       
-                        glo_mass[el_set[el, i]-1, el_set[el, j]-1] = \
-                        glo_mass[el_set[el, i]-1, el_set[el, j]-1] + \
-                        lo_mass[i-1,j-1]
+            if vectorial:
+                glo_mass = zeros((2*n_nodes, 2*n_nodes))
+                for el in range(n_elements):
+                    lo_mass = elements.local_mass_matrix(nodes_coords, el)
+                    for i in range(1, lo_mass.shape[0]/2+1):
+                        for j in range(1, lo_mass.shape[0]/2+1):                            
+                            glo_mass[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
+                            glo_mass[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
+                            lo_mass[2*(i-1),2*(j-1)]
+                            glo_mass[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
+                            glo_mass[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
+                            lo_mass[2*(i-1)+1,2*(j-1)+1]
+            else:
+                glo_mass = zeros((n_nodes, n_nodes))# Initiate Global (glo) mass matrix
+                
+                for el in range(n_elements):
+                    #pending for iteration over elements }
+                    # call to local_mass_matrix
+                    lo_mass = elements.local_mass_matrix(nodes_coords, el)
+                    for i in range(1, lo_mass.shape[0]+1):
+                        for j in range(1, lo_mass.shape[0]+1):                       
+                            glo_mass[el_set[el, i]-1, el_set[el, j]-1] = \
+                            glo_mass[el_set[el, i]-1, el_set[el, j]-1] + \
+                            lo_mass[i-1,j-1]
             glo_mass_d = delete(glo_mass, remove, 0)
             glo_mass_d = delete(glo_mass_d, remove, 1)
             return glo_mass_d
-             
+                 
         else:
             print 'Wrong class. input argument should be an instance of simulation.'
         
@@ -245,6 +299,8 @@ class Interpreter():
             elif simulation.dimension == 2:
                 if 'triangles' in sim_elements.__dict__:
                     elements = sim_elements.triangles
+                elif 'quads' in sim_elements.__dict__:
+                    elements = sim_elements.quads
                 else:
                     print 'Wait untill other elements are supported'
             else:

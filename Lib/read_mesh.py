@@ -439,7 +439,7 @@ def read_bc(filename):
     Where D stands for Dirichlet boundaries, N to Newman, and B for Bloch
     periodic. Physical lines have to be created in order to asociate boundary
     nodes to their corresponding lines.    
-    Each boundary condistion consist in three lines like the following example:
+    Each boundary condition consist in three lines like the following example:
     
     8
     B 1
