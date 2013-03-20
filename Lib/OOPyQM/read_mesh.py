@@ -91,8 +91,8 @@ def read_mesh(filename):
         number_tags = int(values[2]) # Number-of-tags (tags still not used)
         new_elm = [values[3]]
         new_elm.extend(values[3 + number_tags:])
-        new_elm = np.array(new_elm, dtype = int)
-        #print values
+        new_elm = np.array([new_elm], dtype = int)
+       #print values
         if values[1] == '15':
                 if flag_lines_lin == 1:
                         elm_points = np.vstack((elm_lines_lin, new_elm))           
@@ -120,9 +120,12 @@ def read_mesh(filename):
                         flag_triangles = 1
         elif values[1] == '16':
                 if flag_quad_cuad == 1:
+                        
                         elm_quad_cuad = np.vstack((elm_quad_cuad, new_elm))
+                       
                 else:
                         elm_quad_cuad = new_elm
+                        
                         flag_quad_cuad = 1
         else:
                 print "sol_type", values[1], "in element", values[0], \

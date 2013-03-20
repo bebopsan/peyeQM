@@ -25,6 +25,26 @@ class Interpreter():
                     'sol_vec':g, 'dir_positions':remove}
         return equation
         
+    def build_harmonic_EM_eq(self, simulation):
+        epsilon = 1
+        mu = 1
+        simulation.domain.read_bc_file(simulation.bc_filename)
+        print 'Building matrices...\n'    
+        stif = self.global_stiffness_matrix(simulation, True)
+        stif = (1/mu) * stif
+        print stif
+        [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif, True)
+        mass_d = self.global_mass_matrix(simulation, True, remove)
+        mass_d = epsilon * mass_d
+        print 'd',d
+        equation = {'left_side': stif_d - mass_d, 'right_side':-d, \
+                    'sol_vec':g, 'dir_positions':remove, 'vectorial':True}
+        return equation
+# With this I write to the mesh file the necesary information to run a 
+# static dirichlet bounded problem given a 2D problem.        
+# write_solver_input('square8_cap.msh',dimension = 2, bc_type = 'Dir', \
+#parameter = [], eq = 'Harm_Elec', sol_type = 'Stationary',analysis_param \
+#= ['y', 'y', 4, 4, 20, 20, 2], bc_filename = 'square.bc')        
 #    def build_QM_bloch_eq(self, simulation):
 #        from numpy import asarray,vstack
 #        h = 1.
@@ -107,7 +127,6 @@ class Interpreter():
                     lo_stif = elements.build_local_stiffness(nodes_coords, el)
                     for i in range(1, lo_stif.shape[0]+1):
                         for j in range(1, lo_stif.shape[0]+1):
-                            
                             glo_stif[el_set[el, i]-1, el_set[el, j]-1] = \
                             glo_stif[el_set[el, i]-1, el_set[el, j]-1] + \
                             lo_stif[i-1,j-1]
@@ -123,20 +142,13 @@ class Interpreter():
         
         Parameters:
         -----------
-        bc_lines:  numpy array of dimension (n_lines, 3), where the first column
-                   is the label that refers to the physical entity where each 
-                   node belongs, and the other two columns represent node 1 and
-                   2 of the line element
-                
-        dirichlet: list of lists. the first index refers to lists that describe
-                   one particular Dirichlet condition, where the first elements 
-                   of this list is the tag of the physical entity, and the 
-                   second is an array that has the values over each degree of 
-                   freedom.
+        simulation: Instance of Simulation() which contains many of the 
+                    characteristics of the problem definition.
                    
         glo_stiff: matrix like array of size (n_nodes,n_nodes) called
                    the stiffness matrix of the system.
-                   
+        vectorial: Indicates if the simulation has to be defined as scalar or
+                   vectorial. 
            
         Returns:
         --------
@@ -144,7 +156,7 @@ class Interpreter():
                      columns asociated with the dirichlet conditions.
         d:        Vector associated with siffness matrix over dirichlet nodes.
         remove:   List with the numbers of columns to be removed.
-            
+        g:                  
         """ 
         from numpy import zeros, dot, delete 
         
@@ -160,6 +172,73 @@ class Interpreter():
                                  # should be removed 
        
         g = zeros(n_nodes)
+        if vectorial:
+            for tag in dirichlet:
+                xvalue = dirichlet[tag][0][0]
+                yvalue = dirichlet[tag][0][1]
+                for ln in range(n_lines):
+                    #print bc_lines[ln, 0]
+                    if bc_lines[ln, 0] == int(tag):
+                        #print bc_lines[ln, 0],'look here'
+                        for node in bc_lines[ln,1:nodes_line]:
+                            g[2*(node - 1)] = xvalue
+                            g[2*(node - 1)+1] = yvalue
+                            if 2*(node-1) not in remove: # makes a list for removing
+                                remove.append(2*(node- 1))# lines and columns.
+                                remove.append(2*(node- 1)+1)
+#                    else:      
+                    # so here I found a bug...  if there are no tags defined 
+                    # it will inmediatly assume a zero value.
+        else:            
+            g = zeros(n_nodes)
+            for tag in dirichlet:
+                value = dirichlet[tag][0][0]
+                
+                for ln in range(n_lines):
+                    
+                    if bc_lines[ln, 0] == int(tag):
+                        g[bc_lines[ln, 1]-1] = value
+                        g[bc_lines[ln, 2]-1] = value
+                        
+                        if bc_lines[ln, 1]-1 not in remove: # makes a list for removing
+                            remove.append(bc_lines[ln, 1]-1)# lines and columns.
+                        if bc_lines[ln, 2]-1 not in remove:
+                            remove.append(bc_lines[ln, 2]-1)
+        d = dot(glo_stif, g)
+        d = delete(d, remove)
+        
+        glo_stif = delete(glo_stif, remove, 0)
+        glo_stif = delete(glo_stif, remove, 1)
+        
+        return glo_stif, d, remove, g
+    def newman_vector(self, simulation, remove, vectorial = False):      
+        """
+        This function computes the q vector associated to Newman
+        boundary conditions on certain nodes of the domain. 
+        
+        Parameters:
+        -----------
+        simulation:  Instance of class Simulation( ) which contains all 
+                    of the information needed for an analysis.
+                    Read more about the structure of this class somewhere.
+         
+                   
+        remove:   List with the numbers of columns to be removed.
+        
+        Returns:
+        --------
+        q:        Newman vector defined by...      
+        """ 
+        from numpy import zeros, dot, delete 
+        #assert isinstance(simulation, Simulation)        
+        assert 'lines' in simulation.domain.elements.__dict__
+        bc_lines = simulation.domain.elements.lines
+        newman = simulation.domain.boundaries.newman
+        n_nodes = glo_stif.shape[0]         # Number (n) of nodes
+        n_lines = simulation.domain.elements.n_lines         # Number of lines
+        nodes_line = bc_lines.shape[1]
+#not needed        n_bc_d = len(dirichlet)  # Number of Dirichlet boundary conditions
+        q = zeros(n_nodes)
         if vectorial:
             for tag in dirichlet:
                 xvalue = dirichlet[tag][0][0]
@@ -202,7 +281,6 @@ class Interpreter():
         glo_stif = delete(glo_stif, remove, 1)
         
         return glo_stif, d, remove, g
-        
     def global_mass_matrix(self, simulation, vectorial = False, *remove):
         """
         funtion for the assembly of the global mass matrix.
@@ -271,59 +349,77 @@ class Interpreter():
             print 'Wrong class. input argument should be an instance of simulation.'
         
         
-    def global_potential_matrix(self, simulation, *remove):
-        """
-            funtion for the ensamble of the global potential matrix
-            
-            Parameters:
-            -----------
-            simulation: Instance of class Simulation( ) which contains all 
-                    of the information needed for an analysis.
-                    Read more about the structure of this class somewhere.
-                    
-            remove:     List with the numbers of columns to be removed
-                        
-            Returns:
-            --------
-        """
-        from numpy import zeros, delete
-        #If simulation is an instance of Classes.Simulation()
-        if True:
-            nodes_coords = simulation.domain.nodes.coords            
-            n_nodes = simulation.domain.nodes.n
-            sim_elements = simulation.domain.elements
-            v = simulation.body_parameter
-            if simulation.dimension == 1:
-                elements = sim_elements.lines
-                # Pending to add 1D support
-            elif simulation.dimension == 2:
-                if 'triangles' in sim_elements.__dict__:
-                    elements = sim_elements.triangles
-                elif 'quads' in sim_elements.__dict__:
-                    elements = sim_elements.quads
-                else:
-                    print 'Wait untill other elements are supported'
-            else:
-                print 'No 3 dimensional simulations supperted'
-            n_elements = elements.n_elements
-            el_set = elements.el_set
-            glo_v = zeros((n_nodes, n_nodes))# Initiate Global (glo) mass matrix
-            
-            for el in range(n_elements):
-                #pending for iteration over elements }
-                # call to local_mass_matrix
-                lo_v = elements.local_potential_matrix(nodes_coords, el_set, v, el)
-                for i in range(1, lo_v.shape[0]+1):
-                    for j in range(1, lo_v.shape[0]+1):                       
-                        glo_v[el_set[el, i]-1, el_set[el, j]-1] = \
-                        glo_v[el_set[el, i]-1, el_set[el, j]-1] + \
-                        lo_v[i-1,j-1]
-            glo_v_d = delete(glo_v, remove, 0)
-            glo_v_d = delete(glo_v_d, remove, 1)
-            return glo_v_d
-             
-        else:
-            print 'Wrong class. input argument should be an instance of simulation.'
+#    def global_potential_matrix(self, simulation,vectorial = False, *remove):
+#        """
+#            funtion for the ensamble of the global potential matrix
+#
+#            This function is pending to develop because the electromagnetism 
+#            related proyect I'm using, which doesn't necesarily calls 
+#            potential matrices. 
+#                        
+#            Parameters:
+#            -----------
+#            simulation: Instance of class Simulation( ) which contains all 
+#                    of the information needed for an analysis.
+#                    Read more about the structure of this class somewhere.
+#                    
+#            remove:     List with the numbers of columns to be removed
+#                        
+#            Returns:
+#            --------
+#        """
+#        from numpy import zeros, delete
+#        #If simulation is an instance of Classes.Simulation()
+#        if True:
+#            v = simulation. 
+#            nodes_coords = simulation.domain.nodes.coords            
+#            n_nodes = simulation.domain.nodes.n
+#            sim_elements = simulation.domain.elements
+#            v = simulation.body_parameter
+#            if simulation.dimension == 1:
+#                elements = sim_elements.lines
+#                # Pending to add 1D support
+#            elif simulation.dimension == 2:
+#                if 'triangles' in sim_elements.__dict__:
+#                    elements = sim_elements.triangles
+#                elif 'quads' in sim_elements.__dict__:
+#                    elements = sim_elements.quads
+#                else:
+#                    print 'Wait untill other elements are supported'
+#            else:
+#                print 'No 3 dimensional simulations supperted'
+#            n_elements = elements.n_elements
+#            el_set = elements.el_setf
+#            if vectorial:
+#                glo_v = zeros((2*n_nodes, 2*n_nodes))
+#                for el in range(n_elements):
+#                    lo_v = elements.local_potential_matrix(nodes_coords, el_set, v el)
+#                    for i in range(1, lo_v.shape[0]/2+1):
+#                        for j in range(1, lo_v.shape[0]/2+1):                            
+#                            glo_v[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
+#                            glo_v[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
+#                            lo_v[2*(i-1),2*(j-1)]
+#                            glo_v[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
+#                            glo_v[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
+#                            lo_v[2*(i-1)+1,2*(j-1)+1]
+#            else:
+#                glo_v = zeros((n_nodes, n_nodes))# Initiate Global (glo) mass matrix
+#                
+#                for el in range(n_elements):
+#                    #pending for iteration over elements }
+#                    # call to local_mass_matrix
+#                    lo_v = elements.local_potential_matrix(nodes_coords, el_set, v, el)
+#                    for i in range(1, lo_v.shape[0]+1):
+#                        for j in range(1, lo_v.shape[0]+1):                       
+#                            glo_v[el_set[el, i]-1, el_set[el, j]-1] = \
+#                            glo_v[el_set[el, i]-1, el_set[el, j]-1] + \
+#                            lo_v[i-1,j-1]
+#                glo_v_d = delete(glo_v, remove, 0)
+#                glo_v_d = delete(glo_v_d, remove, 1)
+#                return glo_v_d
+#                 
+#        else:
+#            print 'Wrong class. input argument should be an instance of simulation.'
     def reference_image_bloch_vectors(simulation, bc_lines, bloch):
         """
         This function loads the lines of the boundary and the list that contains 

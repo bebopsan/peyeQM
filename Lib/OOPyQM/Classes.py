@@ -57,7 +57,7 @@ class Simulation():
                 documentation of the Potential1D function in the module PrePro.
     
        
-        sim_type: Can be 'QM' from Quantum Mechanics, or another not implemented yet
+        sim_type: Can be 'QM' from Quantum Mechanics, or 'Harm_Elec'
         
     
         sol_type:       String that tells wether to solve the stationary version of
@@ -303,7 +303,62 @@ class Quadrilaterals():
         else:
             return J_mat, det_J, inv_J
 
-
+    def local_potential_matrix(self, nodes, v, el_id):
+        """ 
+        This function calculates the local potential matrix for a quad
+        element using Gauss Legendre   quadratures as means for 
+        integration.
+        It returns a matrix that gets added to the global mass matrix.
+        
+        Parameters:
+            nodes:  Array of nodes, attribute node_coord from class Nodes()
+            v:     Potential is a vector that contains values for field 
+                   parameters such as gravitational forces in  
+            el_id: Integer that points to a certain element in the el_set
+        output: 
+            lo_mass: Array defining the local mass matrix of the problem
+                    given by:
+                        int_{\Omega} H^T \bar{\bar{\epsilon}} H det(J) 
+                        d \Omega_{el}
+                    Where H = interpolation functions according to whether
+                              the formulation of the problem is scalar or vectorial
+        """
+        from numpy import zeros, dot
+        from scipy.special.orthogonal import p_roots
+        node_coords = self.extract_el_points(nodes, el_id)
+        if self.order == 2:
+            h8 = self.h
+            # My own non general purpose integration scheme:
+            # Definition of integration degree for each of the coordinates
+            deg_r = 3
+            deg_s = 3 
+            # Generation of Gauss-Legendre points using scypys's function:
+            r, weights_r  = p_roots(deg_r)
+            s, weights_s  = p_roots(deg_s)
+            if self.vectorial:
+                lo_v = zeros((16,16))     
+            else:
+                lo_v = zeros((8,8))
+            for i in range(deg_r):
+                for j in range(deg_s):
+                    J,det_J,invJ = self.numeric_J(node_coords, r[i], s[j]) 
+                    if self.vectorial:
+                        H8 = zeros((2,16)) 
+                        H8[0, 0] = h8[0](r[i], s[j])
+                        H8[1, 1] = h8[0](r[i], s[j])
+                        for k in range(1,8):
+                            H8[0, 2*k] = h8[k](r[i], s[j])
+                            H8[1,2*k+1]= h8[k](r[i], s[j])
+                    else:
+                        H8 = zeros(8)
+                        for k in range(8):
+                            H8[i] = h8[k](r[i], s[j])                      
+                  
+                    lo_v = lo_v + weights_r[i]*weights_s[j]*\
+                                        dot(H8.transpose(),H8)*det_J 
+            lo_v = dot(lo_v,v)
+            return lo_v  
+            
     def local_mass_matrix(self, nodes, el_id):
         """ 
         This function calculates the local matrix for a quad element using

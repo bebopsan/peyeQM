@@ -35,18 +35,24 @@ def write_vtk(filename, title, SET, points, cells, data):
     fid.write('# vtk DataFile Version 2.0\n')
     if title == '':
 	title = 'Data'
-    if SET == '':
-	SET = 'POLYDATA'
     fid.write(title+'\n')
     fid.write('ASCII\n')
+    if SET == '':
+	SET = 'POLYDATA'
+
     fid.write('DATASET '+SET+'\n')
     n = points.shape[0] # number-of-points
     datatype = 'double' # Future datatype will be extracted from ndarray.dtype
     fid.write('POINTS '+str(n)+' '+datatype+'\n')
     np.savetxt(fid, points, fmt = '%6.6f')
     m = cells.shape # number-of-elms and number-of-nodes by elm
-    fid.write('POLYGONS '+str(m[0])+' '+str(m[0]*(m[1]+1))+'\n') 
+    if SET == 'POLYDATA':
+        fid.write('POLYGONS '+str(m[0])+' '+str(m[0]*(m[1]+1))+'\n') 
     # elm, elm*(nodbyelm+1) +1 is because include number-of-nodes of polygon
+    elif SET == 'UNSTRUCTURED_GRID':
+        fid.write('CELLS '+str(m[0])+' '+str(m[0]*(m[1]+1))+'\n') 
+    else:
+        print 'Other types of DATASETS have not been implemented'
     count = 0
     while count < m[0]:
     	new_elm = np.array(m[1],dtype=int)
@@ -57,9 +63,17 @@ def write_vtk(filename, title, SET, points, cells, data):
 		cellsvtk = new_elm.copy()
 	count = count + 1
     np.savetxt(fid,cellsvtk,fmt='%d')
+    if SET == 'UNSTRUCTURED_GRID':
+        fid.write('CELL_TYPES '+str(m[0])+'\n')
+        cell_ids = np.ones(m[0])
+        if m[1] == 8:
+            element_tag = 23
+        else:
+            print 'just cuad Quads for now, have some patience'
+        for i in range(m[0]):
+            cell_ids[i] = element_tag*cell_ids[i]
+        np.savetxt(fid, cell_ids, fmt = '%d')
     ndata = len(data)/3 # sets of data to visualize
-    print 'ndata', ndata
-    
     
     if not ndata:
 	print len(data),"arguments, but you need to put 3 arguments by set of data."
@@ -103,19 +117,33 @@ def write_vtk(filename, title, SET, points, cells, data):
 #                fid.write("\\\ The following number tells the amount of Scalar vectors to read")
 #                fid.write('\n'+'\\\  '+str(p[1])+'\n')                
                 count2 = 0
-                while count2 < p[1]:
-                    
-                    if data[3*count+1] == '':
-                        data[3*count+1] = 'Data '+str(count+1)+str(count2)
-                    TYPE = 'double'
-                    fid.write(data[3*count]+' '+data[3*count+1][k]+ \
-                              '_'+str(count2)+' '+TYPE+'\n')
-                    fid.write("LOOKUP_TABLE defaul\n")
-
-                    
-                    np.savetxt(fid, data[3*count+2][k][:, count2], \
-                                fmt = '%6.6f')
-                    count2 = count2+1
+                if data[0] == 'SCALARS':
+                    while count2 < p[1]:
+                        
+                        if data[3*count+1] == '':
+                            data[3*count+1] = 'Data '+str(count+1)+str(count2)
+                        TYPE = 'double'
+                        fid.write(data[3*count]+' '+data[3*count+1][k]+ \
+                                  '_'+str(count2)+' '+TYPE+'\n')
+                        fid.write("LOOKUP_TABLE defaul\n")
+                        np.savetxt(fid, data[3*count+2][k][:, count2], \
+                                    fmt = '%6.6f')
+                        count2 = count2+1
+                elif data[0] == 'VECTORS':
+                        if data[3*count+1] == '':
+                            data[3*count+1] = 'Data '+str(count+1)
+                        TYPE = 'double'
+                        fid.write(data[3*count]+' '+data[3*count+1][k]+ \
+                                  ' '+TYPE+'\n')
+                        #fid.write("LOOKUP_TABLE defaul\n")
+    
+                        
+                        np.savetxt(fid, data[3*count+2][k], \
+                                    fmt = '%+6.6f %+6.6f %d')
+                        
+                        
+                else:
+                    print 'Not a supported type  yet'
                 k = k+1
         count = count+1  
     fid.close()
@@ -320,7 +348,10 @@ def write_solver_input(output, dimension = 1, bc_type = 'Dir', parameter = [],\
     dimension  = str(dimension)
     f.write(dimension +'\n')
     f.write(bc_type +'\n')
-    np.savetxt(f, parameter, fmt = '%f')
+    if parameter == []:
+        f.write('\n')
+    else:
+        np.savetxt(f, parameter, fmt = '%f')
     f.write(eq +'\n')
     f.write(sol_type +'\n')
     b = str(analysis_param)
