@@ -468,8 +468,19 @@ def read_bc(filename):
     
     For Dirichlet and Newman conditions:    
     The initial number refers to the tag of the physical line, the letter of the 
-    second line tells the type of condition, and the third line has the
-    number of degrees of freedom and the value for each.
+    second line tells the type of condition, and the number that folloes it 
+    has the number of degrees of freedom. The third line has a value that 
+    refers to the way boundary conditions are interpreted and the 
+    values for the condition on each degree of freedom.
+    
+    So, regarding the first value of the third line, depending on the number
+    a different behaviour will occur. This value is goign to be called the
+    method selector and will work as follows:
+        
+        0:   Read the values listed on the side. Each value will be 
+             interpreted as the value on the corresponding degree of freedom.
+        1:  Interpret an expression stated as a lambda function. for each 
+            degree of freedom.
     
     However for Bloch periodic conditions:
     The initial number refers to the tag of the physical line, the first number 
@@ -489,7 +500,7 @@ def read_bc(filename):
     
     Note: This file should not have empty lines.
     
-    Last modification: date 27/04/2012
+    Last modification: date 21/03/2013
     """
     from numpy import zeros
     assert isinstance(filename, str) 
@@ -502,34 +513,39 @@ def read_bc(filename):
     bloch_flag = 0
     bc_type = ''
     ndf = 0
+    method_selector = 0
     while stop == 0:      
         line = fid.readline().split()
         if len(line) == 0:  # Is this line empty? Is this the end of the file?
             stop = 1         
         elif len(line) == 1:    # This should tell that you are over the tag.     
            tag =  line[0] 
-           count = 0
            deg_of_fre = []
            
         elif len(line) == 2:  # This is the second line of a boundary condition.
             bc_type = line[0]    # Name of the border condition type 
             ndf = int(line[1])        # Number of degrees of freedom
             
-        elif len(line) == 3:
-            deg_of_fre.append(np.array(line[1:], dtype = 'float'))
-            count = count + 1
+        elif len(line) > 2:
+            method_selector = line[0]
+            if method_selector == '0':
+                deg_of_fre.append(np.array(line[1:], dtype = 'float'))
+            elif method_selector == '1':
+                deg_of_fre.append(line[1:])
+            else:
+                print 'No more options defined for method selector'
         else:
            print 'error'
         #=============== Dirichlet conditions ===============================   
-        if bc_type == 'D' and count == ndf and stop == 0:
+        if bc_type == 'D' and stop == 0:
             
             dirichlet[tag]= deg_of_fre
         #================ Newman conditions ================================    
-        elif bc_type == 'N' and count == ndf and stop == 0:
+        elif bc_type == 'N' and stop == 0:
             
             newman[tag] = deg_of_fre
         #================= Bloch periodicity conditions=====================
-        elif bc_type == 'B' and count == ndf and stop == 0:
+        elif bc_type == 'B'  and stop == 0:
             bloch[tag] = [int(deg_of_fre[0][0]), int(deg_of_fre[0][1])]
             bloch_flag = 1
             

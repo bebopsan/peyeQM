@@ -24,7 +24,17 @@ class Interpreter():
         equation = {'left_side': stif_d + v_d, 'right_side':mass_d, \
                     'sol_vec':g, 'dir_positions':remove}
         return equation
-        
+    def build_static_EM_eq(self, simulation):
+        epsilon = 1
+        mu = 1
+        simulation.domain.read_bc_file(simulation.bc_filename)
+        print 'Building matrices...\n'    
+        stif = self.global_stiffness_matrix(simulation, True)
+        stif = (1/mu) * stif
+        [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif, True)
+        equation = {'left_side': stif_d, 'right_side':-d, \
+                    'sol_vec':g, 'dir_positions':remove, 'vectorial':True}
+        return equation
     def build_harmonic_EM_eq(self, simulation):
         epsilon = 1
         mu = 1
@@ -32,12 +42,10 @@ class Interpreter():
         print 'Building matrices...\n'    
         stif = self.global_stiffness_matrix(simulation, True)
         stif = (1/mu) * stif
-        print stif
         [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif, True)
         mass_d = self.global_mass_matrix(simulation, True, remove)
         mass_d = epsilon * mass_d
-        print 'd',d
-        equation = {'left_side': stif_d - mass_d, 'right_side':-d, \
+        equation = {'left_side': stif_d, 'right_side': mass_d, \
                     'sol_vec':g, 'dir_positions':remove, 'vectorial':True}
         return equation
 # With this I write to the mesh file the necesary information to run a 
@@ -164,23 +172,29 @@ class Interpreter():
         assert 'lines' in simulation.domain.elements.__dict__
         bc_lines = simulation.domain.elements.lines
         dirichlet = simulation.domain.boundaries.dirichlet
-        n_nodes = glo_stif.shape[0]         # Number (n) of nodes
-        n_lines = simulation.domain.elements.n_lines         # Number of lines
+        n_nodes = glo_stif.shape[0] 
+        n_lines = simulation.domain.elements.n_lines        
         nodes_line = bc_lines.shape[1]
-#not needed        n_bc_d = len(dirichlet)  # Number of Dirichlet boundary conditions
-        remove = []              # This vector will tell which rows and columns
+        remove = []              
+        
                                  # should be removed 
        
         g = zeros(n_nodes)
         if vectorial:
             for tag in dirichlet:
-                xvalue = dirichlet[tag][0][0]
-                yvalue = dirichlet[tag][0][1]
                 for ln in range(n_lines):
                     #print bc_lines[ln, 0]
                     if bc_lines[ln, 0] == int(tag):
                         #print bc_lines[ln, 0],'look here'
                         for node in bc_lines[ln,1:nodes_line]:
+                            xvalue = dirichlet[tag][0][0]
+                            yvalue = dirichlet[tag][0][1]
+                            if type(xvalue) == str:
+                                from math import sqrt 
+                                x = simulation.domain.nodes.coords[node, 0]
+                                y = simulation.domain.nodes.coords[node, 1]
+                                xvalue = eval(xvalue)
+                                yvalue = eval(yvalue)
                             g[2*(node - 1)] = xvalue
                             g[2*(node - 1)+1] = yvalue
                             if 2*(node-1) not in remove: # makes a list for removing

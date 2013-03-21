@@ -36,6 +36,7 @@ class Solver():
                     g[i] = dir_solution[j]
                     j = j+1
             return g
+            
     def solve_stationary(self, simulation, equation):
         from scipy.linalg import solve        
         g = equation['sol_vec']
