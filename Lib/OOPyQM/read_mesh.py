@@ -498,9 +498,9 @@ def read_bc(filename):
     bloch_2: Is a list of lists where each of the inner lists represents a pair 
              of image and reference physical line entities. 
     
-    Note: This file should not have empty lines.
+    Note: This file must not have empty lines.
     
-    Last modification: date 21/03/2013
+    Last modification: date 02/04/2013
     """
     from numpy import zeros
     assert isinstance(filename, str) 
@@ -524,8 +524,7 @@ def read_bc(filename):
            
         elif len(line) == 2:  # This is the second line of a boundary condition.
             bc_type = line[0]    # Name of the border condition type 
-            ndf = int(line[1])        # Number of degrees of freedom
-            
+            ndf = int(line[1])        # Number of degrees of freedom            
         elif len(line) > 2:
             method_selector = line[0]
             if method_selector == '0':
@@ -536,6 +535,7 @@ def read_bc(filename):
                 print 'No more options defined for method selector'
         else:
            print 'error'
+        
         #=============== Dirichlet conditions ===============================   
         if bc_type == 'D' and stop == 0:
             
@@ -545,25 +545,23 @@ def read_bc(filename):
             
             newman[tag] = deg_of_fre
         #================= Bloch periodicity conditions=====================
-        elif bc_type == 'B'  and stop == 0:
+        elif bc_type == 'B'  and deg_of_fre != []:
+            #print deg_of_fre
             bloch[tag] = [int(deg_of_fre[0][0]), int(deg_of_fre[0][1])]
-            bloch_flag = 1
-            
+            bloch_flag = 1          
     # === This block of code rearranges the bloch  conditions into an array ===
     if bloch_flag == 1: 
-        
         n_bloch = len(bloch)
-        bloch_2 = zeros((n_bloch/2, 4), dtype = int) 
         assert n_bloch % 2 == 0   # Make sure that bloch conditions are paired
-        it_bloch = range(n_bloch)    # Iteration (it) list for bloch conditions   
-        for i in it_bloch:
-            bloch_2[i, 0] = int(bloch[i][0])
-            bloch_2[i, 2] = int(bloch[i][2])
-            for j in it_bloch:
-                if bloch[i][1] == bloch[j][0]:
-                    bloch_2[i, 1] = int(bloch[j][0])
-                    bloch_2[i, 3] = int(bloch[j][2])
-                    it_bloch.pop(j)
+        bloch_2 = zeros((n_bloch/2, 4), dtype = int) 
+        i = 0
+        keys = bloch.keys()
+        for tag1 in keys:
+            for tag2 in keys:
+                if int(tag1) == bloch[tag2][0]:
+                    bloch_2[i] = [tag1, tag2, bloch[tag1][1], bloch[tag2][1]]
+                    keys.pop(keys.index(tag2))
+                    i += 1
         return {'Dir':dirichlet, 'New': newman,'Bloch': bloch_2}
     else:
         return {'Dir':dirichlet, 'New': newman}

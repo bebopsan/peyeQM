@@ -19,7 +19,9 @@ class Simulation():
     sim_type = 'QM'
     time_dependency = 'Stationary'
     dimension = 2
-
+    def __str__(self):
+        return 'This is an instance of the Simulation Class'
+        
     def read_solver_input(self, filename):
         """
         Reads the solver input from a file of gmsh ASCII format V2.2.
@@ -98,7 +100,7 @@ class Simulation():
             self.solver_param = solver_input[5]         # the solution 
             self.bc_filename = solver_input[6]
         else:
-            print 'Pending implementation'
+            raise NotImplementedError('Pending implementation')
     
 
 class Domain():
@@ -115,7 +117,7 @@ class Domain():
         self.nodes = 0
         self.elements = 0
     
-    def read_mesh_file(self, filename):
+    def read_mesh_file(self, filename, vectorial = False):
         from read_mesh import read_mesh
         
         self.nodes = Nodes()
@@ -124,7 +126,7 @@ class Domain():
         _nodes, _elements = read_mesh(filename)        
         
         self.nodes.add(_nodes)
-        self.elements.add(_elements)
+        self.elements.add(_elements, vectorial)
     
     def read_bc_file(self, filename):
         from read_mesh import read_bc
@@ -156,19 +158,24 @@ class Elements():
     """
     #Lines = 0    
   #  def __init__(self, _elements):
-    def add(self, _elements):
-        from numpy import shape
+    def add(self, _elements, vectorial= False):
+       # from numpy import shape
         if 'lin_Lines' in _elements:
-            self.lines = _elements['lin_Lines']
-            self.n_lines = shape(self.lines)[0]
+            self.lines = Lines(_elements['lin_Lines'], vectorial)
+            #self.lines = _elements['lin_Lines']
+            #  self.n_lines = shape(self.lines)[0]
         elif 'cuad_Lines' in _elements:
-            self.lines = _elements['cuad_Lines']
-            self.n_lines = shape(self.lines)[0]
+            self.lines = Lines(_elements['cuad_Lines'], vectorial)
+#            self.lines = _elements['cuad_Lines']
+#            self.n_lines = shape(self.lines)[0]
+        else: 
+            raise NotImplementedError('No higher order line elements of more\
+                                        than second order')
             
         if 'Triangles' in _elements:
             self.triangles = Triangles(_elements['Triangles'])
         if 'cuad_Quads' in _elements:
-            self.quads = Quadrilaterals(_elements['cuad_Quads'])
+            self.quads = Quadrilaterals(_elements['cuad_Quads'], vectorial)
             
     #It doesn't look so hard to implement square elements
 
@@ -178,7 +185,141 @@ class Elements():
     #   * Order
     #   * Area, or other shape attributes like jacobian
     #   * Local matrices...
-    
+class Lines():
+    """ Line elements are used for solving 1D problems and handling 
+        boundary conditions. The instance lines has been made in order
+        to contain properties that are defined exlusively for line elements
+        such as stiffness matrices for 1D problems and
+        interpolation methods for newman and source vectors.
+    """    
+    def __init__(self, raw_lines, vectorial = False):
+        from numpy import shape
+        self.el_set = raw_lines
+        self.n_elements = shape(self.el_set)[0]
+        if shape(self.el_set)[1] == 3:
+            self.order = 1            
+            self.h = [lambda r: 1.0/2.0*(1-r),\
+                      lambda r: 1.0/2.0*(1+r)]
+        elif shape(self.el_set)[1] == 4:
+            self.order = 2            
+            self.h = [lambda r: 1.0/2.0*(1-r)-1.0/2.0*(1-r**2),\
+                      lambda r: 1-r**2,\
+                      lambda r: 1.0/2.0*(1+r)-1.0/2.0*(1-r**2)]
+        else: 
+            raise NotImplementedError('Up to second order only')
+        self.vectorial = vectorial
+    def extract_el_points(self, _nodes, el_id):
+        """
+        Extracts the coordinates of the nodes in each line element and
+        retrieves an array of node coordinates.
+        
+        Parameters:
+        -----------
+        nodes:  numpy array of dimension (n_nodes, 3), where n_nodes is the 
+                number of nodes forming the mesh, and the three columns 
+                represent coordinates (x, y, z).
+                    
+        el_id:   integer value of the current element
+        
+        Returns:
+        --------
+        node_coor: Array with coordinates of coordinate node. 
+                   If the element is 3 node then array is 2*3
+                   If it is a 2 node element then 2*2.
+        """
+        from numpy import zeros
+        if 'el_set' in self.__dict__:
+            if self.order == 2:
+                p2_lines = self.el_set   
+                node_coords = zeros((2,3))
+                for i in range(1,4):
+                    node_coords[0,i-1] = _nodes[p2_lines[el_id, i] - 1,0]
+                    node_coords[1,i-1] = _nodes[p2_lines[el_id, i] - 1,1]
+                   
+                return node_coords   
+            elif self.order == 1:
+                p1_lines = self.el_set                            
+                node_coords = zeros((2,2))
+                for i in range(1,3):
+                    node_coords[0,i- 1] = _nodes[p1_lines[el_id, i] - 1,0]
+                    node_coords[1,i- 1] = _nodes[p1_lines[el_id, i] - 1,1]
+                return node_coords   
+            else:
+                raise NotImplementedError('No higher order elements yet, \
+                                           there must be an error')
+        else:
+            raise IOError('No elements parsed, do something else')
+    def numeric_J(self, node_coords):
+        from numpy.linalg import norm     
+        if self.order == 2:             
+            L1 = norm(node_coords[:,2] - node_coords[:,0])
+            L2 = norm(node_coords[:,1] - node_coords[:,2])
+            J = L1 + L2
+        elif self.order == 1:
+            J = norm(node_coords[:,1] - node_coords[:,0])
+        else:
+            raise NotImplementedError('No higher order elements yet, \
+                                           there must be an error')
+        return J
+    def local_newman(self, q, nodes, newman, tag, ln, vectorial = False):
+        """ Returns the nodal values for a certain newman boundary line 
+            element by using the specific definition from the.bc file.
+        """
+        bc_lines = self.el_set
+        nodes_line = bc_lines.shape[1]
+        if self.order == 2:
+            from scipy.special.orthogonal import p_roots
+            from numpy import zeros
+            h3 = self.h
+             # Definition of integration degree for each of the coordinates
+            deg_r = 3
+            r, weights_r  = p_roots(deg_r)
+            if self.vectorial:
+                lo_q = zeros(6)
+                counter = 0
+                for node in bc_lines[ln,1:nodes_line]:
+                    xvalue = newman[tag][0][0]
+                    yvalue = newman[tag][0][1]
+                    if type(xvalue) == str:
+                        from math import sqrt 
+                        x = nodes[node, 0]
+                        y = nodes[node, 1]
+                        xvalue = eval(xvalue)
+                        yvalue = eval(yvalue)
+                    lo_q[2*counter] = xvalue
+                    lo_q[2*counter+1] = yvalue
+                    counter += 1
+                node_coords = self.extract_el_points(nodes, ln)   
+                det_J = self.numeric_J(node_coords)
+                for i in range(deg_r):
+                    H3 = zeros(6)
+                    for k in range(3):
+                        H3[2*k] = h3[k](r[i])
+                        H3[2*k+1] = h3[k](r[i])
+                    lo_q += weights_r[i]*det_J*H3*lo_q
+                return lo_q
+            else:
+                if bc_lines[ln, 0] == int(tag):
+                    lo_q = zeros(3)
+                    counter = 0
+                    for node in bc_lines[ln,1:nodes_line]:
+                        value = newman[tag][0][0]
+                        if type(xvalue) == str:
+                            from math import sqrt 
+                            x = nodes[node, 0]
+                            value = eval(value)
+                        lo_q[counter] = value
+                        counter += 1
+                    node_coords = self.extract_el_points(nodes, ln)   
+                    det_J = self.numeric_J(node_coords)
+                    for i in range(deg_r):
+                        H3 = zeros(6)
+                        for k in range(3):
+                            H3[k] = h3[k](r[i])
+                        lo_q += weights_r[i]*det_J*H3*lo_q
+                return lo_q
+                
+        
 class Quadrilaterals():
     """ Quadrilateral elements give better accuracy and resistance to 
         locking than triangular elements. They can also be more economic
@@ -188,18 +329,19 @@ class Quadrilaterals():
         This means that there will be x and y components of the solution.
     """
     
-    def __init__(self,raw_quads, vectorial = True):
+    def __init__(self,raw_quads, vectorial = False):
         from numpy import shape
         self.el_set = raw_quads
         self.n_elements = shape(self.el_set)[0]
+        #Definition of second shape functions according to order and type
         if shape(self.el_set)[1] == 5:
             self.order = 1
+            self.h =[lambda r, s: 1.0/4.0*(1+r)*(1+s),\
+                 lambda r, s: 1.0/4.0*(1-r)*(1+s),\
+                 lambda r, s: 1.0/4.0*(1-r)*(1-s),\
+                 lambda r, s: 1.0/4.0*(1+r)*(1-s)] 
         elif shape(self.el_set)[1] == 9:
             self.order = 2
-        if vectorial:
-            self.vectorial = vectorial
-        #Definition of second shape functions according to order and type
-        if self.order == 2:
             self.h =[lambda r, s: 1.0/4.0*(1+r)*(1+s)-1.0/4.0*(1-r**2)*(1+s)\
                                                  -1.0/4.0*(1-s**2)*(1+r),\
                  lambda r, s: 1.0/4.0*(1-r)*(1+s)-1.0/4.0*(1-r**2)*(1+s)\
@@ -211,16 +353,12 @@ class Quadrilaterals():
                  lambda r, s: 1.0/2.0*(1-r**2)*(1+s),\
                  lambda r, s: 1.0/2.0*(1-s**2)*(1-r),\
                  lambda r, s: 1.0/2.0*(1-r**2)*(1-s),\
-                 lambda r, s: 1.0/2.0*(1-s**2)*(1+r)
-                ] 
-        elif self.order == 1:
-            self.h =[lambda r, s: 1.0/4.0*(1+r)*(1+s),\
-                 lambda r, s: 1.0/4.0*(1-r)*(1+s),\
-                 lambda r, s: 1.0/4.0*(1-r)*(1-s),\
-                 lambda r, s: 1.0/4.0*(1+r)*(1-s)
-                ] 
+                 lambda r, s: 1.0/2.0*(1-s**2)*(1+r)] 
         else:
-            raise NameError('Not a defined order...')
+            raise NotImplementedError('Not a defined order...')
+        if vectorial:
+            self.vectorial = vectorial
+            
     def extract_el_points(self, _nodes, el_id):
         """
         Extracts the coordinates of the nodes in each quad element and
@@ -258,10 +396,18 @@ class Quadrilaterals():
                     node_coords[1,i- 1] = _nodes[p1_quads[el_id, i] - 1,1]
                 return node_coords   
             else:
-                print 'No higher order elements yet, there must be an error'
+                raise NotImplementedError('No higher order elements yet, \
+                                           there must be an error')
         else:
-            print 'No elements parsed, do something else'
+            raise IOError('No elements parsed, do something else')
+    
     def numeric_J(self, node_coords, r,s, dHdrs = False):
+        """ I should document more often, now I don't get how this\
+            function work.
+            Parameters:
+                node_coords:    Array that contains coordinates of nodes
+                r, s:   
+        """
         from numpy import dot, zeros
         from numpy.linalg import det
         if self.order == 2:
@@ -284,7 +430,7 @@ class Quadrilaterals():
                     -1.0/2.0*(-r**2+ 1), \
                     -s*(r+ 1)]
         else:
-            print 'linear quad functions pending'
+            raise NotImplementedError('linear quad functions pending')
     
         J_mat[0, 0] = dot(node_coords[0], dhdr)
         J_mat[1, 0] = dot(node_coords[1], dhdr)
@@ -406,7 +552,7 @@ class Quadrilaterals():
                     else:
                         H8 = zeros(8)
                         for k in range(8):
-                            H8[i] = h8[k](r[i], s[j])                      
+                            H8[k] = h8[k](r[i], s[j])                      
                   
                     lo_mass = lo_mass + weights_r[i]*weights_s[j]*epsilon*\
                                         dot(H8.transpose(),H8)*det_J 
@@ -512,9 +658,10 @@ class Triangles():
             if self.order == 1:
                 p1_triangles = self.el_set        
             else:
-                print 'No higher order elements yet, there must be an error'
+                raise NotImplementedError('No higher order elements yet,\
+                                           there must be an error')
         else:
-            print 'No elements parsed, do something else'
+            raise IOError('No elements parsed, do something else')
             
         pt_a = zeros(2)
         pt_b = zeros(2)
@@ -581,7 +728,7 @@ class Triangles():
                     lo_stiff[i, j] = dot(lines[i], lines[j]) / (4*area) 
             return lo_stiff
         else:
-            print 'No higher order triangles for now'
+            raise NotImplementedError('No higher order triangles for now')
         
     def local_mass_matrix(self, nodes, el_id):
         if self.order == 1:
@@ -600,7 +747,7 @@ class Triangles():
             lo_mass = jac * lo_mass    # Escalate acording with the jacobian of the
                                        # transformation 
         else:
-            print 'No higher order triangles for now'
+            raise NotImplementedError('No higher order triangles for now')
         return lo_mass
         
     #======================== Local Newman matrix  1D P1 ===========================
@@ -631,17 +778,120 @@ class Triangles():
                                        # of the transformation 
         
         else:
-            print 'No higher order triangles for now'
+            raise NotImplementedError('No higher order triangles for now')
         return lo_v
 class Boundaries():
     """
     Define what tags from physical entities are associated with certain 
     boundary conditions.
     """
+    def __init__(self, dirichlet = {}, newman = {}, bloch = {}):
+        self.dirichlet = dirichlet
+        self.newman = newman
+        self.bloch = bloch           
     def add(self, _bc):
         self.dirichlet = _bc['Dir']
         self.newman = _bc['New']        
         if 'Bloch' in _bc:
             self.bloch = _bc['Bloch']
+    
+    def __str__(self):
+        return '%s' % self.__dict__
+    
+    def bloch_multiplication(self, k_x, k_y, nodes, ref_im, *matrices):
+        
+        """
+        This function multiplies a given matrix 
+        (in a future a given set of matrices), multiplies each Bloch boundary 
+        node, by the phase factor correspondent with it's position.
+        
+        Parameters:
+        -----------
+        k_x:       Current value of the x component from the wavenumber vector
+         
+        k_y:       Current value of the y component from the wavenumber vector
+        
+        nodes:     Numpy array like matrix of node coordinates (n_nodes,3) where 
+               coorsd(x,:)= x,y,z components of the node.
+        
+        ref_im:    A list of 2-column numpy arrays. Each array in the list 
+               'ref_im', has in it's first column the reference node and on it's 
+               second column the image node for that particular reference node.
+        
+        matrices:  Matrices to be operated.
+        
+        Returns:
+        --------
+        
+        matrices:  The input matrix with all the phase multiplication operations 
+               performed.
+        """
+        from cmath import exp
+        
+        # For each bloch condition in ref_im 
+        im = ref_im[:,1]
+        ref = list(set(list(ref_im[:, 0])))
+        for i in im:
+            x_im = nodes[ i - 1, 0]
+            y_im = nodes[ i - 1, 1]
+            fi = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
+            for matrix in matrices:
+               # Multiply the column of the image node by the phase factor
+                matrix[:, i - 1] = fi * matrix[:, i - 1] 
+                # Multiply the column of the image node by the comlex conjugate
+                #phase factor            
+                matrix[i - 1, :] = fi.conjugate() * matrix[:, i - 1]
+        for i in ref:        
+            x_ref = nodes[ i - 1, 0]
+            y_ref = nodes[ i - 1, 1]
+            ff = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
+            for matrix in matrices:
+               # and the same for the reference node:  
+                matrix[:, i - 1] = ff * matrix[:, i - 1] 
+                matrix[i - 1, :] = ff.conjugate() * matrix[:, i - 1]
+        return matrices
+    
+    def bloch_sum(self, ref_im, *matrices ):
+        """
+        This function takes the value of the image nodes in bloch periodicity 
+        boundaries, and sums it to the value of the reference node.
+        
+        Parameters:
+        -----------
+        
+        ref_im:    A list of 2-column numpy arrays. Each array in the list 
+                    'ref_im', has in it's first column the reference node and on it's 
+                    second column the image node for that particular reference node.
+        
             
-                        
+        matrices:  Matrices to be operated.
+        
+        Returns:
+        -------
+        
+        matrices:  The input matrices but with the sums performed 
+                   and the image nodes columns and rows removed. 
+        
+        """
+        from numpy import delete
+        remove = []
+        
+        for k in range(len(ref_im[:, 0])):
+            i = ref_im[k, 0]
+            j = ref_im[k, 1]
+            for matrix in matrices:
+                # Sum image node row to reference node row 
+                matrix[i - 1, :] = matrix[i - 1, :]+ \
+                                   matrix[j - 1, :]
+                # Sum image node column to reference node column
+                matrix[:, i - 1] = matrix[:, i - 1]+ matrix[:, j -1]
+                #== stack the values of nodes in vertices for further removal===
+                remove.count(j-1)       
+                if remove.count(j-1) == 0:
+                    remove.append(j-1)
+        remove.sort()
+        for matrix in matrices:
+            matrix = delete(matrix, remove, 0)
+            matrix = delete(matrix, remove, 1)
+        return matrices 
+  

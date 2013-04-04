@@ -10,13 +10,13 @@ from Interpreter import Interpreter
 from Solver import Solver
 from write import write_vtk, write_solver_input 
 
-write_solver_input('two_cylinders.msh',dimension = 2, bc_type = 'Dir', \
-parameter = [], eq = 'Harm_Elec', sol_type = 'Stationary',analysis_param \
-= ['y', 'y', 4, 4, 20, 20, 2], bc_filename = 'two_cylinders2.bc')  
+write_solver_input('square8_periodic.msh',dimension = 2, bc_type = 'Bloch', \
+parameter = [], eq = 'Periodic_Elec', sol_type = 'Stationary',analysis_param \
+= ['y', 'y', 4, 4, 20, 20, 2], bc_filename = 'square_bloch.bc')  
 
 simu = Simulation()
-simu.read_solver_input('two_cylinders.msh')
-simu.domain.read_mesh_file('two_cylinders.msh')
+simu.read_solver_input('square8_periodic.msh')
+simu.domain.read_mesh_file('square8_periodic.msh',simu)
 
 inter = Interpreter()
 eq = inter.build_static_EM_eq(simu)
@@ -29,5 +29,6 @@ field3 =  zeros((simu.domain.nodes.n,3))
 field3[:,0:2] = fields
 fields = field3
 
-write_vtk('cylinder2'+'.vtk', 'MyTitle', 'UNSTRUCTURED_GRID' ,simu.domain.nodes.coords,\
+write_vtk('Bloch_periodic'+'.vtk', 'MyTitle', 'UNSTRUCTURED_GRID' ,simu.domain.nodes.coords,\
                quads, ['VECTORS', ['sol'], [fields]])
+print 'Finished.'

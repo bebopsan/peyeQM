@@ -42,6 +42,7 @@ class Solver():
         g = equation['sol_vec']
         remove = equation['dir_positions']
         dir_solution = solve(equation['left_side'], equation['right_side'])
+        print 'Solving...'
         if equation['vectorial']:
             solution = self.build_solution(dir_solution, g, remove, True)
         else:
@@ -103,8 +104,132 @@ class Solver():
             
             return solution
         else:
-            print 'error: If you dont want anything why do you solve?'
+            raise IOError('If you dont want anything why do you solve?')
+    def solve_bloch(self, simulation, equation):
+        """
+            This method solves a 2D bloch periodic condition problem 
+            given an equation and that was interpreted used an instance of
+            the Interpreter Class.
+            Right now I'm testing it for solution of EM probleems with 
+            Bloch periodicity such as those encountered in perfect 
+            photonic crystals. 
             
+            Parameters:
+            -----------    
+            simulation:     An instance of class Simulation
+                            from which all the information about the
+                            domain and problem conditions will be extracted.
+                            The method read_solver_input() must have been 
+                            called with an appropiate input file in order 
+                            to extract information such as solver parameters
+                            from which the wave number is extracted.
+            equation:   Output of one methods of an instance from 
+                        class Interpreter(). Initialy only the output from 
+                        method: build_EM_bloch_eq(self, simulation) works.
+                        Future implementation of a simmilar method for QM 
+                        is pending.
+            Returns:
+            --------
+            k_mesh:     A simple triangular mesh made from x and y values 
+                        of the wavenumber.
+            energy: Set of eigenvalues assigned for each of the pairs 
+                    (k_x, k_y) in the k_mesh. 
+        """
+        #============= Load methods and attributes ================== 
+        from numpy import zeros, pi
+        from scipy.linalg import eigh, eigvalsh
+        bloch_multiplication = simulation.domain.boundaries.bloch_multiplication
+        bloch_sum = simulation.domain.boundaries.bloch_sum
+        ref_im_mul = equation['ref_im_mul']
+        stif = equation['left_side']
+        mass = equation['right_side']
+        analysis_param = simulation.solver_param
+        nodes = simulation.domain.nodes.coords 
+        n = simulation.domain.nodes.n 
+        solver_param = simulation.solver_param
+        #============= Discretize the wavenumber dommain ================== 
+        analysis_param = simulation.solver_param
+        nk_x = int(analysis_param[4]) # number of k to sweep in x
+        nk_y = int(analysis_param[5]) # number of k to sweep in y
+        k_max = pi/float(analysis_param[6])
+        k_min = -k_max
+        k_range_x = linspace(k_min, k_max, num = nk_x)
+        k_range_y = linspace(k_min, k_max, num = nk_y)
+        n_vals = int(analysis_param[2])        
+        #================ Initiate global variable =======================
+        energy = zeros( (nk_x * nk_y, n_vals) )
+        
+        #======================= Main cycles ===============================
+        i = 0         
+        print 'Calculating each of the ', nk_x * nk_y, \
+               ' points in k plane...\n'
+        for k_x in k_range_x:     # Loop over the different wave numbers k in x
+            for k_y in k_range_y: # Loop over the different wave numbers k in y
+                # Multiply boundary nodes of each matrix by phase factor                   
+                new_stif, new_mass = bloch_multiplication(k_x, \
+                                                k_y, nodes, \
+                                                ref_im_mul, stif.copy(), \
+                                                mass.copy())
+                new_stif, new_mass = bloch_sum(ref_im_mul, new_stif, new_mass)
+                
+                vals = eigvalsh(new_stif, new_mass, \
+                                       eigvals = (0, n_vals-1))
+                for val in range(0, n_vals):
+                    energy[i, val] = vals[val]
+                
+                print i+1, ' points out of :', nk_x * nk_y, '\n'  
+                i = i+1
+        from meshUtils import meshtr2D
+        k_mesh = meshtr2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
+        return k_mesh, energy       
+        
+        
+        
+        
+        
+        if 'y'in solver_param[0] and 'n' in solver_param[1]:
+            n_vals = int(solver_param[2])
+            v = eigvalsh(equation['left_side'], equation['right_side'], \
+                                    eigvals = (0, n_vals-1))
+    #                v = v/2
+            print 'The Eigenvalues are:\n', v
+            return v
+    
+        elif 'y'in solver_param[0] and 'y'in solver_param[1]:
+            n_vals = int(solver_param[2])
+            n_vects = int(solver_param[3])
+            n_solutions = max(n_vals,n_vects)
+            v, dir_solution = eigh(equation['left_side'], equation['right_side'], \
+                                     eigvals = (0, n_solutions-1))
+    #                v = v/2
+            if equation['vectorial']:
+                solution = []
+                for i in range(n_vects):
+                    solution.append(self.build_solution(dir_solution[:, i], g, remove, True))
+            else:
+                solution = zeros((n, n_vects))
+                for i in range(n_vects):
+                    solution[:,i] = self.build_solution(dir_solution[:, i], g, remove)
+            
+            return v, solution
+    
+        elif 'n'in solver_param[0] and 'y'in solver_param[1]:
+            n_vects = int(solver_param[3])
+            v, dir_solution = eigh(equation['left_side'], equation['right_side'], \
+                                    eigvals = (0, n_vects-1))
+            
+            if equation['vectorial']:
+                solution = zeros((n/2, n_vects))
+                for i in range(n_vects):
+                    solution[:,i] = self.build_solution(dir_solution[:, i], g, remove, True)
+            else:
+                solution = zeros((n, n_vects))
+                for i in range(n_vects):
+                    solution[:,i] = self.build_solution(dir_solution[:, i], g, remove)
+            
+            return solution
+        else:
+            raise IOError('If you dont want anything why do you solve?')            
     def substract_1(self, matrix):
         """ 
             Substracts the number 1 from node and element positions 
@@ -124,4 +249,54 @@ class Solver():
             for j in range(1, n_cols):
                 matrix[i,j] = matrix[i,j] - 1
         return matrix
-       
+                          
+    def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
+        """
+    
+            Generate a 2D mesh where the points are equally spaced.
+    
+            Parameters:
+            -----------
+            xmin:  initial value of the rectangular domain over x axis
+            xmax:  final value of the rectangular domain over x axis
+            ymin:  initial value of the rectangular domain over y axis
+            ymax:  final value of the rectangular domain over y axis
+            nxpoints:     Number of divisions over x
+            nypoints:     Number of divisions over y
+    
+    
+            Returns:
+            --------
+            coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+            elems:   numpy array like matrix of the relations between nodes.
+        
+        
+            Raises:
+            -------
+        
+            Last modification: date 21/10/2011
+        
+        """    
+        coordx, elem = mesh1D(xmin,xmax,nxpoints)
+        coordy, elem = mesh1D(ymin,ymax,nypoints)
+        npoints = nxpoints*nypoints
+        coords = zeros ( (npoints,2),dtype=float)
+        cont = 0
+        for j in range(0,nypoints):
+            for i in range(0,nxpoints):
+                coords[cont,0] = coordx[i]
+                coords[cont,1] = coordy[j]
+                cont = cont+1
+        nelems = 2*(nxpoints-1)*(nypoints-1)
+        elems = zeros ( (nelems,3) )
+        cont = 0
+        for j in range(0,nypoints-1):
+            for i in range(0,nxpoints-1):
+                elems[cont,0] = j*nxpoints+i
+                elems[cont,1] = j*nxpoints+i+1
+                elems[cont,2] = nxpoints + j*nxpoints+i+1
+                elems[cont+1,0] = j*nxpoints+i
+                elems[cont+1,1] = nxpoints + j*nxpoints+i+1
+                elems[cont+1,2] = nxpoints + j*nxpoints+i
+                cont = cont+2
+        return coords, elems
