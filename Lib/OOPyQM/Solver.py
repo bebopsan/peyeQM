@@ -136,8 +136,8 @@ class Solver():
                     (k_x, k_y) in the k_mesh. 
         """
         #============= Load methods and attributes ================== 
-        from numpy import zeros, pi
-        from scipy.linalg import eigh, eigvalsh
+        from numpy import zeros, pi, linspace 
+        from scipy.linalg import eigvalsh
         bloch_multiplication = simulation.domain.boundaries.bloch_multiplication
         bloch_sum = simulation.domain.boundaries.bloch_sum
         ref_im_mul = equation['ref_im_mul']
@@ -145,11 +145,10 @@ class Solver():
         mass = equation['right_side']
         analysis_param = simulation.solver_param
         nodes = simulation.domain.nodes.coords 
-        n = simulation.domain.nodes.n 
-        solver_param = simulation.solver_param
+        analysis_param = simulation.solver_param
         #============= Discretize the wavenumber dommain ================== 
         analysis_param = simulation.solver_param
-        nk_x = int(analysis_param[4]) # number of k to sweep in x
+        nk_x = int(analysis_param[4]) # number of k to sweep in xpasare a windows entonces para usa
         nk_y = int(analysis_param[5]) # number of k to sweep in y
         k_max = pi/float(analysis_param[6])
         k_min = -k_max
@@ -171,9 +170,8 @@ class Solver():
                                                 ref_im_mul, stif.copy(), \
                                                 mass.copy())
                 new_stif, new_mass = bloch_sum(ref_im_mul, new_stif, new_mass)
-                
-                vals = eigvalsh(new_stif, new_mass, \
-                                       eigvals = (0, n_vals-1))
+                print new_stif, new_mass
+                vals = eigvalsh(new_stif, new_mass, eigvals = (0, n_vals-1))
                 for val in range(0, n_vals):
                     energy[i, val] = vals[val]
                 
@@ -184,52 +182,7 @@ class Solver():
         return k_mesh, energy       
         
         
-        
-        
-        
-        if 'y'in solver_param[0] and 'n' in solver_param[1]:
-            n_vals = int(solver_param[2])
-            v = eigvalsh(equation['left_side'], equation['right_side'], \
-                                    eigvals = (0, n_vals-1))
-    #                v = v/2
-            print 'The Eigenvalues are:\n', v
-            return v
-    
-        elif 'y'in solver_param[0] and 'y'in solver_param[1]:
-            n_vals = int(solver_param[2])
-            n_vects = int(solver_param[3])
-            n_solutions = max(n_vals,n_vects)
-            v, dir_solution = eigh(equation['left_side'], equation['right_side'], \
-                                     eigvals = (0, n_solutions-1))
-    #                v = v/2
-            if equation['vectorial']:
-                solution = []
-                for i in range(n_vects):
-                    solution.append(self.build_solution(dir_solution[:, i], g, remove, True))
-            else:
-                solution = zeros((n, n_vects))
-                for i in range(n_vects):
-                    solution[:,i] = self.build_solution(dir_solution[:, i], g, remove)
-            
-            return v, solution
-    
-        elif 'n'in solver_param[0] and 'y'in solver_param[1]:
-            n_vects = int(solver_param[3])
-            v, dir_solution = eigh(equation['left_side'], equation['right_side'], \
-                                    eigvals = (0, n_vects-1))
-            
-            if equation['vectorial']:
-                solution = zeros((n/2, n_vects))
-                for i in range(n_vects):
-                    solution[:,i] = self.build_solution(dir_solution[:, i], g, remove, True)
-            else:
-                solution = zeros((n, n_vects))
-                for i in range(n_vects):
-                    solution[:,i] = self.build_solution(dir_solution[:, i], g, remove)
-            
-            return solution
-        else:
-            raise IOError('If you dont want anything why do you solve?')            
+                 
     def substract_1(self, matrix):
         """ 
             Substracts the number 1 from node and element positions 

@@ -29,10 +29,13 @@ class Interpreter():
         mu = 1
         simulation.domain.read_bc_file(simulation.bc_filename)
         print 'Building matrices...\n'    
+        print 'stiffness....'
         stif = self.global_stiffness_matrix(simulation, True)
         stif = (1/mu) * stif
+        print 'Performing dirichlet values substitution and stiffness reduction'
         [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif, True)
         n_nodes = stif_d.shape[0]
+        print 'building newman vector'
         q = self.newman_vector(simulation, remove, n_nodes, vectorial = True)
         equation = {'left_side': stif_d, 'right_side':-d-q, \
                     'sol_vec':g, 'dir_positions':remove, 'vectorial':True}
@@ -67,7 +70,7 @@ class Interpreter():
         
         stif = self.global_stiffness_matrix(simulation, True)
         stif = (1.0/mu) * stif
-        mass = self.global_mass_matrix(simulation)
+        mass = self.global_mass_matrix(simulation, True)
         #================ Convert to complex matrices ====================
         stif = asarray(stif, dtype = complex)
         mass = epsilon * asarray(mass, dtype = complex)   
@@ -148,6 +151,7 @@ class Interpreter():
                 el_set = elements.el_set
                 glo_stif = zeros((2*n_nodes, 2*n_nodes))
                 for el in range(n_elements):
+                    print 'assembling element  ', el
                     lo_stif = elements.build_local_stiffness(nodes_coords, el)
                     
                     for i in range(1, lo_stif.shape[0]/2+1):
@@ -212,7 +216,6 @@ class Interpreter():
         remove = []              
         
                                  # should be removed 
-       
         g = zeros(n_nodes)
         if vectorial:
             for tag in dirichlet:
@@ -221,19 +224,32 @@ class Interpreter():
                     if bc_lines[ln, 0] == int(tag):
                         #print bc_lines[ln, 0],'look here'
                         for node in bc_lines[ln,1:nodes_line]:
+                            print 'evaluating nonde ', node
+                            node -= 1
                             xvalue = dirichlet[tag][0][0]
                             yvalue = dirichlet[tag][0][1]
                             if type(xvalue) == str:
                                 from math import sqrt 
+                                from numpy import isnan
                                 x = simulation.domain.nodes.coords[node, 0]
                                 y = simulation.domain.nodes.coords[node, 1]
-                                xvalue = eval(xvalue)
-                                yvalue = eval(yvalue)
-                            g[2*(node - 1)] = xvalue
-                            g[2*(node - 1)+1] = yvalue
-                            if 2*(node-1) not in remove: # makes a list for removing
-                                remove.append(2*(node- 1))# lines and columns.
-                                remove.append(2*(node- 1)+1)
+                                if isnan(eval(xvalue)): 
+                                    xvalue = 0
+                                    print 'value has been reassigned due to \
+                                          division by zero'
+                                else:
+                                    xvalue = eval(xvalue)
+                                if isnan(eval(yvalue)): 
+                                    yvalue = 0
+                                    print 'value has been reassigned due to \
+                                          division by zero'
+                                else:
+                                    yvalue = eval(yvalue)
+                            g[2*node] = xvalue
+                            g[2*node +1] = yvalue
+                            if 2*node not in remove: # makes a list for removing
+                                remove.append(2*node)# lines and columns.
+                                remove.append(2*node + 1)
 #                    else:      
                     # so here I found a bug...  if there are no tags defined 
                     # it will inmediatly assume a zero value.
@@ -252,12 +268,14 @@ class Interpreter():
                             remove.append(bc_lines[ln, 1]-1)# lines and columns.
                         if bc_lines[ln, 2]-1 not in remove:
                             remove.append(bc_lines[ln, 2]-1)
+        print 'performing matrix multiplication'                
         d = dot(glo_stif, g)
         d = delete(d, remove)
-        
+        print 'removing rows'
         glo_stif = delete(glo_stif, remove, 0)
+        print 'remocing columns'
         glo_stif = delete(glo_stif, remove, 1)
-        
+        print 'done removing columns'
         return glo_stif, d, remove, g
     def newman_vector(self, simulation, remove, n_nodes, vectorial = False):      
         """
