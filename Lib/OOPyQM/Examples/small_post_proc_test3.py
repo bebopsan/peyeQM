@@ -19,16 +19,16 @@ simu.read_solver_input('square8_periodic.msh')
 simu.domain.read_mesh_file('square8_periodic.msh',simu)
 
 inter = Interpreter()
-eq = inter.build_static_EM_eq(simu)
+eq = inter.build_EM_bloch_eq(simu)
 my_solver = Solver()
-fields = my_solver.solve_stationary(simu, eq)
-quads = my_solver.substract_1(simu.domain.elements.quads.el_set)
-quads = quads[:,1:]
-from numpy import zeros
-field3 =  zeros((simu.domain.nodes.n,3))
-field3[:,0:2] = fields
-fields = field3
+k_mesh, energy = my_solver.solve_bloch(simu, eq)
 
-write_vtk('Bloch_periodic'+'.vtk', 'MyTitle', 'UNSTRUCTURED_GRID' ,simu.domain.nodes.coords,\
-               quads, ['VECTORS', ['sol'], [fields]])
+
+from numpy import zeros
+nodes =  zeros((k_mesh[0].shape[0],3))
+nodes[:,0:2] = k_mesh[0]
+triangles = k_mesh[1]
+
+write_vtk('Bloch_periodic'+'.vtk', 'MyTitle', 'UNSTRUCTURED_GRID' , nodes,\
+               triangles, ['VECTORS', ['sol'], [energy]])
 print 'Finished.'

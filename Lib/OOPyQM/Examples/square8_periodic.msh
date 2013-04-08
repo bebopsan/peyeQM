@@ -490,10 +490,10 @@ $Elements
 $EndElements
 $Solver input
 2
-Dir
+Bloch
 
-Harm_Elec
+Periodic_Elec
 Stationary
 [y, y, 4, 4, 20, 20, 2]
-square.bc
+square_bloch.bc
 $End Solver input

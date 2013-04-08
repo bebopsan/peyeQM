@@ -1828,3 +1828,12 @@ $Elements
 509 16 2 47 41 1225 58 57 1226 1310 62 1311 1305
 510 16 2 47 41 1226 57 7 46 1311 61 56 1307
 $EndElements
+$Solver input
+2
+Dir
+
+Harm_Elec
+Stationary
+[y, y, 4, 4, 20, 20, 2]
+two_cylinders3.bc
+$End Solver input
