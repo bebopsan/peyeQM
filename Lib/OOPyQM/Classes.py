@@ -127,7 +127,26 @@ class Domain():
         
         self.nodes.add(_nodes)
         self.elements.add(_elements, vectorial)
-    
+    def read_regions_file(self, filename):
+        from read_mesh import read_mesh
+        import pickle
+        _nodes, _elements = read_mesh(filename + '.msh')
+        del(_nodes)
+        f = open(filename +'.reg', 'r')
+        regions = pickle.load(f)
+        for region in regions:
+            region.elements = self.elements
+            tag = int(region.tag)
+            remove =[]
+            print 'region.elements.__dict__', region.elements
+            for class_iter in region.elements.__dict__:
+                el_class = region.elements[class_iter]
+                el_set = el_class.el_set
+                for i in el_set:
+                    if i[0] != tag:
+                        remove.append(i)
+            print remove
+            
     def read_bc_file(self, filename):
         from read_mesh import read_bc
         self.boundaries = Boundaries()
@@ -147,6 +166,19 @@ class Nodes():
         self.n = shape(_nodes)[0]                 #Number of nodes
         self.coords = _nodes        
     
+class Region():
+    """
+    Reperesents a region of the Domain. It is thought as a way to store 
+    attributes that are specific to certain regions such as the kind of 
+    elements that compose it, it's distinctive tag, and material properties
+    """
+    def __init__(self, tag = '', name = '',material_prop = {}, elements = []):
+        self.tag = tag
+        self.name = name
+        self.material_prop =  material_prop
+    def __str__(self):
+        return 'Region with tag %s is called %s and has the following material \
+        properties: %s' %(self.tag, self.name, self.material_prop)
     
 class Elements():
     """
@@ -794,7 +826,6 @@ class Boundaries():
         self.newman = _bc['New']        
         if 'Bloch' in _bc:
             self.bloch = _bc['Bloch']
-    
     def __str__(self):
         return '%s' % self.__dict__
     
@@ -827,28 +858,54 @@ class Boundaries():
                performed.
         """
         from cmath import exp
-        
+        assert matrices != []
         # For each bloch condition in ref_im 
         im = ref_im[:,1]
         ref = list(set(list(ref_im[:, 0])))
-        for i in im:
-            x_im = nodes[ i - 1, 0]
-            y_im = nodes[ i - 1, 1]
-            fi = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
-            for matrix in matrices:
-               # Multiply the column of the image node by the phase factor
-                matrix[:, i - 1] = fi * matrix[:, i - 1] 
-                # Multiply the column of the image node by the comlex conjugate
-                #phase factor            
-                matrix[i - 1, :] = fi.conjugate() * matrix[:, i - 1]
-        for i in ref:        
-            x_ref = nodes[ i - 1, 0]
-            y_ref = nodes[ i - 1, 1]
-            ff = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
-            for matrix in matrices:
-               # and the same for the reference node:  
-                matrix[:, i - 1] = ff * matrix[:, i - 1] 
-                matrix[i - 1, :] = ff.conjugate() * matrix[:, i - 1]
+        if matrices[0].shape[0] / 2 == nodes.shape[0]:    
+            for i in im[::2]:
+                x_im = nodes[ i/2, 0]
+                y_im = nodes[ i/2, 1]
+                fi_x = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
+                fi_y = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
+                for matrix in matrices:
+                   # Multiply the column of the image node by the phase factor
+                    matrix[:, i] = fi_x * matrix[:, i] 
+                    matrix[:, i+1] = fi_y * matrix[:, i+1] 
+                    # Multiply the row of the image node by the comlex conjugate
+                    #phase factor            
+                    matrix[i , :] = fi_x.conjugate()* matrix[i, :]
+                    matrix[i + 1, :] = fi_y.conjugate()* matrix[i+ 1,:]
+            for i in ref[::2]:      
+                x_ref = nodes[ i/2, 0]
+                y_ref = nodes[ i/2, 1]
+                ff_x = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
+                ff_y = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
+                for matrix in matrices:
+                   # and the same for the reference node:  
+                    matrix[:, i] = ff_x * matrix[:, i] 
+                    matrix[:, i+1] = ff_y * matrix[:, i+1]
+                    matrix[i, :] = ff_x.conjugate() * matrix[i, :]
+                    matrix[i + 1, :] = ff_y.conjugate() * matrix[i+ 1,:]
+        else:
+            for i in im:
+                x_im = nodes[ i, 0]
+                y_im = nodes[ i, 1]
+                fi = exp(1.0j*k_x*x_im)*exp(1.0j*k_y*y_im)
+                for matrix in matrices:
+                   # Multiply the column of the image node by the phase factor
+                    matrix[:, i] = fi * matrix[:, i] 
+                    # Multiply the column of the image node by the comlex conjugate
+                    #phase factor            
+                    matrix[i, :] = fi.conjugate()* matrix[i, :]
+            for i in ref:        
+                x_ref = nodes[ i, 0]
+                y_ref = nodes[ i, 1]
+                ff = exp(1.0j*k_x*x_ref)*exp(1.0j*k_y*y_ref)
+                for matrix in matrices:
+                   # and the same for the reference node:  
+                    matrix[:, i] = ff * matrix[:, i] 
+                    matrix[i, :] = ff.conjugate() * matrix[i,:]
         return matrices
     
     def bloch_sum(self, ref_im, *matrices ):
@@ -873,25 +930,25 @@ class Boundaries():
                    and the image nodes columns and rows removed. 
         
         """
-        from numpy import delete
+        from numpy import delete, copy
         remove = []
-        
         for k in range(len(ref_im[:, 0])):
             i = ref_im[k, 0]
             j = ref_im[k, 1]
             for matrix in matrices:
                 # Sum image node row to reference node row 
-                matrix[i - 1, :] = matrix[i - 1, :]+ \
-                                   matrix[j - 1, :]
+                matrix[i, :] = matrix[i, :]+ matrix[j, :]
                 # Sum image node column to reference node column
-                matrix[:, i - 1] = matrix[:, i - 1]+ matrix[:, j -1]
+                matrix[:, i] = matrix[:, i]+ matrix[:, j]
                 #== stack the values of nodes in vertices for further removal===
-                remove.count(j-1)       
-                if remove.count(j-1) == 0:
-                    remove.append(j-1)
+                remove.count(j)       
+                if remove.count(j) == 0:
+                    remove.append(j)
         remove.sort()
+        new_matrices = []
+        i = 0
         for matrix in matrices:
-            matrix = delete(matrix, remove, 0)
-            matrix = delete(matrix, remove, 1)
-        return matrices 
+            new_matrices.append(copy(delete(copy(delete(matrix, remove, 0)), remove, 1)))
+            i+=1
+        return new_matrices 
   

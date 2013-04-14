@@ -164,21 +164,30 @@ class Solver():
                ' points in k plane...\n'
         for k_x in k_range_x:     # Loop over the different wave numbers k in x
             for k_y in k_range_y: # Loop over the different wave numbers k in y
-                # Multiply boundary nodes of each matrix by phase factor                   
+                # Multiply boundary nodes of each matrix by phase factor 
+                import matplotlib.pyplot as plt
+                plt.spy(mass)
+                plt.figure()
+                plt.spy(stif)
                 new_stif, new_mass = bloch_multiplication(k_x, \
                                                 k_y, nodes, \
                                                 ref_im_mul, stif.copy(), \
                                                 mass.copy())
                 new_stif, new_mass = bloch_sum(ref_im_mul, new_stif, new_mass)
-                print new_stif, new_mass
+                #print new_mass, new_stif
+                
+                plt.figure()                
+                plt.spy(new_mass)
+                plt.figure()
+                plt.spy(new_stif)
+                #plt.show()
                 vals = eigvalsh(new_stif, new_mass, eigvals = (0, n_vals-1))
                 for val in range(0, n_vals):
                     energy[i, val] = vals[val]
                 
                 print i+1, ' points out of :', nk_x * nk_y, '\n'  
                 i = i+1
-        from meshUtils import meshtr2D
-        k_mesh = meshtr2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
+        k_mesh = self.meshtr2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
         return k_mesh, energy       
         
         
@@ -203,7 +212,7 @@ class Solver():
                 matrix[i,j] = matrix[i,j] - 1
         return matrix
                           
-    def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
+    def meshtr2D(self,xmin,xmax,ymin,ymax,nxpoints,nypoints):
         """
     
             Generate a 2D mesh where the points are equally spaced.
@@ -230,8 +239,9 @@ class Solver():
             Last modification: date 21/10/2011
         
         """    
-        coordx, elem = mesh1D(xmin,xmax,nxpoints)
-        coordy, elem = mesh1D(ymin,ymax,nypoints)
+        from numpy import zeros
+        coordx, elem = self.mesh1D(xmin,xmax,nxpoints)
+        coordy, elem = self.mesh1D(ymin,ymax,nypoints)
         npoints = nxpoints*nypoints
         coords = zeros ( (npoints,2),dtype=float)
         cont = 0
@@ -252,4 +262,37 @@ class Solver():
                 elems[cont+1,1] = nxpoints + j*nxpoints+i+1
                 elems[cont+1,2] = nxpoints + j*nxpoints+i
                 cont = cont+2
+        return coords, elems
+        
+    def mesh1D(self, xmin, xmax, npoints):
+        """
+    
+            Generate a 1D mesh where the points ares equally spaced.
+    
+            Parameters:
+            -----------
+            xmin:    coordinate of the beginning of the line segment
+            xmax:    coordinate of the end of the line segment
+            npoints: number of subdivisions
+    
+    
+            Returns:
+            --------
+            coords:  numpy array like vector of the discretized domain with lenght N
+            elems:  numpy array like vector of the relations between nodes.
+        
+        
+            Raises:
+    	-------
+        
+       
+            Last modification: date 21/10/2011
+        
+        """
+        from numpy import linspace, zeros
+        coords = linspace(xmin,xmax,npoints,endpoint=True)
+        elems = zeros( (npoints-1,2) ,dtype=int )
+        for i in range(0,npoints-1):
+            elems[i,0] = i
+            elems[i,1] = i+1
         return coords, elems

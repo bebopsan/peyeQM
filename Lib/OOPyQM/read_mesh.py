@@ -547,7 +547,7 @@ def read_bc(filename):
         #================= Bloch periodicity conditions=====================
         elif bc_type == 'B'  and deg_of_fre != []:
             #print deg_of_fre
-            bloch[tag] = [int(deg_of_fre[0][0]), int(deg_of_fre[0][1])]
+            bloch[tag] = [int(deg_of_fre[0][0]), int(deg_of_fre[0][1]), ndf]
             bloch_flag = 1          
     # === This block of code rearranges the bloch  conditions into an array ===
     if bloch_flag == 1: 
@@ -559,7 +559,10 @@ def read_bc(filename):
         for tag1 in keys:
             for tag2 in keys:
                 if int(tag1) == bloch[tag2][0]:
-                    bloch_2[i] = [tag1, tag2, bloch[tag1][1], bloch[tag2][1]]
+                    if bloch[tag1][2] == 1:
+                        bloch_2[i] = [tag1, tag2, bloch[tag1][1], bloch[tag2][1]]
+                    else:
+                        bloch_2[i] = [tag2, tag1, bloch[tag2][1], bloch[tag1][1]]
                     keys.pop(keys.index(tag2))
                     i += 1
         return {'Dir':dirichlet, 'New': newman,'Bloch': bloch_2}

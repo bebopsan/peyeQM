@@ -11,8 +11,19 @@ class Interpreter():
     construct from it the linear equations that then get to be solved by 
     an appropiate solver.
     """
+    def __init__(self, vectorial = True):
+        """
+        Tell the interpreter if the formulation of the problem will be 
+        scalar or vectorial in boolean logic.
+        Default value is True.
+        """
+        # Defining vectorial as an attribute of class Interpreter() 
+        # might be temporary. Is just that I've been having trouble 
+        # with reorganizing the code in order to support vectorial 
+        # formulations and didn't think on a clever way to do it.
+        # Pending to organize
+        self.vectorial = vectorial
     def build_QM_dirichlet_eq(self,simulation):
-
         h = 1.
         m = 1.        
         print 'Building matrices...\n'        
@@ -30,28 +41,28 @@ class Interpreter():
         simulation.domain.read_bc_file(simulation.bc_filename)
         print 'Building matrices...\n'    
         print 'stiffness....'
-        stif = self.global_stiffness_matrix(simulation, True)
+        stif = self.global_stiffness_matrix(simulation)
         stif = (1/mu) * stif
         print 'Performing dirichlet values substitution and stiffness reduction'
-        [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif, True)
+        [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif)
         n_nodes = stif_d.shape[0]
         print 'building newman vector'
-        q = self.newman_vector(simulation, remove, n_nodes, vectorial = True)
+        q = self.newman_vector(simulation, remove, n_nodes)
         equation = {'left_side': stif_d, 'right_side':-d-q, \
-                    'sol_vec':g, 'dir_positions':remove, 'vectorial':True}
+                    'sol_vec':g, 'dir_positions':remove, 'vectorial':self.vectorial}
         return equation
     def build_harmonic_EM_eq(self, simulation):
         epsilon = 1
         mu = 1
         simulation.domain.read_bc_file(simulation.bc_filename)
         print 'Building matrices...\n'    
-        stif = self.global_stiffness_matrix(simulation, True)
+        stif = self.global_stiffness_matrix(simulation)
         stif = (1.0/mu) * stif
-        [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif, True)
-        mass_d = self.global_mass_matrix(simulation, True, remove)
+        [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif)
+        mass_d = self.global_mass_matrix(simulation, remove)
         mass_d = epsilon * mass_d
         equation = {'left_side': stif_d, 'right_side': mass_d, \
-                    'sol_vec':g, 'dir_positions':remove, 'vectorial':True}
+                    'sol_vec':g, 'dir_positions':remove, 'vectorial':self.vectorial}
         return equation
 
     def build_EM_bloch_eq(self, simulation):
@@ -60,26 +71,23 @@ class Interpreter():
         Bloch boundaries must be matched and have the same number of nodes.
         The user must state in the .bc file the image and references 
         physical entities and interpret with a - sign if they are mirrored.
+        Boundaries have been previously defined as vectorial.
         """
         from numpy import array, asarray, vstack
         mu = 1.
         epsilon = 1.        
         print 'Building matrices...\n'       
         simulation.domain.read_bc_file(simulation.bc_filename)
-        
-        
-        stif = self.global_stiffness_matrix(simulation, True)
+        stif = self.global_stiffness_matrix(simulation)
         stif = (1.0/mu) * stif
-        mass = self.global_mass_matrix(simulation, True)
+        mass = self.global_mass_matrix(simulation)
         #================ Convert to complex matrices ====================
         stif = asarray(stif, dtype = complex)
         mass = epsilon * asarray(mass, dtype = complex)   
         ref_im = self.reference_image_bloch_vectors(simulation)
-        
         #======== Define a new image reference ===========================      
         ref_im_aux = ref_im[0] # image(im) reference(ref) for complex
                                   # multimplication (mul) operations 
-        
         for bl in range(1, len(ref_im)):
             ref_im_aux = vstack((ref_im_aux, ref_im[bl]))
         #=============== Find who are the corners =======================
@@ -90,7 +98,7 @@ class Interpreter():
             if list(ref_im_aux[:, 1]).count(corner2) == 2:
                 break
         #==== Relate the corners and delete their previous links===========            
-        
+
         im_mul = list(set(list(ref_im_aux[:, 1])))
         ref_mul = []
         for i in im_mul:
@@ -98,15 +106,16 @@ class Interpreter():
         ref_im_mul = array([ref_mul, im_mul]).T # Rearranged without 
                                                 # repeated reference 
                                                 # to corner  
-        ref_im_mul[list(ref_im_mul[:, 1]).index(corner2), 0] = corner
-        print "ref_im_mul", ref_im_mul        
+        if self.vectorial:
+            ref_im_mul[list(ref_im_mul[:, 1]).index(corner2), 0] = corner
+            ref_im_mul[list(ref_im_mul[:, 1]).index(corner2+ 1), 0] = corner+1
         
         equation = {'left_side': stif, 'right_side': mass, \
-                    'ref_im_mul':ref_im_mul, 'vectorial':True}
+                    'ref_im_mul':ref_im_mul, 'vectorial':self.vectorial}
         return equation
 #        #Will continue...
         
-    def global_stiffness_matrix(self, simulation, vectorial = False):
+    def global_stiffness_matrix(self, simulation):
         """
         Funtion for the assembly of the global stiffnes matrix of a 
         simulation file. 
@@ -128,6 +137,7 @@ class Interpreter():
         #print isinstance(simulation, Simulation)
         #from Classes import Simulation
         #print isinstance(simulation, Simulation)
+        vectorial = self.vectorial
         if True:
             nodes_coords = simulation.domain.nodes.coords            
             n_nodes = simulation.domain.nodes.n
@@ -181,7 +191,7 @@ class Interpreter():
             raise  TypeError('Wrong class. input argument should be\
                               an instance of simulation.')
             
-    def dirichlet_vector(self, simulation, glo_stif, vectorial = False):
+    def dirichlet_vector(self, simulation, glo_stif):
         """
         This function computes the d vector associated to Dirichlet
         boundary conditions on certain nodes of the domain. 
@@ -208,6 +218,7 @@ class Interpreter():
         
         #assert isinstance(simulation, Simulation)        
         assert 'lines' in simulation.domain.elements.__dict__
+        vectorial = self.vectorial
         bc_lines = simulation.domain.elements.lines.el_set
         dirichlet = simulation.domain.boundaries.dirichlet
         n_nodes = glo_stif.shape[0] 
@@ -224,7 +235,6 @@ class Interpreter():
                     if bc_lines[ln, 0] == int(tag):
                         #print bc_lines[ln, 0],'look here'
                         for node in bc_lines[ln,1:nodes_line]:
-                            print 'evaluating nonde ', node
                             node -= 1
                             xvalue = dirichlet[tag][0][0]
                             yvalue = dirichlet[tag][0][1]
@@ -277,7 +287,7 @@ class Interpreter():
         glo_stif = delete(glo_stif, remove, 1)
         print 'done removing columns'
         return glo_stif, d, remove, g
-    def newman_vector(self, simulation, remove, n_nodes, vectorial = False):      
+    def newman_vector(self, simulation, remove, n_nodes):      
         """
         This function computes the q vector associated to Newman
         boundary conditions on certain nodes of the domain. 
@@ -297,6 +307,7 @@ class Interpreter():
         """ 
         from numpy import zeros, dot, delete 
         #assert isinstance(simulation, Simulation)        
+        vectorial = self.vectorial
         assert 'lines' in simulation.domain.elements.__dict__
         bc_lines = simulation.domain.elements.lines.el_set
         lo_newman = simulation.domain.elements.lines.local_newman
@@ -326,7 +337,7 @@ class Interpreter():
                         for node in bc_lines[ln,1:nodes_line]:
                             q[bc_lines[ln, 1]-1] = lo_q[count]                        
         return q
-    def global_mass_matrix(self, simulation, vectorial = False, *remove):
+    def global_mass_matrix(self, simulation, *remove):
         """
         funtion for the assembly of the global mass matrix.
         
@@ -342,6 +353,7 @@ class Interpreter():
         glo_mass: Global mass matrix where the dirichlet positions have 
                   been removed.
         """
+        vectorial = self.vectorial
         from numpy import zeros, delete
         #If simulation is an instance of Classes.Simulation()
         if True:
@@ -488,16 +500,12 @@ class Interpreter():
                     reference node and on it's second column the image node for 
                     that particular reference node.
         """
-        from numpy import array, zeros, copy, vstack
+        from numpy import array, zeros, vstack, append
         bloch = simulation.domain.boundaries.bloch
+        
         bc_lines = simulation.domain.elements.lines.el_set
-        n_lines = simulation.domain.elements.lines.n_elements
         order = simulation.domain.elements.lines.order
         vectorial = simulation.domain.elements.lines.vectorial
-        
-        n_bloch = bloch.shape[0]
-        it_bloch = range(n_bloch)    
-       
         lines_dict = {}
         for ln in bc_lines:
             if str(ln[0]) not in lines_dict:
@@ -524,43 +532,46 @@ class Interpreter():
                     ref_im.append(zeros((2*lines_dict[str(bl[0])].shape[0]+1,2), dtype = int))
             else:
                 raise NotImplementedError, 'No higher order support yet'
-
         tags = lines_dict.keys()
         ref_im_dicts = {}
-        i=0
+        i = 0
+        lines = {} 
         for bl in bloch:
-            ref_im_dict = {}            
+            ref_im_dict = {}  
             for tag in tags:
                 if str(bl[0]) == tag:
-                    for ln in range(lines_dict[tag].shape[0]):
-                        for j in range(3):
-                            tag1 = lines_dict[tag][ln, j]
-                            tag2 = lines_dict[str(bl[1])][ln, j]
-                            if tag1 and tag2 not in ref_im_dict.keys():
+                    nodes_iter1 = range(lines_dict[tag].shape[1])
+                    ln_iter_1 = range(lines_dict[tag].shape[0])
+                    
+                    if bl[2]*bl[3] == -1:
+                        ln_iter_2 = tuple(ln_iter_1[::-1])
+                        nodes_iter2 = tuple(nodes_iter1[::-1])
+                    else:
+                        ln_iter_2 = tuple(ln_iter_1)
+                        nodes_iter2 = tuple(nodes_iter1)
+                    nodes_iter1 = tuple(nodes_iter1)
+                    ln_iter_1 = tuple(ln_iter_1)
+                    
+                    for (ln1, ln2) in zip(ln_iter_1,ln_iter_2):
+                        l1 = lines_dict[tag][ln1]
+                        l1 = append([l1[0]],[l1[2:],[l1[1]]])
+                        l2 = lines_dict[str(bl[1])][ln2]
+                        l2 = append([l2[0]],[l2[2:], [l2[1]]])
+                        for j1, j2 in zip(nodes_iter1, nodes_iter2):
+                            tag1 = l1[j1]
+                            tag2 = l2[j2]
+                            if tag1 not in ref_im_dict.keys():
                                 ref_im_dict[tag1] = tag2
+                                if tag not in lines:
+                                    lines[tag] = 0
+                                else:
+                                    lines[tag] += 1
+                                if vectorial:
+                                    ref_im[i][2*lines[tag]]=[2*(tag1-1), 2*(tag2- 1)]
+                                    ref_im[i][2*lines[tag]+1]=[2*tag1 - 1, 2*tag2- 1]
+                                else:
+                                    ref_im[i][lines[tag]]=[tag1, tag2]
                     tags.pop(tags.index(tag))   
             ref_im_dicts[i] = ref_im_dict
             i += 1
-      
-       
-        if vectorial:
-            for bl in range(len(ref_im)):
-                i = 0
-                keys = ref_im_dicts[bl].keys()
-                for key in keys:
-                    ref_im[bl][2*i,:] = [2*key, 2*ref_im_dicts[bl][key]]
-                    ref_im[bl][2*i+1,:] = [2*key+1, 2*ref_im_dicts[bl][key]+1]
-                    i += 1
-        else:
-            for bl in range(len(ref_im)):
-                keys = ref_im_dicts[bl].keys()
-                i = 0
-                for key in keys:
-                    ref_im[bl][i] = [key, ref_im_dicts[bl][key]]
-                    i += 1
-        print ref_im
-        for bl in it_bloch:
-            if bloch[bl, 2]*bloch[bl, 3] == -1:
-                ref_im[bl][:,1] = copy(ref_im[bl][::-1,1])
-        
         return ref_im
