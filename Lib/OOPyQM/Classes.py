@@ -59,7 +59,8 @@ class Simulation():
                 documentation of the Potential1D function in the module PrePro.
     
        
-        sim_type: Can be 'QM' from Quantum Mechanics, or 'Harm_Elec'
+        sim_type: Can be 'QM' from Quantum Mechanics, or 'EM' for 
+                  electromagnetism.
         
     
         sol_type:       String that tells wether to solve the stationary version of
@@ -116,7 +117,7 @@ class Domain():
     def __init_(self):
         self.nodes = 0
         self.elements = 0
-    
+        self.regions = {}
     def read_mesh_file(self, filename, vectorial = False):
         from read_mesh import read_mesh
         
@@ -129,23 +130,26 @@ class Domain():
         self.elements.add(_elements, vectorial)
     def read_regions_file(self, filename):
         from read_mesh import read_mesh
+        from numpy import delete
+        from copy import deepcopy
         import pickle
-        _nodes, _elements = read_mesh(filename + '.msh')
-        del(_nodes)
+        print filename
         f = open(filename +'.reg', 'r')
         regions = pickle.load(f)
         for region in regions:
-            region.elements = self.elements
+            region.elements = deepcopy(self.elements.all)
             tag = int(region.tag)
-            remove =[]
-            print 'region.elements.__dict__', region.elements
-            for class_iter in region.elements.__dict__:
-                el_class = region.elements[class_iter]
-                el_set = el_class.el_set
-                for i in el_set:
+            for class_iter in region.elements:
+                row = 0
+                remove =[]
+                for i in region.elements[class_iter].el_set:
                     if i[0] != tag:
-                        remove.append(i)
-            print remove
+                        remove.append(row)
+                    row += 1
+                el_set = delete(region.elements[class_iter].el_set, remove, 0)
+                region.elements[class_iter].el_set = el_set
+                region.elements[class_iter].n_elements = el_set.shape[0]
+        self.regions = regions
             
     def read_bc_file(self, filename):
         from read_mesh import read_bc
@@ -172,13 +176,15 @@ class Region():
     attributes that are specific to certain regions such as the kind of 
     elements that compose it, it's distinctive tag, and material properties
     """
-    def __init__(self, tag = '', name = '',material_prop = {}, elements = []):
+    def __init__(self, tag = '', name = '',material_prop = {}, elements = {}):
         self.tag = tag
         self.name = name
         self.material_prop =  material_prop
+        self.elements = elements
     def __str__(self):
-        return 'Region with tag %s is called %s and has the following material \
-        properties: %s' %(self.tag, self.name, self.material_prop)
+        return "Region with tag %s is called %s and has the following"\
+                "material properties: \n %s and sets of elements \n %s"\
+                %(self.tag, self.name, self.material_prop,self.elements.keys())
     
 class Elements():
     """
@@ -189,25 +195,25 @@ class Elements():
     associated with elements
     """
     #Lines = 0    
-  #  def __init__(self, _elements):
+    def __init__(self):
+        self.all = {}
     def add(self, _elements, vectorial= False):
        # from numpy import shape
         if 'lin_Lines' in _elements:
             self.lines = Lines(_elements['lin_Lines'], vectorial)
-            #self.lines = _elements['lin_Lines']
-            #  self.n_lines = shape(self.lines)[0]
+            self.all['lin_Lines'] = self.lines
         elif 'cuad_Lines' in _elements:
             self.lines = Lines(_elements['cuad_Lines'], vectorial)
-#            self.lines = _elements['cuad_Lines']
-#            self.n_lines = shape(self.lines)[0]
+            self.all['cuad_Lines'] = self.lines
         else: 
             raise NotImplementedError('No higher order line elements of more\
                                         than second order')
-            
         if 'Triangles' in _elements:
             self.triangles = Triangles(_elements['Triangles'])
+            self.all['Triangles'] = self.triangles
         if 'cuad_Quads' in _elements:
             self.quads = Quadrilaterals(_elements['cuad_Quads'], vectorial)
+            self.all['cuad_Quads'] = self.quads
             
     #It doesn't look so hard to implement square elements
 

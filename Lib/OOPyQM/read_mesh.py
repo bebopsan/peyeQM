@@ -532,6 +532,7 @@ def read_bc(filename):
             elif method_selector == '1':
                 deg_of_fre.append(line[1:])
             else:
+                print 'method_selector', method_selector
                 print 'No more options defined for method selector'
         else:
            print 'error'

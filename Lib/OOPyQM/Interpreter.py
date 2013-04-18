@@ -24,11 +24,8 @@ class Interpreter():
         # Pending to organize
         self.vectorial = vectorial
     def build_QM_dirichlet_eq(self,simulation):
-        h = 1.
-        m = 1.        
         print 'Building matrices...\n'        
         stif = self.global_stiffness_matrix(simulation)
-        stif = h/(2.*m)*stif 
         [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif)
         mass_d = self.global_mass_matrix(simulation, remove)
         v_d = self.global_potential_matrix(simulation, remove)
@@ -36,13 +33,10 @@ class Interpreter():
                     'sol_vec':g, 'dir_positions':remove}
         return equation
     def build_static_EM_eq(self, simulation):
-        epsilon = 1
-        mu = 1
         simulation.domain.read_bc_file(simulation.bc_filename)
         print 'Building matrices...\n'    
         print 'stiffness....'
         stif = self.global_stiffness_matrix(simulation)
-        stif = (1/mu) * stif
         print 'Performing dirichlet values substitution and stiffness reduction'
         [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif)
         n_nodes = stif_d.shape[0]
@@ -52,15 +46,11 @@ class Interpreter():
                     'sol_vec':g, 'dir_positions':remove, 'vectorial':self.vectorial}
         return equation
     def build_harmonic_EM_eq(self, simulation):
-        epsilon = 1
-        mu = 1
         simulation.domain.read_bc_file(simulation.bc_filename)
         print 'Building matrices...\n'    
         stif = self.global_stiffness_matrix(simulation)
-        stif = (1.0/mu) * stif
         [stif_d, d, remove, g] = self.dirichlet_vector(simulation, stif)
         mass_d = self.global_mass_matrix(simulation, remove)
-        mass_d = epsilon * mass_d
         equation = {'left_side': stif_d, 'right_side': mass_d, \
                     'sol_vec':g, 'dir_positions':remove, 'vectorial':self.vectorial}
         return equation
@@ -74,16 +64,17 @@ class Interpreter():
         Boundaries have been previously defined as vectorial.
         """
         from numpy import array, asarray, vstack
-        mu = 1.
-        epsilon = 1.        
         print 'Building matrices...\n'       
+        print 'simulation.bc_filename',simulation.bc_filename
         simulation.domain.read_bc_file(simulation.bc_filename)
+        reg_filename = simulation.bc_filename.split('.bc')[0]
+        print reg_filename        
+        simulation.domain.read_regions_file(reg_filename)
         stif = self.global_stiffness_matrix(simulation)
-        stif = (1.0/mu) * stif
         mass = self.global_mass_matrix(simulation)
         #================ Convert to complex matrices ====================
         stif = asarray(stif, dtype = complex)
-        mass = epsilon * asarray(mass, dtype = complex)   
+        mass = asarray(mass, dtype = complex)   
         ref_im = self.reference_image_bloch_vectors(simulation)
         #======== Define a new image reference ===========================      
         ref_im_aux = ref_im[0] # image(im) reference(ref) for complex
@@ -109,7 +100,7 @@ class Interpreter():
         if self.vectorial:
             ref_im_mul[list(ref_im_mul[:, 1]).index(corner2), 0] = corner
             ref_im_mul[list(ref_im_mul[:, 1]).index(corner2+ 1), 0] = corner+1
-        
+        print ref_im_mul
         equation = {'left_side': stif, 'right_side': mass, \
                     'ref_im_mul':ref_im_mul, 'vectorial':self.vectorial}
         return equation
@@ -133,64 +124,68 @@ class Interpreter():
                    the global stiffness matrix of the system
         """
         from numpy import zeros
-        # Discuss this error with Edward      
-        #print isinstance(simulation, Simulation)
-        #from Classes import Simulation
-        #print isinstance(simulation, Simulation)
         vectorial = self.vectorial
-        if True:
-            nodes_coords = simulation.domain.nodes.coords            
-            n_nodes = simulation.domain.nodes.n
-            
-            sim_elements = simulation.domain.elements
-            if simulation.dimension == 1:
-                elements = sim_elements.lines.el_set
-                # Pending to add 1D support
-            elif simulation.dimension == 2:
-                if 'triangles' in sim_elements.__dict__:
-                    elements = sim_elements.triangles
-                elif 'quads' in sim_elements.__dict__:
-                    elements = sim_elements.quads
-                else:
-                    raise NotImplementedError('Wait untill other elements\
-                                               are supported')
-            else:
-                print 'No 3 dimensional simulations supperted'
-            if vectorial:
-                n_elements = elements.n_elements   
-                el_set = elements.el_set
-                glo_stif = zeros((2*n_nodes, 2*n_nodes))
-                for el in range(n_elements):
-                    print 'assembling element  ', el
-                    lo_stif = elements.build_local_stiffness(nodes_coords, el)
-                    
-                    for i in range(1, lo_stif.shape[0]/2+1):
-                        for j in range(1, lo_stif.shape[0]/2+1):                            
-                            glo_stif[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
-                            glo_stif[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
-                            lo_stif[2*(i-1),2*(j-1)]
-                            glo_stif[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
-                            glo_stif[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
-                            lo_stif[2*(i-1)+1,2*(j-1)+1]
-            else:
-                n_elements = elements.n_elements
-                el_set = elements.el_set
-            
-                glo_stif = zeros((n_nodes, n_nodes))            
-                
-                for el in range(n_elements):
-                    lo_stif = elements.build_local_stiffness(nodes_coords, el)
-                    for i in range(1, lo_stif.shape[0]+1):
-                        for j in range(1, lo_stif.shape[0]+1):
-                            glo_stif[el_set[el, i]-1, el_set[el, j]-1] = \
-                            glo_stif[el_set[el, i]-1, el_set[el, j]-1] + \
-                            lo_stif[i-1,j-1]
-                            #                      ^ due to python's 0 base numbering
-            return glo_stif
+        nodes_coords = simulation.domain.nodes.coords            
+        n_nodes = simulation.domain.nodes.n
+        if vectorial:
+            glo_stif = zeros((2*n_nodes, 2*n_nodes))
         else:
-            raise  TypeError('Wrong class. input argument should be\
-                              an instance of simulation.')
-            
+             glo_stif = zeros((n_nodes, n_nodes))            
+        for region in simulation.domain.regions:
+            all_elements = region.elements
+            for el_class in all_elements:
+                elements = all_elements[el_class]
+                if vectorial:
+                    n_elements = elements.n_elements   
+                    el_set = elements.el_set
+                    if el_set == []:
+                        break
+                    else:
+                        for el in range(n_elements):
+                            print 'assembling element  ', el
+                            lo_stif = elements.build_local_stiffness(nodes_coords, el)
+                            
+                            for i in range(1, lo_stif.shape[0]/2+1):
+                                for j in range(1, lo_stif.shape[0]/2+1):                            
+                                    glo_stif[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
+                                    glo_stif[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
+                                    lo_stif[2*(i-1),2*(j-1)]
+                                    glo_stif[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
+                                    glo_stif[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
+                                    lo_stif[2*(i-1)+1,2*(j-1)+1]
+                            if simulation.sim_type == 'EM':
+                                mu = region.material_prop['mu']
+                                lo_stif = 1.0/mu * lo_stif
+                            elif simulation.sim_type == 'QM':
+                                h = region.material_prop['h']
+                                m = region.material_prop['m']
+                                lo_stif = h/(2.*m)*lo_stif
+                            else:
+                                raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)
+                else:
+                    n_elements = elements.n_elements
+                    el_set = elements.el_set
+                    if el_set == []:
+                        break
+                    else:
+                        for el in range(n_elements):
+                            lo_stif = elements.build_local_stiffness(nodes_coords, el)
+                            for i in range(1, lo_stif.shape[0]+1):
+                                for j in range(1, lo_stif.shape[0]+1):
+                                    glo_stif[el_set[el, i]-1, el_set[el, j]-1] = \
+                                    glo_stif[el_set[el, i]-1, el_set[el, j]-1] + \
+                                    lo_stif[i-1,j-1]
+                            if simulation.sim_type == 'EM':
+                                mu = region.material_prop['mu']
+                                lo_stif = 1.0/mu * lo_stif
+                            elif simulation.sim_type == 'QM':
+                                h = region.material_prop['h']
+                                m = region.material_prop['m']
+                                lo_stif = h/(2.*m)*lo_stif
+                            else:
+                                raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)
+        return glo_stif
+        
     def dirichlet_vector(self, simulation, glo_stif):
         """
         This function computes the d vector associated to Dirichlet
@@ -355,58 +350,67 @@ class Interpreter():
         """
         vectorial = self.vectorial
         from numpy import zeros, delete
-        #If simulation is an instance of Classes.Simulation()
-        if True:
-            nodes_coords = simulation.domain.nodes.coords            
-            n_nodes = simulation.domain.nodes.n
-            sim_elements = simulation.domain.elements
-            if simulation.dimension == 1:
-                elements = sim_elements.lines.el_set
-                # Pending to add 1D support
-            elif simulation.dimension == 2:
-                if 'triangles' in sim_elements.__dict__:
-                    elements = sim_elements.triangles
-                elif 'quads' in sim_elements.__dict__:
-                    elements = sim_elements.quads
-                else:
-                    raise NotImplementedError('Wait untill other elements\
-                                               are supported')
-            else:
-                raise NotImplementedError('No 3 dimensional simulations\
-                                           supperted')
-            n_elements = elements.n_elements   
-            el_set = elements.el_set
-            if vectorial:
-                glo_mass = zeros((2*n_nodes, 2*n_nodes))
-                for el in range(n_elements):
-                    lo_mass = elements.local_mass_matrix(nodes_coords, el)
-                    for i in range(1, lo_mass.shape[0]/2+1):
-                        for j in range(1, lo_mass.shape[0]/2+1):                            
-                            glo_mass[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
-                            glo_mass[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
-                            lo_mass[2*(i-1),2*(j-1)]
-                            glo_mass[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
-                            glo_mass[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
-                            lo_mass[2*(i-1)+1,2*(j-1)+1]
-            else:
-                glo_mass = zeros((n_nodes, n_nodes))# Initiate Global (glo) mass matrix
-                
-                for el in range(n_elements):
-                    #pending for iteration over elements }
-                    # call to local_mass_matrix
-                    lo_mass = elements.local_mass_matrix(nodes_coords, el)
-                    for i in range(1, lo_mass.shape[0]+1):
-                        for j in range(1, lo_mass.shape[0]+1):                       
-                            glo_mass[el_set[el, i]-1, el_set[el, j]-1] = \
-                            glo_mass[el_set[el, i]-1, el_set[el, j]-1] + \
-                            lo_mass[i-1,j-1]
-            glo_mass_d = delete(glo_mass, remove, 0)
-            glo_mass_d = delete(glo_mass_d, remove, 1)
-            return glo_mass_d
-                 
+    
+        nodes_coords = simulation.domain.nodes.coords            
+        n_nodes = simulation.domain.nodes.n
+        if vectorial:
+            glo_mass = zeros((2*n_nodes, 2*n_nodes))
         else:
-            raise TypeError('Wrong class. input argument should be an\
-                             instance of simulation.')
+            glo_mass = zeros((n_nodes, n_nodes))
+        for region in simulation.domain.regions:
+            all_elements = region.elements
+            for el_class in all_elements:
+                elements = all_elements[el_class]    
+                if vectorial:
+                    n_elements = elements.n_elements   
+                    el_set = elements.el_set
+                    print el_set
+                    if el_set == []:
+                        break
+                    else:
+                        for el in range(n_elements):
+                            lo_mass = elements.local_mass_matrix(nodes_coords, el)
+                            for i in range(1, lo_mass.shape[0]/2+1):
+                                for j in range(1, lo_mass.shape[0]/2+1):                            
+                                    glo_mass[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] = \
+                                    glo_mass[2*(el_set[el, i]-1), 2*(el_set[el, j]-1)] + \
+                                    lo_mass[2*(i-1),2*(j-1)]
+                                    glo_mass[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] = \
+                                    glo_mass[2*(el_set[el, i]-1)+1, 2*(el_set[el, j]-1)+1] + \
+                                    lo_mass[2*(i-1)+1,2*(j-1)+1]
+                            if simulation.sim_type == 'EM':
+                                epsilon = region.material_prop['epsilon']
+                                lo_mass = epsilon * lo_mass
+                            elif simulation.sim_type == 'QM':
+                                pass
+                            else:
+                                raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)
+                else:
+                    n_elements = elements.n_elements   
+                    el_set = elements.el_set
+                    if el_set == []:
+                        break
+                    else:
+                        for el in range(n_elements):
+                            #pending for iteration over elements }
+                            # call to local_mass_matrix
+                            lo_mass = elements.local_mass_matrix(nodes_coords, el)
+                            for i in range(1, lo_mass.shape[0]+1):
+                                for j in range(1, lo_mass.shape[0]+1):                       
+                                    glo_mass[el_set[el, i]-1, el_set[el, j]-1] = \
+                                    glo_mass[el_set[el, i]-1, el_set[el, j]-1] + \
+                                    lo_mass[i-1,j-1]
+                            if simulation.sim_type == 'EM':
+                                epsilon = region.material_prop['epsilon']
+                                lo_mass = epsilon * lo_mass
+                            elif simulation.sim_type == 'QM':
+                                pass
+                        else:
+                            raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)
+        glo_mass_d = delete(glo_mass, remove, 0)
+        glo_mass_d = delete(glo_mass_d, remove, 1)
+        return glo_mass_d
+                     
         
         
 #    def global_potential_matrix(self, simulation,vectorial = False, *remove):

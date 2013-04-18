@@ -98,7 +98,6 @@ def write_vtk(filename, title, SET, points, cells, data):
             while k < DataPerType:
             
                 p = data[3*count+2][k].shape
-                
                 #---------------------------Headers---------------------------------
                 if (p[0] == n) and (not point_data):
             
@@ -118,8 +117,30 @@ def write_vtk(filename, title, SET, points, cells, data):
 #                fid.write('\n'+'\\\  '+str(p[1])+'\n')                
                 count2 = 0
                 if data[0] == 'SCALARS':
-                    while count2 < p[1]:
-                        
+                    if data[3*count+2][k].ndim == 1:
+                        if data[3*count+1] == '':
+                            data[3*count+1] = 'Data '+str(count+1)+str(count2)
+                        TYPE = 'double'
+                        fid.write(data[3*count]+' '+data[3*count+1][k]+ \
+                                  '_'+str(count2)+' '+TYPE+'\n')
+                        fid.write("LOOKUP_TABLE defaul\n")
+                        np.savetxt(fid, data[3*count+2][k], \
+                                    fmt = '%6.6f')
+                        count2 = 1
+                    else:
+                        while count2 < p[1]:
+                            
+                            if data[3*count+1] == '':
+                                data[3*count+1] = 'Data '+str(count+1)+str(count2)
+                            TYPE = 'double'
+                            fid.write(data[3*count]+' '+data[3*count+1][k]+ \
+                                      '_'+str(count2)+' '+TYPE+'\n')
+                            fid.write("LOOKUP_TABLE defaul\n")
+                            np.savetxt(fid, data[3*count+2][k], \
+                                        fmt = '%6.6f')
+                            count2 = count2+1
+                elif data[0] == 'VECTORS':
+                    if data[3*count+2][k].ndim == 1:
                         if data[3*count+1] == '':
                             data[3*count+1] = 'Data '+str(count+1)+str(count2)
                         TYPE = 'double'
@@ -128,8 +149,8 @@ def write_vtk(filename, title, SET, points, cells, data):
                         fid.write("LOOKUP_TABLE defaul\n")
                         np.savetxt(fid, data[3*count+2][k][:, count2], \
                                     fmt = '%6.6f')
-                        count2 = count2+1
-                elif data[0] == 'VECTORS':
+                        count2 = 1
+                    else:
                         if data[3*count+1] == '':
                             data[3*count+1] = 'Data '+str(count+1)
                         TYPE = 'double'
