@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
-from drawing import *
+from Drawing import *
 from numpy import *
 
 # curve_vect

@@ -177,6 +177,56 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
     return coords, elems
 
 
+def meshsq2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
+    """
+
+        Generate a 2D mesh where the points are equally spaced.
+
+        Parameters:
+        -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
+
+
+        Returns:
+        --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
+    
+    
+        Raises:
+        -------
+    
+        Last modification: April 30, 2013
+    
+    """    
+    coordx, elem = mesh1D(xmin,xmax,nxpoints)
+    coordy, elem = mesh1D(ymin,ymax,nypoints)
+    npoints = nxpoints*nypoints
+    coords = zeros ( (npoints,2),dtype=float)
+    cont = 0
+    for j in range(0,nypoints):
+        for i in range(0,nxpoints):
+            coords[cont,0] = coordx[i]
+            coords[cont,1] = coordy[j]
+            cont = cont+1
+    nelems = (nxpoints - 1)*(nypoints - 1)
+    elems = zeros ( (nelems,4) )
+    cont = 0
+    for j in range(0,nypoints - 1):
+        for i in range(0,nxpoints - 1):
+            elems[cont,0] = j*nxpoints + i
+            elems[cont,1] = j*nxpoints + i + 1
+            elems[cont,2] = nxpoints + j*nxpoints + i + 1
+            elems[cont,3] = nxpoints + j*nxpoints + i
+            cont = cont + 1
+    return coords, elems
+
+
 
 def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
                 basex, basey):
@@ -203,8 +253,8 @@ def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
          optiony: Lets the user decide the orientation of the log distribution
                   for the custom mesh over the y axis. thi parameter can be
                   L for more points on the top
-                  R for more points on the right
-                  C for more points on the bottom
+                  R for more points on the bottom
+                  C for more points on the middle
 
 
         Returns:
@@ -218,7 +268,7 @@ def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
         Error if the user gives a wrong 'option' argument
         Numerical error if base is chosen equal or less than 1
    
-        Last modification: date 21/10/2011
+        Last modification: April 30, 2013
     
     """    
     coordx, elem = logmesh1D(xmin,xmax,nxpoints,basex,optionx)
@@ -246,6 +296,70 @@ def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
     return coords, elems
 
 
+def logmeshsq2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
+                basex, basey):
+    """
+
+        Generate a quadrilateral 2D mesh where the points are logarithmally spaced in both, x and
+        y cordinates.
+
+        Parameters:
+        -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
+        basex: the same base parameter but for the x coordinates of the rectangle
+        basey: the same base parameter but for the y coordinates of the rectangle
+        optionx:  Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the x axis. thi parameter can be
+                  L for more points on the left
+                  R for more points on the right
+                  C for more points on the center
+         optiony: Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the y axis. thi parameter can be
+                  L for more points on the top
+                  R for more points on the bottom
+                  C for more points on the middle
+
+
+        Returns:
+        --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
+    
+    
+        Raises:
+        -------
+        Error if the user gives a wrong 'option' argument
+        Numerical error if base is chosen equal or less than 1
+   
+        Last modification: April 30, 2013
+    
+    """    
+    coordx, elem = logmesh1D(xmin,xmax,nxpoints,basex,optionx)
+    coordy, elem = logmesh1D(ymin,ymax,nypoints,basey,optiony)
+    npoints = nxpoints*nypoints
+    coords = zeros ( (npoints,2),dtype=float)
+    cont = 0
+    for j in range(0,nypoints):
+        for i in range(0,nxpoints):
+            coords[cont,0] = coordx[i]
+            coords[cont,1] = coordy[j]
+            cont = cont+1
+    nelems = (nxpoints-1)*(nypoints-1)
+    elems = zeros ( (nelems,4) )
+    cont = 0
+    for j in range(0,nypoints-1):
+        for i in range(0,nxpoints-1):
+            elems[cont,0] = j*nxpoints + i
+            elems[cont,1] = j*nxpoints + i + 1
+            elems[cont,2] = nxpoints + j*nxpoints + i + 1
+            elems[cont,3] = nxpoints + j*nxpoints + i
+            cont = cont + 1
+    return coords, elems
 
 
 def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
@@ -308,6 +422,66 @@ def linlogmeshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
             elems[cont+1,1] = nxpoints + j*nxpoints+i+1
             elems[cont+1,2] = nxpoints + j*nxpoints+i
             cont = cont+2
+    return coords, elems
+
+def linlogmeshsq2D(xmin,xmax,ymin,ymax,nxpoints,nypoints,
+                   optiony,basey):
+    """
+
+        Generate a quadrilateral 2D mesh where the points are equally spaced in x direction
+        and logarithmally spaced in y direction.
+
+        Parameters:
+        -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
+        basey: the same base parameter but for the y coordinates of the rectangle
+         optiony: Lets the user decide the orientation of the log distribution
+                  for the custom mesh over the y axis. thi parameter can be
+                  L for more points on the top
+                  R for more points on the right
+                  C for more points on the bottom
+
+
+        Returns:
+        --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
+    
+    
+        Raises:
+        -------
+        Error if the user gives a wrong 'option' argument
+        Numerical error if base is chosen equal or less than 1
+    
+   
+        Last modification: April 30, 2013
+    
+    """    
+    coordx, elem = mesh1D(xmin,xmax,nxpoints)
+    coordy, elem = logmesh1D(ymin,ymax,nypoints,basey,optiony)
+    npoints = nxpoints*nypoints
+    coords = zeros ( (npoints,2),dtype=float)
+    cont = 0
+    for j in range(0,nypoints):
+        for i in range(0,nxpoints):
+            coords[cont,0] = coordx[i]
+            coords[cont,1] = coordy[j]
+            cont = cont+1
+    nelems = (nxpoints - 1)*(nypoints - 1)
+    elems = zeros ( (nelems,4) )
+    cont = 0
+    for j in range(0,nypoints - 1):
+        for i in range(0,nxpoints - 1):
+            elems[cont,0] = j*nxpoints + i
+            elems[cont,1] = j*nxpoints + i + 1
+            elems[cont,2] = nxpoints + j*nxpoints + i + 1
+            elems[cont,3] = nxpoints + j*nxpoints + i
+            cont = cont + 1
     return coords, elems
 
 
