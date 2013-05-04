@@ -1,0 +1,26 @@
+\section{
+Explicit FEM method pseudo, cor the solution of transient 
+simulations of electromagnetic fields.
+}
+
+Import libraries 
+Define a filename for .msh, .reg and .bc input files.
+
+Instantiate the simulation and initialize it from the 
+files with the filename name.
+	do:
+	 read_mesh
+	 read_regions
+	 
+
+Define a timestep $\delta t$ and a range for the iteration
+
+Build the lumped mass matrix (vector) 
+
+Define initial states $\mathbf{E}^{0}$ and $\mathbf{E}^{1}$.
+
+for time n in timesteps: 
+	
+	for node in nodes:
+		assemble dof's
+		Solve for dof

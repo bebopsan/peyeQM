@@ -468,13 +468,13 @@ def read_bc(filename):
     
     For Dirichlet and Newman conditions:    
     The initial number refers to the tag of the physical line, the letter of the 
-    second line tells the type of condition, and the number that folloes it 
+    second line tells the type of condition, and the number that follows it 
     has the number of degrees of freedom. The third line has a value that 
     refers to the way boundary conditions are interpreted and the 
     values for the condition on each degree of freedom.
     
     So, regarding the first value of the third line, depending on the number
-    a different behaviour will occur. This value is goign to be called the
+    a different behaviour will occur. This value is going to be called the
     method selector and will work as follows:
         
         0:   Read the values listed on the side. Each value will be 
@@ -482,11 +482,16 @@ def read_bc(filename):
         1:  Interpret an expression stated as a lambda function. for each 
             degree of freedom.
     
-    However for Bloch periodic conditions:
-    The initial number refers to the tag of the physical line, the first number 
-    of the third line holds no meaning, the second number of the third line 
-    tells which is the "partner" of the curent physical line, and the third 
-    term of the third line tells if it is an "image" or "reference" entity. 
+   
+   However for Bloch periodic conditions:
+   The initial number refers to the tag of the physical line, The second 
+   line tells the kind of condition and a binary expression next to it will 
+   mean that the current line is a reference (0) or image (1) line.
+   The first number of the third line holds no meaning, the second number of 
+   the third line tells which is the "partner" of the current physical line,
+   and the third term of the third line tells if the current line points in 
+   the same direction of its reciprocal. Lines that point in different 
+   direction have this value with opposite signs.
     
     Parameters:
     -----------

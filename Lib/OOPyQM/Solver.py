@@ -36,7 +36,23 @@ class Solver():
                     g[i] = dir_solution[j]
                     j = j+1
             return g
-            
+    def build_solution_2(self, solution):
+        """
+        The other build solution method was good for cases where we had
+        a dirichlet vector. This method is implemented for the
+        explicit solution where I already have known and discovered 
+        values in the same vector.
+        The problem is assumed vectorial
+        """
+        n_sol = solution.shape[0]
+        from numpy import zeros
+        vec_field = zeros((n_sol/2,2))
+        for i in range(0,n_sol, 2):
+           if i == 0:
+               vec_field[0] = [solution[i], solution[i+ 1]] 
+           else:
+               vec_field[i/2] = [solution[i], solution[i+ 1]] 
+        return vec_field
     def solve_stationary(self, simulation, equation):
         from scipy.linalg import solve        
         g = equation['sol_vec']
@@ -165,22 +181,11 @@ class Solver():
         for k_x in k_range_x:     # Loop over the different wave numbers k in x
             for k_y in k_range_y: # Loop over the different wave numbers k in y
                 # Multiply boundary nodes of each matrix by phase factor 
-                import matplotlib.pyplot as plt
-                plt.spy(mass)
-                plt.figure()
-                plt.spy(stif)
                 new_stif, new_mass = bloch_multiplication(k_x, \
                                                 k_y, nodes, \
                                                 ref_im_mul, stif.copy(), \
                                                 mass.copy())
                 new_stif, new_mass = bloch_sum(ref_im_mul, new_stif, new_mass)
-                #print new_mass, new_stif
-                
-                plt.figure()                
-                plt.spy(new_mass)
-                plt.figure()
-                plt.spy(new_stif)
-                #plt.show()
                 vals = eigvalsh(new_stif, new_mass, eigvals = (0, n_vals-1))
                 for val in range(0, n_vals):
                     energy[i, val] = vals[val]
@@ -189,7 +194,79 @@ class Solver():
                 i = i+1
         k_mesh = self.meshtr2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
         return k_mesh, energy       
+    def solve_bloch_Brillouin(self, simulation, equation):
+        """
+            This method solves a 2D bloch periodic condition problem 
+            given an equation and that was interpreted used an instance of
+            the Interpreter Class.
+            Right now I'm testing it for solution of EM probleems with 
+            Bloch periodicity such as those encountered in perfect 
+            photonic crystals. 
+            
+            Parameters:
+            -----------    
+            simulation:     An instance of class Simulation
+                            from which all the information about the
+                            domain and problem conditions will be extracted.
+                            The method read_solver_input() must have been 
+                            called with an appropiate input file in order 
+                            to extract information such as solver parameters
+                            from which the wave number is extracted.
+            equation:   Output of one methods of an instance from 
+                        class Interpreter(). Initialy only the output from 
+                        method: build_EM_bloch_eq(self, simulation) works.
+                        Future implementation of a simmilar method for QM 
+                        is pending.
+            Returns:
+            --------
+            k_mesh:     A simple triangular mesh made from x and y values 
+                        of the wavenumber.
+            energy: Set of eigenvalues assigned for each of the pairs 
+                    (k_x, k_y) in the k_mesh. 
+        """
+        #============= Load methods and attributes ================== 
+        from numpy import zeros, pi
+        from scipy.linalg import eigvalsh
+        bloch_multiplication = simulation.domain.boundaries.bloch_multiplication
+        bloch_sum = simulation.domain.boundaries.bloch_sum
+        ref_im_mul = equation['ref_im_mul']
+        stif = equation['left_side']
+        mass = equation['right_side']
+        analysis_param = simulation.solver_param
+        nodes = simulation.domain.nodes.coords 
+        analysis_param = simulation.solver_param
+        #============= Discretize the wavenumber dommain ================== 
+        analysis_param = simulation.solver_param
+        nk_x = int(analysis_param[4]) # number of k to sweep in xpasare a windows entonces para usa
+        nk_y = int(analysis_param[5]) # number of k to sweep in y
+        assert nk_x == nk_y, "Must be the same number of divisions"
+        k_max = pi/float(analysis_param[6])
+        k_coords = self.mesh_BrillouinZone(k_max, k_max,nk_x, nk_y)
+        print'k_coords.shape[0]', k_coords.shape[0]
+        n_vals = int(analysis_param[2])        
+        #================ Initiate global variable =======================
+        energy = zeros( (k_coords.shape[0], n_vals) )
         
+        #======================= Main cycles ===============================
+        i = 0         
+        print 'Calculating each of the ', k_coords.shape[0], \
+               ' points in k plane...\n'
+        for k in k_coords:
+            k_x = k[0]
+            k_y = k[1]
+            new_stif, new_mass = bloch_multiplication(k_x, \
+                                            k_y, nodes, \
+                                            ref_im_mul, stif.copy(), \
+                                            mass.copy())
+            new_stif, new_mass = bloch_sum(ref_im_mul, new_stif, new_mass)
+            vals = eigvalsh(new_stif, new_mass, eigvals = (0, n_vals-1))
+            for val in range(0, n_vals):
+                energy[i, val] = vals[val]
+            
+            print i+1, ' points out of :', k_coords.shape[0], '\n'  
+            i = i+1
+        
+        return k_coords, energy           
         
                  
     def substract_1(self, matrix):
@@ -296,3 +373,21 @@ class Solver():
             elems[i,0] = i
             elems[i,1] = i+1
         return coords, elems
+    def mesh_BrillouinZone(self, xmax, ymax, nxpoints,nypoints):
+        """
+        This functions returns the contour of the Brillouin zone for a 
+        square shaped Brillouin zone.
+        """
+        from numpy import zeros
+        coordx, line_x = self.mesh1D(0, xmax,nxpoints)
+        coordy, line_y = self.mesh1D(0, ymax,nypoints)
+        assert nxpoints == nypoints 
+        npoints = 3*nxpoints - 1
+        coords = zeros ( (npoints,2),dtype=float)
+        coords[:nxpoints, 0] = coordx
+        coords[nxpoints:nypoints+nxpoints, 0] = coordx[-1]
+        coords[nxpoints:nypoints+nxpoints, 1] = coordy
+        coords[2*nxpoints:-1,0] = coordx[-2:0:-1]
+        coords[2*nxpoints:-1,1] = coordy[-2:0:-1]
+        coords[-1] = coords[0]
+        return coords

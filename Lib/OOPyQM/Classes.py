@@ -129,7 +129,6 @@ class Domain():
         self.nodes.add(_nodes)
         self.elements.add(_elements, vectorial)
     def read_regions_file(self, filename):
-        from read_mesh import read_mesh
         from numpy import delete
         from copy import deepcopy
         import pickle
@@ -206,8 +205,9 @@ class Elements():
             self.lines = Lines(_elements['cuad_Lines'], vectorial)
             self.all['cuad_Lines'] = self.lines
         else: 
-            raise NotImplementedError('No higher order line elements of more\
-                                        than second order')
+            raise NotImplementedError("No higher order line elements of more"\
+                                        "than second order. Maybe you did't"\
+                                        "define physical lines?")
         if 'Triangles' in _elements:
             self.triangles = Triangles(_elements['Triangles'])
             self.all['Triangles'] = self.triangles
@@ -475,6 +475,7 @@ class Quadrilaterals():
         J_mat[0, 1] = dot(node_coords[0], dhds)
         J_mat[1, 1] = dot(node_coords[1], dhds)
         det_J = det(J_mat)
+        assert det_J > 0, "You did something wrong with numbering, because this should be positive"
         inv_J = zeros((2,2))
         inv_J[0, 0] = J_mat[1,1]
         inv_J[1, 1] = J_mat[0, 0]
@@ -957,4 +958,164 @@ class Boundaries():
             new_matrices.append(copy(delete(copy(delete(matrix, remove, 0)), remove, 1)))
             i+=1
         return new_matrices 
-  
+class DOF():
+    """
+    	A degree of freedom to solve for in a explicit methodology.
+    	Attributes:
+    
+    	node_id: 	Number that represents the row that corresponds to a certain node in 
+    				the array of nodes.
+    	boundary:  Boolean. df: false
+    
+    	region:  tells to which region it belongs
+    
+    	vectorial: Tells if the degree of freedom is part of a vectorial formulation.
+    			   for 2D vectorial models we will have two dof's per node.
+    	comp:  0,1   If vectorial, this will tell if the dof corresponds to x or y component of the field.	
+    
+    	s_elements:  List of surrounding elements 
+    
+    	k: 		Componento of the stiffness matrix built using the elements to which it belongs
+    
+    """
+    value = 0.0
+    def __init__(self, node_id, simulation, t = None, comp = 0, vectorial = False ):
+        self.node_id = node_id
+        self.F_i = 0
+        self.region = ''
+        self.comp = comp
+        self.s_elements = []
+        self.check_if_in_boundary(simulation, t = t)
+        self.boundary = self.check_if_in_boundary(simulation, t = t)
+    def __str__(self):
+        return "Degree of freedom %s of node %s is shared by elements:\n %s\n"\
+    		"and its corresondent stiffness constant is %s \n" %(self.comp, self.node_id,self.s_elements, self.k)		
+    def find_surrounding_elements(self, dofs, simulation):
+        """
+        Loop over elements looking for reference to the current node_id
+        """
+        self.F_i = 0
+        self.s_elements = []
+        nodes_coords = simulation.domain.nodes.coords            
+        for region in simulation.domain.regions:
+            all_elements = region.elements
+            for el_class in all_elements:
+                elements = all_elements[el_class]
+                if elements.vectorial:
+                    n_elements = elements.n_elements   
+                    el_set = elements.el_set
+                    if el_set == []:
+                        break
+                    else:
+                        for el in range(n_elements):
+                            if self.node_id + 1 in el_set[el][1:]:
+                                self.s_elements.append(region.name+' '+el_class+' '+str(el)+'\n')
+                                lo_stif = elements.build_local_stiffness(nodes_coords, el)
+                                if simulation.sim_type == 'EM':
+                                    mu = region.material_prop['mu']
+                                    lo_stif = 1.0/mu * lo_stif
+                                elif simulation.sim_type == 'QM':
+                                    h = region.material_prop['h']
+                                    m = region.material_prop['m']
+                                    lo_stif = h/(2.*m)*lo_stif
+                                else:
+                                    raise NotImplementedError('%s Not a simulation type'%simulation.sim_type) 
+                                from numpy import array, dot, where, append
+                                u = array([])
+                                
+                                for node in el_set[el][1:]:
+                                    if self.comp == 0:
+                                        u = append(u, dofs[2*(node-1)].value)
+                                        u = append(u, 0)
+                                    else: 
+                                        u = append(u, 0)
+                                        u = append(u, dofs[2*(node-1)+1].value)
+#                                if self.node_id == 107:
+#                                    print 'el_set[el][1:]',el_set[el][1:]
+#                                    print u,
+#                                    for dof in dofs:
+#                                        print 'dof.node_id',dof.node_id, 'value', dof.value                                        
+                                pivot = where(el_set[el][1:] == self.node_id+1)[0]    
+                                k_row = lo_stif[pivot + self.comp,:][0]
+                                
+                                self.F_i += dot(k_row, u)
+                                
+                else:
+                    n_elements = elements.n_elements
+                    el_set = elements.el_set
+                    if el_set == []:
+                        break
+                    else:
+                        for el in range(n_elements):
+                            if self.node_id + 1 in  el_set[el][1:]:
+                                self.s_elements.append(region.name+' '+el_class+' '+str(el)+'\n')
+                                lo_stif = elements.build_local_stiffness(nodes_coords, el)
+                                if simulation.sim_type == 'EM':
+                                    mu = region.material_prop['mu']
+                                    lo_stif = 1.0/mu * lo_stif
+                                elif simulation.sim_type == 'QM':
+                                    h = region.material_prop['h']
+                                    m = region.material_prop['m']
+                                    lo_stif = h/(2.*m)*lo_stif
+                                else:
+                                    raise NotImplementedError('%s Not a simulation type'%simulation.sim_type) 
+                                from numpy import sum, where       
+                                pivot = where(el_set[el][1:] == self.node_id+1)[0]
+                                row = lo_stif[pivot + self.comp,:]
+                                column1 = lo_stif[:pivot + self.comp, pivot + self.comp]
+                                column2 = lo_stif[pivot + self.comp+1:, pivot + self.comp]
+                                self.k += sum(row) + sum(column1)+ sum(column2)
+        return self.F_i
+    def check_if_in_boundary(self, simulation, t = None):
+        """
+        Run throug line elements checking if this degree of freedom 
+        belongs to a bc line defined by a bc condition.
+        
+        Parameters:
+        -----------
+        simulation:     Instance of class Simulation()
+        
+        Returns:
+        -------
+        
+        ln:     the number of the line to which the dof belongs 
+        """
+        bc_lines = simulation.domain.elements.lines.el_set
+        n_lines = simulation.domain.elements.lines.n_elements
+        vectorial = simulation.domain.elements.lines.vectorial
+        dirichlet = simulation.domain.boundaries.dirichlet
+        if vectorial:
+            for tag in dirichlet:
+                for ln in range(n_lines):
+                    if bc_lines[ln, 0] == int(tag):
+                        if self.node_id + 1 in bc_lines[ln]:  
+                            if self.comp == 0:                        
+                                value = dirichlet[tag][0][0]
+                            else:
+                                value = dirichlet[tag][0][1]
+                            if type(value) == str:
+                                from math import sqrt, sin, pi 
+                                from numpy import isnan
+                                x = simulation.domain.nodes.coords[self.node_id, 0]
+                                y = simulation.domain.nodes.coords[self.node_id, 1]
+                                import re
+                                value = re.sub("_"," ",value)
+                                exec(value)
+                                if isinstance(value, str):
+                                    raise TypeError("value should be already" \
+                                                    "evaluated something happened")
+                                else:
+                                    if isnan(value): 
+                                        value = 0
+                                        print 'value has been reassigned due to \
+                                          division by zero'
+                                
+                                    self.value = value
+                            else: 
+                                self.value = value
+                            return "This DOF belongs to line %s of bc with "\
+                            "tag %s.\n Value %s has been assigned to the DOF"\
+                            %(ln, tag, dirichlet[tag][0][self.comp])
+        else:
+        	raise NotImplementedError("Wait please")
+        return False         
