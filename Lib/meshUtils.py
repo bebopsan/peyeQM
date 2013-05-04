@@ -175,8 +175,27 @@ def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
             elems[cont+1,2] = nxpoints + j*nxpoints+i
             cont = cont+2
     return coords, elems
-
-
+    
+def mesh_BrillouinZone(xmax, ymax, nxpoints,nypoints):
+    """
+    This functions returns the contour of the Brillouin zone for a 
+    square shaped Brillouin zone.
+    """
+    from numpy import zeros
+    coordx, line_x = mesh1D(0, xmax,nxpoints)
+    coordy, line_y = mesh1D(0, ymax,nypoints)
+    assert nxpoints == nypoints 
+    npoints = 3*nxpoints - 1
+    coords = zeros ( (npoints,2),dtype=float)
+    coords[:nxpoints, 0] = coordx
+    coords[nxpoints:nypoints+nxpoints, 0] = coordx[-1]
+    print coordy
+    coords[nxpoints:nypoints+nxpoints, 1] = coordy
+    coords[2*nxpoints:-1,0] = coordx[-2:0:-1]
+    coords[2*nxpoints:-1,1] = coordy[-2:0:-1]
+    coords[-1] = coords[0]
+    print coords
+    return coords
 
 def logmeshtr2D(xmin, xmax, ymin, ymax, nxpoints, nypoints, optionx, optiony,\
                 basex, basey):
