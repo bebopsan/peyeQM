@@ -1,20 +1,103 @@
 # -*- coding: utf-8 -*-
-"""
-Module Classes will temporalry hold the classes used by PeYeQM to
-define instances.
+""" Classes module specifications.
+
+Module Classes holds many of the classes used by PeYeQM to
+define the instances necessary for the initial statement
+of a simulation problem.
+
+List of Classes
+===============
+
+Simulation()
+------------
+Top level class of a FEA. It contains as attributes all other classes listed 
+below.
+It has
+    - Definition of the problem. 
+    - Details about the context of the solution.
+Domain()
+--------
+Representation of the physical domain of a simulation. 
+It has:
+    - Information about regions and their discretization
+    - definitions of elements, nodes and boundary conditions
+
+Region()
+--------
+A region is an object that allows the identification of different material 
+properties according to a previous subdivision of the Domain.
+
+Nodes()
+-------
+Class Nodes represents the coordinates of the points that result from 
+a discretization of a given domain. 
+
+Elements()
+----------
+Class elements is a container for sets of 1D and 2D elements that can be 
+of different shapes and orders. Elements are representations of the 
+relation between nodes of a discretized domain.  
+Current supported elements are:
+    - Lines
+    - Triangles
+    - Quadrilaterals
+Lines()
+-------
+An instance of class Lines() is a container of line elements. 
+This class also defines common operations and attributes that 
+involve line elements.
+
+Triangles()
+-----------
+An instance of class Triangles() is a container of triangular elements. 
+This class also defines common operations and attributes that 
+involve triangular elements.
+
+Quadrilaterals()
+----------------
+An instance of class Quadrilaterals() is a container of QUAD elements. 
+This class also defines common operations and attributes that 
+involve QUAD elements.
+
+Boundaries()
+------------
+This class acts as a container of boundaries and their attributes.
+Boundaries of a domain are the objects where edge conditions are stated.
+
+DOF()
+-----
+DOF is a class that was defined for transient simulations only.
+A DOF represents a degree of freedom in a dynamic problem, and has the 
+necessary attributes and methods for a time dependant algorithm
+
 """
 __author__ = ['Santiago Echeverri Chacón']
 
 class Simulation():
-    """
-    Instances from simulation class will act as a container for the overal 
+    """ Contains the data of a simulation.
+    
+    Instances from this class act as a container for the overal 
     problem definition of the simulation.
-    It shall include information about:
-        * The Domain and its discretization.
-        * Options and configuration.
-        *Type of simulations and solvers to be used.
+    A simulation instance is meant to contain information about:
+        - The domain and its discretized representation.
+        - The physics of the problem.
+        - Details about the method of solution.
+    After instantiating a simulationone one gets an almost empty class.
+    In order to have an useful object, you have to read the input
+    data from a .msh that hasbeen prepared beforehand in the preprocessing
+    stage. 
+    
+    To read information of a file use the method read_solver_input()
+    
+    @ivar domain:  The Domain and its discretization.
+    @ivar sim_type: 
+    @ivar dimension: 
+    @ivar time_dependency:
+        
     """
     def __init__(self):
+        """ Not really a proper __init__ function. 
+        """
         self.domain = Domain()
     sim_type = 'QM'
     time_dependency = 'Stationary'
@@ -23,72 +106,72 @@ class Simulation():
         return 'This is an instance of the Simulation Class'
         
     def read_solver_input(self, filename):
-        """
-        Reads the solver input from a file of gmsh ASCII format V2.2.
-        This input is to be read by the Solver module.
-        Parameters:
-        -----------
-        filename: String which contain filename and path of the output file.
-        Returns:
-        --------
-        solver_input: List with the following parameters:
-    
-        [dimension,bc_type,parameter,eq,sol_type,analysis_param]
-    
-        dimension:  int parameter that tells the program wether to solve for a
-                1D problem or a 2D problem (not supported yet)
-    
-        bc_type:     String parameter for the selection of a border condition
-                    that can be either:
-    
-                        'Dir'   For the Dirichlet border condition
-                                (Infinite potential well).
-    
-                        'Bloch' For the periodic formulation of the problem.
-                                (Electron in a periodic material )
-                
-        body_parameter:  
-                Is an array that describes the potential actuating over the
-                the elements of the domain given by Elems. For each element in
-                Elems there is an associated potential value on the same
-                position in the array parameter.
-
-                The potential in Scroedinger equation defines the specific
-                nature of the problem to be solved. For more details on how
-                to define a potential and what does it mean pleas read the
-                documentation of the Potential1D function in the module PrePro.
-    
-       
-        sim_type: Can be 'QM' from Quantum Mechanics, or 'EM' for 
-                  electromagnetism.
+        """Reads the solver input from a file of gmsh ASCII format V2.2.
         
+        This input is to be read by the Solver module.
+        
+        :param filename: String 
+            which contain filename and path of the output file.
+       
+        :returns: solver_input
+            List with the following parameters:
+            [dimension, bc_type, parameter, eq, sol_type, analysis_param]
     
-        sol_type:       String that tells wether to solve the stationary version of
-                    the equation or another not yet suported.
+        dimension: int 
+            Parameter that tells the program wether to solve for a
+            1D problem or a 2D problem. 1D problems are currently 
+            not supported.
+        bc_type: str
+            Parameter for the selection of a boundary condition
+            that can be either:
+                'Dir':
+                    For the Dirichlet border condition
+                    (Infinite potential well).
+                'Bloch':
+                    For the periodic formulation of the problem.
+                    (Electron in a periodic material )
+        body_parameter: numpy.array
+            Is an array that describes the body force actuating over the
+            the elements of the domain. 
+            For each element in self.domain.elements
+            there is an associated potential value on the same
+            position in the array parameter. For EM this fiel is empty.
     
-                    'Stationary'   
-    
-        solver_param:   Array that contains the information regarding the number
-                         of solutions to be computed and wether to save the values
-                         or not.
-    
-                        analysis_param[0]:  String  answer to the question
-                                                   save  Eigen Values?
-                        analysis_param[1]:  String  answer to the question
-                                                   save  Eigen Vectors?
-                        analysis_param[2]:  Integer  number of Eigen Values to save
-                        analysis_param[3]:  Integer  number of Eigen Vectors to save 
-                        analysis_param[4]:  Integer number of wave numbers 
-                                            in x to sweep
-                        analysis_param[5]:  Integer number of wave numbers 
-                                            in y to sweep
-                        analysis_param[6]:  biggest value of k. it may be the lenght
-                                            of the dommain                                        
-                        
-        bc_filename:    string that tells where to look for the boundary 
-                        conditions  
+            The potential in Scroedinger equation defines the specific
+            nature of the problem to be solved. For more details on how
+            to define a potential and what does it mean please read the
+            documentation of the Potential1D function in the module PrePro.
+
+        sim_type: str
+            Can be 'QM' from Quantum Mechanics, or 'EM' for 
+            electromagnetism.
+        sol_type:  str
+            Tells wether to solve the stationary version of the equation 
+            or dynamic one
+                - 'Stationary'   
+                - 'Transient'
+        solver_param:  list 
+            Array that contains the information regarding the number
+            of solutions to be computed and wether to save the values
+            or not.
+            analysis_param[0]:  str
+                answer to the question, Save  Eigen Values?
+            analysis_param[1]:  str
+                answer to the question  Save  Eigen Vectors?
+            analysis_param[2]:  int
+                number of Eigen Values to save.
+            analysis_param[3]:  int
+                number of Eigen Vectors to save. 
+            analysis_param[4]:  int
+                number of wave numbers in x to sweep
+            analysis_param[5]:  int
+                number of wave numbers in y to sweep
+            analysis_param[6]:  int-float
+                biggest value of k. it may be the lenght of the dommain                                        
+        bc_filename: str
+            tells where to look for the boundary conditions  
                             
-         Last modification: date 12/02/2013
+        Last modification: date 05/05/2013
         """
         from read_mesh import read_solver_input
         solver_input = read_solver_input(filename) 
@@ -105,34 +188,99 @@ class Simulation():
     
 
 class Domain():
-    """ 
+    """ Is a container to other classes and methods exclusive of the domain.
+    
     Instances from Domain Class contain the attributes that define 
     characteristics of the simulation such as regions, meshing, and 
-    boundary conditions.
-    To be included here are instances of other clases such as:
-        * Nodes.
-        * Elements 
-        * And boundaries.
+    boundary conditions. They are somehow independent of the details
+    regarding the solution of the problem. 
+    
+    A domain is one of the principal components of the Simulation Class.
+    To be included here are instances of clases such as:
+        - Regions.
+        - Nodes.
+        - Elements. 
+        - Boundaries.
+    These are the main attibutes of a domain in Finite Elemen Analysis.
+    
+    :ivar nodes: Nodes()
+        After discretization space is reduced to points known as nodes,
+        each having unique coordinates. Nodes, is a class that contains
+        the coordinates of each node. for a FE model.
+
+    :ivar elements: Elements()
+        The way in which FEA solves problems is by solving differential 
+        equations over chunks of the domain. These chunks are called 
+        elements, and as the name suggest they are characterized by being
+        finite. By defining these elements as simple interpolation 
+        function of nodes, one can create an approximate representation 
+        of space and solve the differential equations for these functions.
+        elements is an instance that contains information about the elemens
+        that form the domain.
+        
+    :ivar regions: list [ Region1, Region2 ]
+        regions is a list of instances of class region which will help 
+        us relate material properties with different sets of elements. 
+    
+    :ivar boundaries: Boundaries()
+        As in any situation where one has to solve differential equations,
+        in FEA particular conditions have to be stated in some boundaries
+        of the domain in order to have unique solutions.
+        This instance has information about which boundaries have 
+        boundary conditions that are relevant to the solution of the 
+        simulation.
+        
     """
     def __init_(self):
+        """ This init is not very usefull. Maybe it shouldnt be there"""
         self.nodes = 0
         self.elements = 0
         self.regions = {}
-    def read_mesh_file(self, filename, vectorial = False):
-        from read_mesh import read_mesh
         
+    def read_mesh_file(self, filename, vectorial = False):
+        """ Reads mesh characteristics from a .msh file of gmsh
+            ASCII format V2.2.
+        
+        This method is meant to populate a domain instance by reading
+        nodes and elements from a .msh file.   
+        - Instances from Nodes and Elements are created.
+        - Function read_mesh() from module read_mesh.py is used to extract 
+          raw sets of elements and nodes.
+        - raw sets are added to nodes and elements by using their method 
+          add()
+        
+        :param filename: str 
+            which contains path and filename of input .msh file.
+        :keyord vectorial: Boolean
+            Tells if the problem is to be solved with a scalar or vectorial 
+            formulation. vectorial = True, builds two unknowns for each node.
+                    
+        """
+        from read_mesh import read_mesh
         self.nodes = Nodes()
         self.elements = Elements()
-  
         _nodes, _elements = read_mesh(filename)        
-        
         self.nodes.add(_nodes)
         self.elements.add(_elements, vectorial)
     def read_regions_file(self, filename):
+        """ Reads Region attributes from a .reg file exported by pickle.
+        
+        This method is meant to populate a domain instance by reading
+        regions attributes from a .reg file.   
+        The .reg file is a list of instances of class Region() that has 
+        been exported by using python's pickle function.
+        A .reg file contains elements, material properties, and a tag.
+
+        - Import the list        
+        - For each region in the list, add the elemtns that have its tag
+          by deep-copying them.
+        
+        :param filename: str 
+            which contains path and filename of input .reg file.
+        """
         from numpy import delete
         from copy import deepcopy
         import pickle
-        print filename
         f = open(filename +'.reg', 'r')
         regions = pickle.load(f)
         for region in regions:
@@ -151,16 +299,38 @@ class Domain():
         self.regions = regions
             
     def read_bc_file(self, filename):
+        """ Reads boundary confitions attributes from a .bc file.
+            
+        .bc files are made by hand by the user, and by means of tags
+        relate line elements to pre-established values.
+        There are three kinds of boundary conditions
+        D: Dirichlet
+            Conditions where one knows the value of the solution at the node.
+        N: Newman
+            Conditions where one knows the value of the derivative
+            of the  solution at the node.
+        B: Bloch
+            Made for Bloch periodicity
+
+        :param filename: str 
+            which contains path and filename of input .bc file.
+        """
         from read_mesh import read_bc
         self.boundaries = Boundaries()
         _bc = read_bc(filename)
         self.boundaries.add(_bc)                
                   
 class Nodes():
-    """
-    Nodes, will be a instance fo handling nodes. Right now its only 
+    """ Nodes, is a class that has coordinates for each node in a FE model.
+    
+    Nodes, is an instance for handling nodes. Right now its only 
     two attributes are the total number of nodes and the array of 
-    ccordinates.
+    coordinates.
+    
+    :ivar n: int
+        Total number of nodes.
+    :ivar coords: numpy.array
+        raw set of nodes as read from the mesh file.       
     """
     # def __init__(self):
         
@@ -170,12 +340,34 @@ class Nodes():
         self.coords = _nodes        
     
 class Region():
+    """ Reperesents a region of the Domain.
+    
+    It is a way to store attributes that are specific to certain regions 
+    of the simulation such as the kind of elements that compose it, 
+    it's distinctive tag, and material properties.
+    
+    
     """
-    Reperesents a region of the Domain. It is thought as a way to store 
-    attributes that are specific to certain regions such as the kind of 
-    elements that compose it, it's distinctive tag, and material properties
-    """
-    def __init__(self, tag = '', name = '',material_prop = {}, elements = {}):
+    def __init__(self, tag = '', name = '', material_prop = {}, elements = {}):
+        """ Initialization of a region.
+        
+        :keyword tag: str
+            This is a str that has a number. The number must be associated
+            to a physical surface of the mesh. Using this value one can
+            extract elements from the raw list of elements and assign them
+            to a particular region defined by this instance.
+        :keyword name: str
+            If you want to name this region for any reason 
+        :keyword material_prop: dict
+            dictionary, that lists the properties and their values. One 
+            example for the EM simulation is to define permitivity and 
+            permeability:
+                material_prop = {'epsilon':8.9, 'mu':1.0}
+        :keyword elements: dict of numpy.array's
+            This dictionary contains all the elements of a simulation
+            that are related to self.tag. This dict gets filled with
+            method domain.read_regions_file() 
+        """
         self.tag = tag
         self.name = name
         self.material_prop =  material_prop
@@ -186,18 +378,30 @@ class Region():
                 %(self.tag, self.name, self.material_prop,self.elements.keys())
     
 class Elements():
-    """
-    Elements for now counts the number f line and triangle elements
-    in a format imported from a file by using function read_mesh().
+    """ Contains information about all elemens that form the domain.
     
-    The Idea is that the instance elements contains all the attributes 
-    associated with elements
+    Elements is a class that gets filled by interpreting an array of 
+    raw elements, instantiating objects of the relevant class for 
+    each elemnt.
+    
+    If the reading of a .msh file gives line and quad elements, they are
+    saved into instances of classes Line() and Quadrilateral().
+    
+    :ivar all: dict of elements
+        all is a dictionary where all kinds of elements are indexed    
+    
     """
-    #Lines = 0    
     def __init__(self):
         self.all = {}
     def add(self, _elements, vectorial= False):
-       # from numpy import shape
+        """ Function to populate the class by interpreting a dict of elements.
+        
+        :param _elements: dict of elements
+        :keyword vectorial: Boolean
+            Tells if the elements are instantiated as vectorial elements.
+            vectorial = True, builds bigger matrices.
+            
+        """
         if 'lin_Lines' in _elements:
             self.lines = Lines(_elements['lin_Lines'], vectorial)
             self.all['lin_Lines'] = self.lines
@@ -214,23 +418,70 @@ class Elements():
         if 'cuad_Quads' in _elements:
             self.quads = Quadrilaterals(_elements['cuad_Quads'], vectorial)
             self.all['cuad_Quads'] = self.quads
-            
-    #It doesn't look so hard to implement square elements
 
-    # It would be cool to have a function and or attributes where 
-    # The order of elements is taken into account. 
-    #Things such as an element properties like:
-    #   * Order
-    #   * Area, or other shape attributes like jacobian
-    #   * Local matrices...
 class Lines():
-    """ Line elements are used for solving 1D problems and handling 
-        boundary conditions. The instance lines has been made in order
-        to contain properties that are defined exlusively for line elements
-        such as stiffness matrices for 1D problems and
-        interpolation methods for newman and source vectors.
+    """ Container for line elements and their methods.
+    
+    Line elements are used for solving 1D problems and handling 
+    boundary conditions. The instance lines has been made in order
+    to contain properties that are defined exlusively for line elements
+    such as stiffness matrices for 1D problems and
+    interpolation methods for newman and source vectors.
+    
+    :ivar el_set: numpy.array
+        Has the tags and list of nodes for each line element.
+    :ivar n_elements: int
+        number of lines in el_set
+    :ivar order: int
+        Tells of what order the elements are. order = 0 stands for
+        linear interpolation functions and order = 2 for cuadratic lines.
+        Maximum order is 2.
+    :ivar h: list of lambda functions
+        Is a list where interpolation functions for each node of the element
+        are defined. h depends on the order of the element.
+    
+    What we are trying to obtain when solving a FE problem is a function 
+    that represents the solution of a certain equation. By using  Finite 
+    elements  we form an abstraction of that function. Defining smaller 
+    compact suport functions that represent chunks of the domain, and 
+    assembling them carefully, we can build an approximate solution 
+    of complex problems whose analytical solution is out of reach.
+    
+    These compact suport functions are stated as interpolation functions
+    of nodal values and their relative positions. 
+    The idea is that knowing nodal values and the positions of nodes, 
+    we are able to interpolate the solution and find the value of an 
+    arbitrary point. It is however an approximation, and the precision
+    of this value will be dependent of factors such as:
+        - Number of nodes per element.
+        - Order of the interpolation function.
+        - complexity of the solution.
+    
+    In peyeQM elements are isoparametric elements. This means that 
+    elents of any shape are mapped to a standard element from which 
+    it is easier to perform operations.
+    
+    interpolation functions for the line element are:
+    ..math::
+        h_1 = \frac{1}{2}\left( 1 - r \right ) if cuad: 
+            - \frac{1}{2}\left( 1 - r^2 \right )
+    ..math::
+        h_2 = \frac{1}{2}\left( 1 + r \right )  if cuad: 
+        - \frac{1}{2}\left( 1 - r^2 \right )
+    ..math::
+        h_3 = \left( 1 - r  \right )
     """    
     def __init__(self, raw_lines, vectorial = False):
+        """ Initialization of a Lines object.
+        
+        
+        :param raw_lines: numpy.array
+            Has the lines as extracted from function read_mesh_file()
+            of module read_mesh.
+        :keyword vectorial: Boolean
+            Tells if the elements are instantiated as vectorial elements.
+            vectorial = True, builds bigger matrices.
+        """
         from numpy import shape
         self.el_set = raw_lines
         self.n_elements = shape(self.el_set)[0]
@@ -247,23 +498,25 @@ class Lines():
             raise NotImplementedError('Up to second order only')
         self.vectorial = vectorial
     def extract_el_points(self, _nodes, el_id):
-        """
+        """ Method for the extracion of coordinates from nodes in a element.
+        
         Extracts the coordinates of the nodes in each line element and
         retrieves an array of node coordinates.
         
-        Parameters:
-        -----------
-        nodes:  numpy array of dimension (n_nodes, 3), where n_nodes is the 
-                number of nodes forming the mesh, and the three columns 
-                represent coordinates (x, y, z).
-                    
-        el_id:   integer value of the current element
+        loops inside an element reading the indexes of nodes and looks
+        for their coordinates in the matrix of nodes.
         
-        Returns:
-        --------
-        node_coor: Array with coordinates of coordinate node. 
-                   If the element is 3 node then array is 2*3
-                   If it is a 2 node element then 2*2.
+        :param nodes: numpy.array 
+            Of dimension (n_nodes, 3), where n_nodes is the 
+            number of nodes forming the mesh, and the three columns 
+            represent coordinates (x, y, z).
+        :param el_id: int 
+            Index of the current element in the set of lines
+        
+        :returns: node_coor: 
+                Array with coordinates of coordinate node. 
+                If the element is 3 node then array is 2*3
+                If it is a 2 node element then 2*2.
         """
         from numpy import zeros
         if 'el_set' in self.__dict__:
@@ -288,6 +541,17 @@ class Lines():
         else:
             raise IOError('No elements parsed, do something else')
     def numeric_J(self, node_coords):
+        """ Calculation of the Jacobian of a line element
+        
+        Jacobian is used for scaling of arbitrary line elements into the
+        isoparametric line defined by interpolation functions h.
+        
+        :param node_coords: numpy.array
+            Array containing coordinates of nodes in the line. As extracted 
+            using method Lines.extract_el_points().
+        :returns: J
+            Jacobian of the input matrix.
+        """
         from numpy.linalg import norm     
         if self.order == 2:             
             L1 = norm(node_coords[:,2] - node_coords[:,0])
@@ -300,8 +564,34 @@ class Lines():
                                            there must be an error')
         return J
     def local_newman(self, q, nodes, newman, tag, ln, vectorial = False):
-        """ Returns the nodal values for a certain newman boundary line 
-            element by using the specific definition from the.bc file.
+        """ Method used for the computation of the local Newman vector.
+        
+        Returns the nodal values for a certain newman boundary line 
+        element by using the specific definition from the.bc file.
+        
+        The Newman vector is constructed in order to define Newman boundary
+        conditions. It uses interpolation functions of line elements
+        and numerical integration to perform the calculation of components
+        q of the newman vector.
+        
+        :param q: Seems to be doing nothing, but I'm not removing it because 
+            there is no time to track a point from where it might be being 
+            invoqued.
+        :param nodes: numpy.array
+            Array of coordinates for nodes, as read from the .msh file-
+        :param newman: dict Boundaries.newman
+            dictionary that holds the information about what values or
+            expressions are assigned to a particular newmann bc.
+        :param tag: str
+            id of the current boundary condition. dict newman may contain 
+            more than one relation, and tag is an identifier for selecting
+            one.
+        :parama ln: int
+            index of the current line element.
+        :keyword vectorial: Boolean
+            Tells if the local vector is initiated to fit vectorial elements.
+            vectorial = True, builds two dof for each node in the element.    
+            
         """
         bc_lines = self.el_set
         nodes_line = bc_lines.shape[1]
@@ -359,15 +649,44 @@ class Lines():
                 
         
 class Quadrilaterals():
-    """ Quadrilateral elements give better accuracy and resistance to 
-        locking than triangular elements. They can also be more economic
-        when meshing compared to their equivalent triangular peers.
-        Option vectorial will initiate base functions and nodal 
-        representation that accounts for components of the solution function.
-        This means that there will be x and y components of the solution.
-    """
+    """ Container for Quadrilateral elements and their methods.
+     
+    QUAD elements are used for meshing 2D plane surfaces, and solving 
+    for the unknowns inside a region of the domain.
+    The quad elements supported are  bi-linear or bi-cuadratic 
+    isoparametric elements. 
+    Quadrilateral elements give better accuracy and resistance to 
+    locking than triangular elements. 
+    
+     
+    :ivar el_set: numpy.array
+        Has the tags and list of nodes for each line element.
+    :ivar n_elements: int
+        number of quads in el_set
+    :ivar order: int
+        Tells of what order the elements are. Order = 0 stands for
+        linear interpolation functions and order = 2 for cuadratic elements.
+        Maximum order is 2.
+    :ivar h: list of lambda functions
+        Is a list where interpolation functions for each node of the element
+        are defined. h depends on the order of the element.
+
+   """
     
     def __init__(self,raw_quads, vectorial = False):
+        """Initialization of quadrilateral elements
+        
+        Elements are interpreted according to the number of nodes and
+        interpolation functions get initialized depending on the 
+        order of the element.
+        
+        :param raw_quads: numpy.array
+            Has the quads as extracted from function read_mesh_file()
+            of module read_mesh.
+        :keyword vectorial: Boolean
+            Tells if the elements are instantiated as vectorial elements.
+            vectorial = True, builds bigger matrices.        
+        """
         from numpy import shape
         self.el_set = raw_quads
         self.n_elements = shape(self.el_set)[0]
@@ -398,21 +717,23 @@ class Quadrilaterals():
             self.vectorial = vectorial
             
     def extract_el_points(self, _nodes, el_id):
-        """
+        """ Method for the extracion of coordinates from nodes in a element.
+        
         Extracts the coordinates of the nodes in each quad element and
         retrieves an array of node coordinates.
         
-        Parameters:
-        -----------
-        nodes:  numpy array of dimension (n_nodes, 3), where n_nodes is the 
-                number of nodes forming the mesh, and the three columns 
-                represent coordinates (x, y, z).
-                    
-        el_id:   integer value of the current element
+        loops inside an element reading the indexes of nodes and looks
+        for their coordinates in the matrix of nodes.
         
-        Returns:
-        --------
-        node_coor: Array with coordinates of coordinate node. 
+        :param nodes: numpy.array 
+            Of dimension (n_nodes, 3), where n_nodes is the 
+            number of nodes forming the mesh, and the three columns 
+            represent coordinates (x, y, z).
+        :param el_id: int 
+            Index of the current element in the set of lines
+        
+        :returns: node_coords: 
+                   Array with coordinates of current node. 
                    If the element is 8 node then array is 2*8
                    If it is a 4 node element then 2*4.
         """
@@ -440,11 +761,30 @@ class Quadrilaterals():
             raise IOError('No elements parsed, do something else')
     
     def numeric_J(self, node_coords, r,s, dHdrs = False):
-        """ I should document more often, now I don't get how this\
-            function work.
-            Parameters:
-                node_coords:    Array that contains coordinates of nodes
-                r, s:   
+        """ Calculation of the Jacobian of a QUAD element
+        
+        Determinant of theJacobian matrix is used for scaling of arbitrary 
+        QUAD elements into the isoparametric element defined by 
+        interpolation functions h.
+        Also, the inverse of the Jacobian is used in the calculation of 
+        the gradient of isoparametric interpolation functions.
+                
+        
+        :param node_coords: numpy.array
+            Array containing coordinates of nodes in the line. As extracted 
+            using method Quadrilaterals.extract_el_points().
+        :Parameters: 
+            r: x coordinate of an integration point in Gauss-Legendre 
+               cuadrature 
+            s: x coordinate of an integration point in Gauss-Legendre 
+               cuadrature
+        :keyword dHdrs: Boolean
+            If you want the matrix array([dhdr,dhds]) returned, give this as 
+            True
+            
+        :returns: J_mat
+            Jacobian matrix             
+            
         """
         from numpy import dot, zeros
         from numpy.linalg import det
@@ -457,8 +797,7 @@ class Quadrilaterals():
                     -r*(s+ 1), \
                     -1.0/2.0*(-s**2+ 1), \
                     -r*(-s+ 1),\
-                    1.0/2.0*(-s**2+ 1)]
-            
+                    1.0/2.0*(-s**2+ 1)]            
             dhds = [1.0/4.0*(r**2 + r +2*s*(r+ 1)), \
                     1.0/4.0*(r**2 - r +2*s*(-r+ 1)), \
                     1.0/4.0*(-r**2 + r +2*s*(-r+ 1)), \
@@ -656,7 +995,12 @@ class Quadrilaterals():
             
     
 class Triangles():
-    """
+    """ Triangles class is a container for triangular elements and their 
+    common methods.
+    
+    Triangular elements are best suited for representing curved boundaries
+    and edges.     
+    
     Triangles are one kind of very important elements
     """    
     def __init__(self, raw_triangles):
@@ -790,7 +1134,7 @@ class Triangles():
         return lo_mass
         
     #======================== Local Newman matrix  1D P1 ===========================
-    def local_newman_matrix():
+    def local_newman_matrix(self):
         from numpy import array
         lo_new = 1./6* array([[2, 1],\
                               [1, 2]])
@@ -989,7 +1333,7 @@ class DOF():
         self.boundary = self.check_if_in_boundary(simulation, t = t)
     def __str__(self):
         return "Degree of freedom %s of node %s is shared by elements:\n %s\n"\
-    		"and its corresondent stiffness constant is %s \n" %(self.comp, self.node_id,self.s_elements, self.k)		
+    		"and its Fi is %s \n" %(self.comp, self.node_id,self.s_elements, self.F_i)		
     def find_surrounding_elements(self, dofs, simulation):
         """
         Loop over elements looking for reference to the current node_id
@@ -1026,18 +1370,24 @@ class DOF():
                                 for node in el_set[el][1:]:
                                     if self.comp == 0:
                                         u = append(u, dofs[2*(node-1)].value)
-                                        u = append(u, 0)
+                                        u = append(u, 0.)
                                     else: 
-                                        u = append(u, 0)
+                                        u = append(u, 0.)
                                         u = append(u, dofs[2*(node-1)+1].value)
 #                                if self.node_id == 107:
 #                                    print 'el_set[el][1:]',el_set[el][1:]
 #                                    print u,
 #                                    for dof in dofs:
-#                                        print 'dof.node_id',dof.node_id, 'value', dof.value                                        
-                                pivot = where(el_set[el][1:] == self.node_id+1)[0]    
-                                k_row = lo_stif[pivot + self.comp,:][0]
-                                
+#                                        print 'dof.node_id',dof.node_id, 'value', dof.value    
+                               
+                                    
+                                pivot = where(el_set[el][1:] == self.node_id+1)[0]   
+                                pivot -= 1
+                                k_row = lo_stif[2*pivot + self.comp,:][0]
+                                if self.node_id+1 == 91:
+                                    print 'u',u , pivot, el_set[el][1:]
+                                    print 'self.F_i',self.F_i
+                                    print 'k_row',k_row
                                 self.F_i += dot(k_row, u)
                                 
                 else:
@@ -1061,10 +1411,9 @@ class DOF():
                                     raise NotImplementedError('%s Not a simulation type'%simulation.sim_type) 
                                 from numpy import sum, where       
                                 pivot = where(el_set[el][1:] == self.node_id+1)[0]
-                                row = lo_stif[pivot + self.comp,:]
-                                column1 = lo_stif[:pivot + self.comp, pivot + self.comp]
-                                column2 = lo_stif[pivot + self.comp+1:, pivot + self.comp]
-                                self.k += sum(row) + sum(column1)+ sum(column2)
+                                pivot -= 1
+                                k_row = lo_stif[pivot + self.comp,:][0]
+                                self.F_i += dot(k_row, u)
         return self.F_i
     def check_if_in_boundary(self, simulation, t = None):
         """
@@ -1088,7 +1437,7 @@ class DOF():
             for tag in dirichlet:
                 for ln in range(n_lines):
                     if bc_lines[ln, 0] == int(tag):
-                        if self.node_id + 1 in bc_lines[ln]:  
+                        if self.node_id + 1 in bc_lines[ln][1:]:  
                             if self.comp == 0:                        
                                 value = dirichlet[tag][0][0]
                             else:
@@ -1113,6 +1462,7 @@ class DOF():
                                     self.value = value
                             else: 
                                 self.value = value
+                                
                             return "This DOF belongs to line %s of bc with "\
                             "tag %s.\n Value %s has been assigned to the DOF"\
                             %(ln, tag, dirichlet[tag][0][self.comp])

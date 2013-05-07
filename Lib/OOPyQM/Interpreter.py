@@ -462,7 +462,6 @@ class Interpreter():
                             if simulation.sim_type == 'EM':
                                 epsilon = region.material_prop['epsilon']
                                 lo_mass = epsilon * lo_mass
-                                print 'epsilon',epsilon
                             elif simulation.sim_type == 'QM':
                                 pass
                             else:

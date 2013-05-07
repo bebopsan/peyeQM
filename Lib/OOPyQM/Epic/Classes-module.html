@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Classes</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;Classes
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Classes-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module Classes</h1><p class="nomargin-top"><span class="codelink"><a href="Classes-pysrc.html">source&nbsp;code</a></span></p>
+<p>Classes module specifications.</p>
+  <p>Module Classes holds many of the classes used by PeYeQM to define the 
+  instances necessary for the initial statement of a simulation 
+  problem.</p>
+  <h1 class="heading">List of Classes</h1>
+    <h2 class="heading">Simulation()</h2>
+      <p>Top level class of a FEA. It contains as attributes all other 
+      classes listed below. It has</p>
+      <ul>
+        <li>
+          Definition of the problem.
+        </li>
+        <li>
+          Details about the context of the solution.
+        </li>
+      </ul>
+    <h2 class="heading">Domain()</h2>
+      <p>Representation of the physical domain of a simulation. It has:</p>
+      <ul>
+        <li>
+          Information about regions and their discretization
+        </li>
+        <li>
+          definitions of elements, nodes and boundary conditions
+        </li>
+      </ul>
+    <h2 class="heading">Region()</h2>
+      <p>A region is an object that allows the identification of different 
+      material properties according to a previous subdivision of the 
+      Domain.</p>
+    <h2 class="heading">Nodes()</h2>
+      <p>Class Nodes represents the coordinates of the points that result 
+      from a discretization of a given domain.</p>
+    <h2 class="heading">Elements()</h2>
+      <p>Class elements is a container for sets of 1D and 2D elements that 
+      can be of different shapes and orders. Elements are representations 
+      of the relation between nodes of a discretized domain. Current 
+      supported elements are:</p>
+      <ul>
+        <li>
+          Lines
+        </li>
+        <li>
+          Triangles
+        </li>
+        <li>
+          Quadrilaterals
+        </li>
+      </ul>
+    <h2 class="heading">Lines()</h2>
+      <p>An instance of class Lines() is a container of line elements. This
+      class also defines common operations and attributes that involve line
+      elements.</p>
+    <h2 class="heading">Triangles()</h2>
+      <p>An instance of class Triangles() is a container of triangular 
+      elements. This class also defines common operations and attributes 
+      that involve triangular elements.</p>
+    <h2 class="heading">Quadrilaterals()</h2>
+      <p>An instance of class Quadrilaterals() is a container of QUAD 
+      elements. This class also defines common operations and attributes 
+      that involve QUAD elements.</p>
+    <h2 class="heading">Boundaries()</h2>
+      <p>This class acts as a container of boundaries and their attributes.
+      Boundaries of a domain are the objects where edge conditions are 
+      stated.</p>
+    <h2 class="heading">DOF()</h2>
+      <p>DOF is a class that was defined for transient simulations only. A 
+      DOF represents a degree of freedom in a dynamic problem, and has the 
+      necessary attributes and methods for a time dependant algorithm</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Santiago Echeverri Chac\xc3\xb3n
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Boundaries-class.html" class="summary-name">Boundaries</a><br />
+      Define what tags from physical entities are associated with certain
+        boundary conditions.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.DOF-class.html" class="summary-name">DOF</a><br />
+      A degree of freedom to solve for in a explicit methodology.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Domain-class.html" class="summary-name">Domain</a><br />
+      Is a container to other classes and methods exclusive of the domain.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Elements-class.html" class="summary-name">Elements</a><br />
+      Contains information about all elemens that form the domain.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Lines-class.html" class="summary-name">Lines</a><br />
+      Container for line elements and their methods.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Nodes-class.html" class="summary-name">Nodes</a><br />
+      Nodes, is a class that has coordinates for each node in a FE model.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Quadrilaterals-class.html" class="summary-name">Quadrilaterals</a><br />
+      Quadrilateral elements give better accuracy and resistance to 
+        locking than triangular elements.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Region-class.html" class="summary-name">Region</a><br />
+      Reperesents a region of the Domain.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Simulation-class.html" class="summary-name">Simulation</a><br />
+      Contains the data of a simulation.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="Classes.Triangles-class.html" class="summary-name">Triangles</a><br />
+      Triangles are one kind of very important elements
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="None">None</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sun May  5 17:26:48 2013
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
