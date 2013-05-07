@@ -50,7 +50,7 @@ node_coords = simu.domain.nodes.coords
 
 dt = 0.01 
 n_timesteps = 200
-times = range(3, n_timesteps)
+times = range(2, n_timesteps)
 
 dofs_past = []
 dofs_present = []
@@ -64,11 +64,11 @@ for node in range(node_coords.shape[0]):
     dofs_past.append(DOF(node, simu, comp = 1, t = 0 * dt))
     dofs_present.append(DOF(node, simu, comp = 0, t = 1 * dt))
     dofs_present.append(DOF(node, simu, comp = 1, t = 1 * dt))
-    dofs_future.append(DOF(node, simu, comp = 0, t = 6 * dt))
-    dofs_future.append(DOF(node, simu, comp = 1, t = 6 * dt))
+    dofs_future.append(DOF(node, simu, comp = 0, t = 2 * dt))
+    dofs_future.append(DOF(node, simu, comp = 1, t = 2 * dt))
 
 snapshot = [dofs_past, dofs_present, dofs_future]
-
+simu.
 from numpy import zeros, append, array
 solver = Solver()
 quads = solver.substract_1(simu.domain.elements.quads.el_set)
@@ -85,13 +85,17 @@ for n in times:
         E_future = snapshot[2][dof]  
         if E_future.check_if_in_boundary(simu, t = n*dt) == False:
             Fi = E_present.find_surrounding_elements(snapshot[1], simu)
-            F = Fi + 1/(dt**2)*mass[dof]*(2*E_present.value - E_past.value)
+            F = -Fi + 1.0/(dt**2)*mass[dof]*(2*E_present.value - E_past.value)
             snapshot[2][dof].value = dt**2/mass[dof] * F
+            if snapshot[2][dof].node_id+1 == 91:
+                print snapshot[2][dof].value, snapshot[1][dof].s_elements 
+                print 'Fi',Fi, mass[dof]
         snapshot[0][dof] = E_present
         snapshot[1][dof] =  E_future
         field = append(field, snapshot[2][dof].value)
         field_past = append(field, snapshot[0][dof].value)
         field_present =  append(field, snapshot[2][dof].value)
+        
     field = solver.build_solution_2(field)
     field3[:,0:2] = field
     field = field3
@@ -127,5 +131,5 @@ for n in times:
 #               triangles, ['SCALARS', ['sol'], [energy[:,i]]])
 #
 from inform import inform
-inform('done runing time simulation')
+inform('done runing time simulation ')
 print 'Finished.'
