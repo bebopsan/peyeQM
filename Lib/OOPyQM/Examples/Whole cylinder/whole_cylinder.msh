@@ -2443,7 +2443,7 @@ $Solver input
 2
 Dir
 
-Harm_Elec
+EM
 Stationary
 [y, y, 4, 4, 20, 20, 2]
 whole_cylinder.bc
