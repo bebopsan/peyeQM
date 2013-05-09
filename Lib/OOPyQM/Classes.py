@@ -1368,26 +1368,16 @@ class DOF():
                                 u = array([])
                                 
                                 for node in el_set[el][1:]:
-                                    if self.comp == 0:
-                                        u = append(u, dofs[2*(node-1)].value)
-                                        u = append(u, 0.)
-                                    else: 
-                                        u = append(u, 0.)
-                                        u = append(u, dofs[2*(node-1)+1].value)
+                                    u = append(u, dofs[2*(node-1)].value)
+                                    u = append(u, dofs[2*(node-1)+1].value)
+                                       
 #                                if self.node_id == 107:
 #                                    print 'el_set[el][1:]',el_set[el][1:]
 #                                    print u,
 #                                    for dof in dofs:
 #                                        print 'dof.node_id',dof.node_id, 'value', dof.value    
-                               
-                                    
-                                pivot = where(el_set[el][1:] == self.node_id+1)[0]   
-                                pivot -= 1
-                                k_row = lo_stif[2*pivot + self.comp,:][0]
-                                if self.node_id+1 == 91:
-                                    print 'u',u , pivot, el_set[el][1:]
-                                    print 'self.F_i',self.F_i
-                                    print 'k_row',k_row
+                                pivot = where(el_set[el][1:] == self.node_id+1)[0][0]
+                                k_row = lo_stif[2*pivot + self.comp,:]
                                 self.F_i += dot(k_row, u)
                                 
                 else:
@@ -1450,6 +1440,7 @@ class DOF():
                                 import re
                                 value = re.sub("_"," ",value)
                                 exec(value)
+                                print value
                                 if isinstance(value, str):
                                     raise TypeError("value should be already" \
                                                     "evaluated something happened")
@@ -1459,9 +1450,11 @@ class DOF():
                                         print 'value has been reassigned due to \
                                           division by zero'
                                 
-                                    self.value = value
+                                    self.value = value 
+                                    
                             else: 
                                 self.value = value
+                                
                                 
                             return "This DOF belongs to line %s of bc with "\
                             "tag %s.\n Value %s has been assigned to the DOF"\
