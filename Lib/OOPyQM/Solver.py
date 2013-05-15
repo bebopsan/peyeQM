@@ -192,7 +192,7 @@ class Solver():
                 
                 print i+1, ' points out of :', nk_x * nk_y, '\n'  
                 i = i+1
-        k_mesh = self.meshtr2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
+        k_mesh = self.meshsq2D(k_min, k_max, k_min, k_max, nk_x, nk_y)
         return k_mesh, energy       
     def solve_bloch_Brillouin(self, simulation, equation):
         """
@@ -288,33 +288,67 @@ class Solver():
             for j in range(1, n_cols):
                 matrix[i,j] = matrix[i,j] - 1
         return matrix
-                          
-    def meshtr2D(self,xmin,xmax,ymin,ymax,nxpoints,nypoints):
-        """
-    
-            Generate a 2D mesh where the points are equally spaced.
-    
-            Parameters:
-            -----------
+    def meshsq2D(self, xmin, xmax, ymin, ymax, nxpoints, nypoints):
+        """ Generate a 2D mesh where the points are equally spaced.
+
+        :Parameters:
             xmin:  initial value of the rectangular domain over x axis
             xmax:  final value of the rectangular domain over x axis
             ymin:  initial value of the rectangular domain over y axis
             ymax:  final value of the rectangular domain over y axis
             nxpoints:     Number of divisions over x
             nypoints:     Number of divisions over y
-    
-    
-            Returns:
-            --------
-            coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+
+        :Returns:
+            coords:  numpy array like matrix of the discretized domain 
+                     with shape Nx Ny
             elems:   numpy array like matrix of the relations between nodes.
-        
-        
-            Raises:
-            -------
-        
-            Last modification: date 21/10/2011
-        
+    
+        Last modification: April 30, 2013
+    
+        """    
+        from numpy import zeros
+        coordx, elem = self.mesh1D(xmin,xmax,nxpoints)
+        coordy, elem = self.mesh1D(ymin,ymax,nypoints)
+        npoints = nxpoints*nypoints
+        coords = zeros ( (npoints,2),dtype=float)
+        cont = 0
+        for j in range(0,nypoints):
+            for i in range(0,nxpoints):
+                coords[cont,0] = coordx[i]
+                coords[cont,1] = coordy[j]
+                cont = cont+1
+        nelems = (nxpoints - 1)*(nypoints - 1)
+        elems = zeros ( (nelems,4) )
+        cont = 0
+        for j in range(0,nypoints - 1):
+            for i in range(0,nxpoints - 1):
+                elems[cont,0] = j*nxpoints + i
+                elems[cont,1] = j*nxpoints + i + 1
+                elems[cont,2] = nxpoints + j*nxpoints + i + 1
+                elems[cont,3] = nxpoints + j*nxpoints + i
+                cont = cont + 1
+        return coords, elems             
+    def meshtr2D(self, xmin,xmax,ymin,ymax,nxpoints,nypoints):
+        """ Generate a 2D mesh where the points are equally spaced.
+
+        Parameters:
+        -----------
+        xmin:  initial value of the rectangular domain over x axis
+        xmax:  final value of the rectangular domain over x axis
+        ymin:  initial value of the rectangular domain over y axis
+        ymax:  final value of the rectangular domain over y axis
+        nxpoints:     Number of divisions over x
+        nypoints:     Number of divisions over y
+
+
+        Returns:
+        --------
+        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+        elems:   numpy array like matrix of the relations between nodes.
+    
+        Last modification: date 21/10/2011
+    
         """    
         from numpy import zeros
         coordx, elem = self.mesh1D(xmin,xmax,nxpoints)

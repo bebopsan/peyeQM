@@ -126,30 +126,24 @@ def logmesh1D(xmin,xmax,npoints,base,option):
 
 
 def meshtr2D(xmin,xmax,ymin,ymax,nxpoints,nypoints):
-    """
+    """Generate a 2D mesh where the points are equally spaced.
 
-        Generate a 2D mesh where the points are equally spaced.
-
-        Parameters:
-        -----------
-        xmin:  initial value of the rectangular domain over x axis
-        xmax:  final value of the rectangular domain over x axis
-        ymin:  initial value of the rectangular domain over y axis
-        ymax:  final value of the rectangular domain over y axis
-        nxpoints:     Number of divisions over x
-        nypoints:     Number of divisions over y
+    Parameters:
+    -----------
+    xmin:  initial value of the rectangular domain over x axis
+    xmax:  final value of the rectangular domain over x axis
+    ymin:  initial value of the rectangular domain over y axis
+    ymax:  final value of the rectangular domain over y axis
+    nxpoints:     Number of divisions over x
+    nypoints:     Number of divisions over y
 
 
-        Returns:
-        --------
-        coords:  numpy array like matrix of the discretized domain with shape Nx Ny
-        elems:   numpy array like matrix of the relations between nodes.
-    
-    
-        Raises:
-        -------
-    
-        Last modification: date 21/10/2011
+    Returns:
+    --------
+    coords:  numpy array like matrix of the discretized domain with shape Nx Ny
+    elems:   numpy array like matrix of the relations between nodes.
+
+    Last modification: date 21/10/2011
     
     """    
     coordx, elem = mesh1D(xmin,xmax,nxpoints)

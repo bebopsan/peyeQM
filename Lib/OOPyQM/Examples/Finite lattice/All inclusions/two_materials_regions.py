@@ -10,26 +10,25 @@ when runing the simulation.
 Pseudo:
 - Import stuff
 - Define a filename root
-- Create dictionarries for air and Dielectric material properties.
-- Make an instance of class region using those properties, and save 
-  both regions in a list to be pickled.
-
+- Define properties for materials in a dict
+- assign properties to a instance of class Regions
+- open a file and write the instance using pickle
 @author: santiago
 """
 import os, sys
-lib_path = os.path.abspath('../../')
+lib_path = os.path.abspath('../../../')
 sys.path.append(lib_path)
 from Classes import Region
 import pickle
 
-filename = 'finite_lattice_point_defect.reg'
-
+#filename = 'unit_cell_1-04_two_reg_guide.reg'
+filename = 'finite_lattice_all_inclusions.reg'
 air_prop = {'mu':1, 'epsilon':1}
 air = Region(tag = '30', name = 'Air', material_prop = air_prop)
 
 
 #air1 = Region(tag = '31', name = 'Air', material_prop = air_prop)
-dielectric_prop = {'mu':1, 'epsilon':8.9}
+dielectric_prop = {'mu':1, 'epsilon':1}
 dielectric = Region(tag = '31', name = 'Dielectric', material_prop = dielectric_prop)
 
 f = open(filename,'w')

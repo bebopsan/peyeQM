@@ -34,10 +34,10 @@ from Interpreter import Interpreter
 from Solver import Solver
 from write import write_vtk, write_solver_input 
 
-filename = 'unit_cell_1-04_two_reg'
+filename = 'unit_cell_1-02_two_reg'
 write_solver_input(filename +'.msh',dimension = 2, bc_type = 'Bloch', \
 parameter = [], eq = 'EM', sol_type = 'Stationary',analysis_param \
-= ['y', 'y', 15, 15, 11, 11, 1], bc_filename = filename +'.bc')  
+= ['y', 'y', 8, 8, 15, 15, 1], bc_filename = filename +'.bc')  
 
 simu = Simulation()
 simu.read_solver_input(filename +'.msh')
@@ -59,7 +59,7 @@ triangles = k_mesh[1]
 for i in range(energy.shape[1]):
     energy[:,i] = sqrt(around(energy[:,i],10))
     
-    write_vtk('Bloch_periodic_r-a_1-04_two_reg_true'+str(i)+'.vtk','this shit','POLYDATA', nodes,\
+    write_vtk('Bloch_periodic_r-a_1-02_two_reg_true'+str(i)+'.vtk','this shit','POLYDATA', nodes,\
                triangles, ['SCALARS', ['sol'], [energy[:,i]]])
 
 from inform import inform

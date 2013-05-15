@@ -1452,8 +1452,8 @@ $Solver input
 2
 Dir
 
-Harm_Elec
+EM
 Stationary
-[y, y, 4, 4, 20, 20, 2]
+[y, y, 15, 15, 20, 20, 2]
 square_waveguide.bc
 $End Solver input

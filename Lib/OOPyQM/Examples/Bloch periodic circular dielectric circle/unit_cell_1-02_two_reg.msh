@@ -622,6 +622,6 @@ Bloch
 
 EM
 Stationary
-[y, y, 15, 15, 11, 11, 1]
+[y, y, 8, 8, 15, 15, 1]
 unit_cell_1-02_two_reg.bc
 $End Solver input
