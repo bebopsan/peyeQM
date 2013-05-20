@@ -4,7 +4,7 @@ PeyeQM is a Python based Platform for the solution of 2D Finite Element problems
 
 What can it do?
 ===============
-- It can solve maxwell and schroedinger equations for simple 2D problems using the Finite Element Method.
+- It can solve Maxwell and Schroedinger equations for simple 2D problems using the Finite Element Method.
 - Supports scalar and vectorial formulations.
 - Is capable of handling periodic conditions for simulation of crystals.
 - Is in ongoing development for the solution of transient problems.
