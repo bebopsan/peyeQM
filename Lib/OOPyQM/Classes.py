@@ -653,8 +653,9 @@ class Quadrilaterals():
      
     QUAD elements are used for meshing 2D plane surfaces, and solving 
     for the unknowns inside a region of the domain.
-    The quad elements supported are  bi-linear or bi-cuadratic 
-    isoparametric elements. 
+    The quad elements supported here are  bi-linear or bi-cuadratic 
+    isoparametric elements of 8 nodes. They are best known as serendipity
+    elements.
     Quadrilateral elements give better accuracy and resistance to 
     locking than triangular elements. 
     
@@ -763,13 +764,15 @@ class Quadrilaterals():
     def numeric_J(self, node_coords, r,s, dHdrs = False):
         """ Calculation of the Jacobian of a QUAD element
         
-        Determinant of theJacobian matrix is used for scaling of arbitrary 
+        Determinant of the Jacobian matrix is used for scaling of arbitrary 
         QUAD elements into the isoparametric element defined by 
         interpolation functions h.
         Also, the inverse of the Jacobian is used in the calculation of 
         the gradient of isoparametric interpolation functions.
-                
-        
+        Right now, only the jacobian of second order QUAD elements is 
+        avaialble for solution.
+        The interpolation functions are derivated for coordinates r and s.
+    
         :param node_coords: numpy.array
             Array containing coordinates of nodes in the line. As extracted 
             using method Quadrilaterals.extract_el_points().
@@ -828,18 +831,17 @@ class Quadrilaterals():
             return J_mat, det_J, inv_J
 
     def local_potential_matrix(self, nodes, v, el_id):
-        """ 
-        This function calculates the local potential matrix for a quad
-        element using Gauss Legendre   quadratures as means for 
+        """ Calculates the local potential matrix for a QUAD element using Gauss Legendre   quadratures as means for 
         integration.
+        
         It returns a matrix that gets added to the global mass matrix.
         
-        Parameters:
+        :Parameters:
             nodes:  Array of nodes, attribute node_coord from class Nodes()
             v:     Potential is a vector that contains values for field 
                    parameters such as gravitational forces in  
             el_id: Integer that points to a certain element in the el_set
-        output: 
+        :returns: 
             lo_mass: Array defining the local mass matrix of the problem
                     given by:
                         int_{\Omega} H^T \bar{\bar{\epsilon}} H det(J) 
