@@ -8,7 +8,7 @@
 #    doc/
 
 # remove doc/_build/html if present
-cd doc && rm -rf doc/_build/html
+cd Doc && rm -rf Doc/_build/html
 
 # edit .gitignore to ignore _build
 echo "_build" >> .gitignore
@@ -19,7 +19,7 @@ git commit -m 'ignoring _build'
 mkdir -p _build/html
 
 # clone the entire repo into this directory (yes, this duplicates it)
-git clone git@github.com:username/project.git _build/html
+git clone git@github.com:bebopsan/peyeQM.git _build/html
 
 # set this directory to track gh-pages
 git symbolic-ref HEAD refs/heads/gh-pages
@@ -38,7 +38,7 @@ git commit -m 'first docs to gh-pages'
 git push origin gh-pages
 
 # [optional] cleanup stuff in duplicate master (in docs/_build/html)
-git co master
+git checkout master
 rm .git/index
 git clean -fdx
 
