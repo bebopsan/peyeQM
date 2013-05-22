@@ -1,0 +1,15 @@
+# Auxiliary files #
+###################
+*.aux
+*.bbl
+*.blg
+*.brf
+*.db
+*.log
+*.out
+*.toc
+*.bak
+*.gz
+# Folder #
+##########
+doc
