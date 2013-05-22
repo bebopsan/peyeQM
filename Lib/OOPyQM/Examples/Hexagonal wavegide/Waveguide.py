@@ -1,19 +1,30 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Apr  6 18:58:29 2013
+""" This script solves the harmonic wave equation for electromagnetic fields in 
+a circular waveguide.
+
+It reads the files with name stated in variable filename.
+
+The necessary files are files with following extensions:
+    
+    .msh    Mesh file has information about nodes and elements
+    .reg    Information about regions and material properties
+    .bc     Boundary conditions pertinent for the simulation
+    .
 
 @author: santiago
 """
-print __file__
+
 import os, sys
 lib_path = os.path.abspath('../..')
-print lib_path
 sys.path.append(lib_path)
-print sys.path
+
 from Classes import Simulation
 from Interpreter import Interpreter
 from Solver import Solver
 from write import write_vtk, write_solver_input 
+from numpy import pi, sqrt
+from numpy import zeros
+
 filename = 'hexagonal_waveguide'
 write_solver_input(filename +'.msh',dimension = 2, bc_type = 'Dir', \
 parameter = [], eq = 'EM', sol_type = 'Stationary',analysis_param \
@@ -22,16 +33,21 @@ parameter = [], eq = 'EM', sol_type = 'Stationary',analysis_param \
 simu = Simulation()
 simu.read_solver_input(filename +'.msh')
 simu.domain.read_mesh_file(filename +'.msh', True)
+simu.domain.read_bc_file(simu.bc_filename)
+
+reg_filename = simu.bc_filename.split('.bc')[0]
+simu.domain.read_regions_file(reg_filename)
 
 inter = Interpreter()
 eq = inter.build_harmonic_EM_eq(simu)
 g = eq['sol_vec']
+
 my_solver = Solver()
 value, fields = my_solver.solve_spectral(simu, eq)
-print len(fields), 'value', value
+print len(fields), 'value', sqrt(value)*2.0
 quads = my_solver.substract_1(simu.domain.elements.quads.el_set)
 quads = quads[:,1:]
-from numpy import zeros
+
 for i in range(len(fields)):
     field3 =  zeros((simu.domain.nodes.n,3))
     field3[:,0:2] = fields[i]
@@ -46,7 +62,7 @@ for i in range(len(fields)):
                quads, ['VECTORS', ['sol'], [fields[i]]])
 
 # Analitic solution
-from numpy import pi
+
 a = 2; b = 4
 k=[]
 for m in range(1,6):

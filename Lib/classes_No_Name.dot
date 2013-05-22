@@ -1,0 +1,47 @@
+digraph "classes_No_Name" {
+charset="utf-8"
+rankdir=BT
+"6" [shape="record", label="{Domain|regions : dict\lboundaries\lnodes : int\lelements : int\l|read_bc_file()\lread_regions_file()\lread_mesh_file()\l}"];
+"7" [shape="record", label="{Elements|quads\lall : dict\llines\ltriangles\l|add()\l}"];
+"8" [shape="record", label="{DOF|s_elements : list\lcomp : int\lregion : str\lF_i : int\lvalue : int\lnode_id\lboundary : bool\lvalue : float\l|check_if_in_boundary()\lfind_surrounding_elements()\l}"];
+"9" [shape="record", label="{Region|tag : str\lmaterial_prop : dict\lname : str\lelements : dict\l|}"];
+"10" [shape="record", label="{Lines|el_set\ln_elements\lvectorial : bool\lorder : int\lh : list\l|extract_el_points()\llocal_newman()\lnumeric_J()\l}"];
+"11" [shape="record", label="{Simulation|domain\lbc_type\ltime_dependency\lsim_type\lbody_parameter\lsolver_param\lbc_filename\ldimension\lsim_type : str\ltime_dependency : str\ldimension : int\l|read_solver_input()\l}"];
+"12" [shape="record", label="{Boundaries|newman : dict\ldirichlet : dict\lbloch : dict\l|bloch_sum()\ladd()\lbloch_multiplication()\l}"];
+"13" [shape="record", label="{Quadrilaterals|el_set\ln_elements\lvectorial : bool\lorder : int\lh : list\l|build_local_stiffness()\llocal_potential_matrix()\llocal_mass_matrix()\lnumeric_J()\lextract_el_points()\l}"];
+"14" [shape="record", label="{Nodes|coords\ln\l|add()\l}"];
+"15" [shape="record", label="{Triangles|el_set\ln_elements\lorder : int\l|build_local_stiffness()\llocal_potential_matrix()\llocal_mass_matrix()\lextract_el_edges()\lcalc_area()\lextract_el_points()\llocal_newman_matrix()\l}"];
+"18" [shape="record", label="{Interpreter|vectorial : bool\l|build_EM_bloch_eq()\ldirichlet_vector()\lbuild_QM_dirichlet_eq()\lglobal_mass_matrix()\lbuild_harmonic_EM_eq()\llumped_mass_matrix()\lnewman_vector()\lglobal_stiffness_matrix()\lreference_image_bloch_vectors()\lbuild_static_EM_eq()\l}"];
+"24" [shape="record", label="{Solver|\l|solve_stationary()\lsubstract_1()\lbuild_solution_2()\lbuild_solution()\lsolve_spectral()\lmeshsq2D()\lsolve_bloch()\lsolve_bloch_Brillouin()\lmesh_BrillouinZone()\lmesh1D()\lmeshtr2D()\l}"];
+"26" [shape="record", label="{Physical_Line|id_tag\llines\ltags : str\l|}"];
+"27" [shape="record", label="{Properties_bag|origin : NoneType\la : NoneType\lkind\lb : NoneType\lr : NoneType\l|}"];
+"28" [shape="record", label="{Point|y : int\lx : int\lid_tag\l|distance()\lisBelow()\lisLeft()\lisRight()\lisAbove()\l}"];
+"29" [shape="record", label="{Unitary_cell|surfaces : list\llast_tag\lperimeters : list\lid_tag\llast_point\lkind : str\lphysical_surfaces : list\lcircle\l|add_circular_inclussion()\l}"];
+"30" [shape="record", label="{Line_loop|id_tag\llines\l|}"];
+"31" [shape="record", label="{Shape|\l|}"];
+"32" [shape="record", label="{Physical_Surface|plane_surface\lid_tag\ltags : str\l|}"];
+"33" [shape="record", label="{Grid|origin\lphys_tags : list\lsketch\lsk_shape : list\ldicts\lcells\lphys_lines : list\ltransfinite : bool\l|extract_left_lines()\lextract_right_lines()\lextract_bottom_lines()\lcheck_rectangular()\ldefine_boundary()\lextract_top_lines()\l}"];
+"34" [shape="record", label="{Line|transfinite : bool\lphys_tag : NoneType\llenght\lpoints : list\lid_tag\l|}"];
+"35" [shape="record", label="{Plane_Surface|transfinite : bool\lid_tag\lline_loop\l|}"];
+"36" [shape="record", label="{Circle|surfaces : list\lphys_tag : NoneType\lperimeters : list\lsquare\lid_tag\lcenter\llines : list\lpoints : list\lradius\ltransfinite : bool\lrecombine : bool\lphysical_surface\l|contains()\l}"];
+"37" [shape="record", label="{Rectangle|origin\lperimeter\lkind : str\lid_tag\lcenter\llast_tag\lphys_tag : NoneType\lsurfaces : list\llines : list\lperimeters : list\lsurface\lheight\lwidth\lphysical_surfaces : list\lpoints : list\lphys_lines : list\llast_point\ltransfinite : bool\lrecombine : bool\lphysical_surface\l|contains()\lcontains_circ()\l}"];
+"38" [shape="record", label="{Circle_arc|transfinite : bool\lphys_tag : NoneType\lpoints\lid_tag\l|}"];
+"29" -> "37" [arrowtail="none", arrowhead="empty"];
+"36" -> "31" [arrowtail="none", arrowhead="empty"];
+"37" -> "31" [arrowtail="none", arrowhead="empty"];
+"12" -> "6" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="boundaries"];
+"14" -> "6" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="nodes"];
+"7" -> "6" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="elements"];
+"13" -> "7" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="quads"];
+"10" -> "7" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="lines"];
+"10" -> "7" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="lines"];
+"15" -> "7" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="triangles"];
+"6" -> "11" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="domain"];
+"36" -> "29" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="circle"];
+"37" -> "36" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="square"];
+"32" -> "36" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="physical_surface"];
+"30" -> "37" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="perimeter"];
+"28" -> "37" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="center"];
+"35" -> "37" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="surface"];
+"32" -> "37" [arrowhead="diamond", style="solid", arrowtail="none", fontcolor="green", label="physical_surface"];
+}

@@ -1,0 +1,234 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 12.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+fpprintprec:6;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Coordinates for the element
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+coords: matrix(
+ [x1,x2,x3,x4,x5,x6,x7,x8], 
+ [y1,y2,y3,y4,y5,y6,y7,y8]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Interpolation functions
+
+2--5--1
+|     |
+6     8
+|     |
+3--7--4
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Haux:1/2*[(1-r^2)*(1+s),(1-s^2)*(1-r),(1-r^2)*(1-s),(1-s^2)*(1+r)]$
+N8:[1/4*(1+r)*(1+s)-1/2*Haux[1]-1/2*Haux[4],
+   1/4*(1-r)*(1+s)-1/2*Haux[1]-1/2*Haux[2],
+   1/4*(1-r)*(1-s)-1/2*Haux[2]-1/2*Haux[3],
+   1/4*(1+r)*(1-s)-1/2*Haux[3]-1/2*Haux[4],
+   Haux[1],Haux[2],Haux[3],Haux[4]];
+kill(Haux)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Jacobian
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+jac:matrix([0,0], [0,0])$
+jac[1,1]: ratsimp(sum(coords[1,i]*diff(N8[i],r),i,1,8))$
+jac[1,2]: ratsimp(sum(coords[2,i]*diff(N8[i],r),i,1,8))$
+jac[2,1]: ratsimp(sum(coords[1,i]*diff(N8[i],s),i,1,8))$
+jac[2,2]: ratsimp(sum(coords[2,i]*diff(N8[i],s),i,1,8))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+jac;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+detjac:determinant(jac);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+jacinv:1/detjac*matrix([jac[2,2],-jac[1,2]], [-jac[2,1],jac[1,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Let's check for the canonical element, the Jacobian of the transformation is an identity matrix and the determinant is 1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=1,y1=1,
+x2=-1,y2=1,
+x3=-1,y3=-1,
+x4=1,y4=-1,
+x5=0,y5=1,
+x6=-1,y6=0,
+x7=0,y7=-1,
+x8=1,y8=0],jac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=1,y1=1,
+x2=-1,y2=1,
+x3=-1,y3=-1,
+x4=1,y4=-1,
+x5=0,y5=1,
+x6=-1,y6=0,
+x7=0,y7=-1,
+x8=1,y8=0],detjac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=1,y1=1,
+x2=-1,y2=1,
+x3=-1,y3=-1,
+x4=1,y4=-1,
+x5=0,y5=1,
+x6=-1,y6=0,
+x7=0,y7=-1,
+x8=1,y8=0],jacinv),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now for a constant elongation in x, we have a diagonal Jacobian with 2 as elongation factor. The determinant is the change
+in area 2.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=2,y1=1,
+x2=-2,y2=1,
+x3=-2,y3=-1,
+x4=2,y4=-1,
+x5=0,y5=1,
+x6=-2,y6=0,
+x7=0,y7=-1,
+x8=2,y8=0],jac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=2,y1=1,
+x2=-2,y2=1,
+x3=-2,y3=-1,
+x4=2,y4=-1,
+x5=0,y5=1,
+x6=-2,y6=0,
+x7=0,y7=-1,
+x8=2,y8=0],detjac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=2,y1=1,
+x2=-2,y2=1,
+x3=-2,y3=-1,
+x4=2,y4=-1,
+x5=0,y5=1,
+x6=-2,y6=0,
+x7=0,y7=-1,
+x8=2,y8=0],jacinv),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now, for a rigid rotation of 90 degrees.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([
+x1=-1,y1=1,
+x2=-1,y2=-1,
+x3=1,y3=-1,
+x4=1,y4=1,
+x5=-1,y5=0,
+x6=0,y6=-1,
+x7=1,y7=0,
+x8=0,y8=1],jac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+is the same that
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix([cos(%pi/2),sin(%pi/2)],-[sin(%pi/2),cos(%pi/2)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([
+x1=-1,y1=1,
+x2=-1,y2=-1,
+x3=1,y3=-1,
+x4=1,y4=1,
+x5=-1,y5=0,
+x6=0,y6=-1,
+x7=1,y7=0,
+x8=0,y8=1],detjac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([
+x1=-1,y1=1,
+x2=-1,y2=-1,
+x3=1,y3=-1,
+x4=1,y4=1,
+x5=-1,y5=0,
+x6=0,y6=-1,
+x7=1,y7=0,
+x8=0,y8=1],jacinv),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+And now for a constant shear distortion
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=2,y1=2,
+x2=-1,y2=1,
+x3=-2,y3=-2,
+x4=1,y4=-1,
+x5=1/2,y5=3/2,
+x6=-3/2,y6=-1/2,
+x7=-1/2,y7=-3/2,
+x8=3/2,y8=1/2],jac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=2,y1=2,
+x2=-1,y2=1,
+x3=-2,y3=-2,
+x4=1,y4=-1,
+x5=1/2,y5=3/2,
+x6=-3/2,y6=-1/2,
+x7=-1/2,y7=-3/2,
+x8=3/2,y8=1/2],detjac),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(
+[x1=2,y1=2,
+x2=-1,y2=1,
+x3=-2,y3=-2,
+x4=1,y4=-1,
+x5=1/2,y5=3/2,
+x6=-3/2,y6=-1/2,
+x7=-1/2,y7=-3/2,
+x8=3/2,y8=1/2],jacinv),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMI verified="false" xmi.version="1.2" timestamp="2013-01-26T23:13:11" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
+<XMI verified="false" xmi.version="1.2" timestamp="2013-05-05T12:12:10" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
  <XMI.header>
   <XMI.documentation>
    <XMI.exporter>umbrello uml modeller http://uml.sf.net</XMI.exporter>
@@ -28,21 +28,12 @@
         <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="KDQpFWJ2mG0K" name="unsigned short"/>
         <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="wo7Zbz8BIE9P" name="unsigned long"/>
         <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="QrKa2i0MwQ99" name="string"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="j63BWOny4WML" name="array"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="RYTKBTzsxPLi" name="tuple"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="18nrFfqwjr8D" name="object"/>
+        <UML:DataType stereotype="datatype" visibility="public" isSpecification="false" namespace="Datatypes" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="FtCIPYdp549E" name="set"/>
        </UML:Namespace.ownedElement>
       </UML:Package>
-      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="5DjNRskqi4Qi" name="Simulation">
-       <UML:Classifier.feature>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="kw6QMjWmXtiW" type="nQ2joBsib2OH" initialValue="'QM'" name="sim_type"/>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="3cRYV74rRuKL" type="QrKa2i0MwQ99" initialValue="'Stationary'" name="time_dependency "/>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="Xl9WVoQeoI0l" type="MiVyeMguUda0" initialValue="2" name="dimension"/>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="hDRzWYeXA53e" type="nQ2joBsib2OH" name="Domain"/>
-        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="9reTfmSFgSf6" name="add_ingredients">
-         <UML:BehavioralFeature.parameter>
-          <UML:Parameter visibility="private" isSpecification="false" xmi.id="PnPy1UeL7Zk0" type="QrKa2i0MwQ99" value="" name="msh_filename"/>
-         </UML:BehavioralFeature.parameter>
-        </UML:Operation>
-       </UML:Classifier.feature>
-      </UML:Class>
       <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="nQ2joBsib2OH" name="Domain">
        <UML:Classifier.feature>
         <UML:Attribute visibility="private" isSpecification="false" xmi.id="O1tW5u8F0bp1" type="KcR0gpiTDiA1" name="nodes"/>
@@ -50,7 +41,7 @@
         <UML:Attribute visibility="private" isSpecification="false" xmi.id="86M2xcgvwihX" type="UDTehID1uc2Z" name="boundaries"/>
         <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="KvraY6chGDlx" name="read_mesh_file">
          <UML:BehavioralFeature.parameter>
-          <UML:Parameter visibility="private" isSpecification="false" xmi.id="5StZEpVN9Dvh" type="QrKa2i0MwQ99" value="" name="filename"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="QYh7U4DnvVFa" type="QrKa2i0MwQ99" value="" name="msh_filename"/>
          </UML:BehavioralFeature.parameter>
         </UML:Operation>
         <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="ukesaBv1S87k" name="read_bc_file">
@@ -131,27 +122,6 @@
         </UML:Operation>
        </UML:Classifier.feature>
       </UML:Class>
-      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Ri2ePBdICMjD" name="Interpreter">
-       <UML:Classifier.feature>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="7GHLT0JYTA6f" comment="Havent defined a class yet.&#xa;" name="sys_of_eq"/>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="8su6D1VKfAsn" name="something_to_solve"/>
-        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="0b07mvm0s6fc" name="assemble_sys_of_eq">
-         <UML:BehavioralFeature.parameter>
-          <UML:Parameter visibility="private" isSpecification="false" xmi.id="EqhIpLrwb8H2" type="5DjNRskqi4Qi" value="" name="simulation"/>
-         </UML:BehavioralFeature.parameter>
-        </UML:Operation>
-       </UML:Classifier.feature>
-      </UML:Class>
-      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="RSUuzwpT7G5o" name="Solver">
-       <UML:Classifier.feature>
-        <UML:Attribute visibility="private" isSpecification="false" xmi.id="9myYSmXITTaG" name="solution"/>
-        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="XYZPCZHq0Z4V" name="solve">
-         <UML:BehavioralFeature.parameter>
-          <UML:Parameter visibility="private" isSpecification="false" xmi.id="wJowssQDrwWJ" type="" value="" name="that_something"/>
-         </UML:BehavioralFeature.parameter>
-        </UML:Operation>
-       </UML:Classifier.feature>
-      </UML:Class>
       <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="YGnTsn0HU2tt" name="Post_Pro">
        <UML:Classifier.feature>
         <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Zv7dZDqox3Hs" name="understand_and_save_to_vtk">
@@ -179,18 +149,6 @@
        </UML:Classifier.feature>
       </UML:Class>
       <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="r3g2VrgqaS4L" name="new_class_1"/>
-      <UML:Association visibility="public" isSpecification="false" namespace="Logical View" xmi.id="uJPdRw91rGcP" name="">
-       <UML:Association.connection>
-        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="TSBRVQHg2SF0" type="5DjNRskqi4Qi" name="" aggregation="none"/>
-        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="hiCX2BCwSbat" type="Ri2ePBdICMjD" name="" aggregation="none"/>
-       </UML:Association.connection>
-      </UML:Association>
-      <UML:Association visibility="public" isSpecification="false" namespace="Logical View" xmi.id="YjsNzTmQvypP" name="">
-       <UML:Association.connection>
-        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="false" isSpecification="false" xmi.id="O73PZGPEybj1" type="5DjNRskqi4Qi" name="" aggregation="none"/>
-        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="kwvAXV25CuTB" type="Ri2ePBdICMjD" name="" aggregation="none"/>
-       </UML:Association.connection>
-      </UML:Association>
       <UML:Association visibility="public" isSpecification="false" namespace="Logical View" xmi.id="NDaHBPeYWhx3" name="">
        <UML:Association.connection>
         <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="false" isSpecification="false" xmi.id="vKItt1sexooT" type="RSUuzwpT7G5o" name="" aggregation="none"/>
@@ -209,87 +167,218 @@
         <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="xhIBOc2s8PS4" type="YGnTsn0HU2tt" name="" aggregation="none"/>
        </UML:Association.connection>
       </UML:Association>
+      <UML:Association visibility="public" isSpecification="false" namespace="Logical View" xmi.id="uJPdRw91rGcP" name="">
+       <UML:Association.connection>
+        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="TSBRVQHg2SF0" type="5DjNRskqi4Qi" name="" aggregation="none"/>
+        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="hiCX2BCwSbat" type="Ri2ePBdICMjD" name="" aggregation="none"/>
+       </UML:Association.connection>
+      </UML:Association>
+      <UML:Association visibility="public" isSpecification="false" namespace="Logical View" xmi.id="YjsNzTmQvypP" name="">
+       <UML:Association.connection>
+        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="false" isSpecification="false" xmi.id="O73PZGPEybj1" type="5DjNRskqi4Qi" name="" aggregation="none"/>
+        <UML:AssociationEnd changeability="changeable" visibility="public" isNavigable="true" isSpecification="false" xmi.id="kwvAXV25CuTB" type="Ri2ePBdICMjD" name="" aggregation="none"/>
+       </UML:Association.connection>
+      </UML:Association>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="RSUuzwpT7G5o" name="Solver">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="9myYSmXITTaG" name="solution"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="XYZPCZHq0Z4V" name="solve">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="wJowssQDrwWJ" type="" value="" name="that_something"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="X66STS8VYuMn" name="build_solution">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="WCO1DIW1cDXa" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="XAiGzqSFheX6" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="A8tFC2Uh6Y8Y" type="QrKa2i0MwQ99" value="" name="dir_solution"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="0G3Z8NKfX2uU" type="QrKa2i0MwQ99" value="" name="g"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="qMjVyEc8MTMY" type="QrKa2i0MwQ99" value="" name="remove"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="WoEaMM8Lc9sj" type="QrKa2i0MwQ99" value="" name="vectorial"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="S7hoa3L4pZd9" name="build_solution_2">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="mcwZ9Xj2HBV8" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="tjUTtKCNVbPi" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="rthU4C4WJjJs" type="QrKa2i0MwQ99" value="" name="solution"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="WgV1Hsh6jOao" name="solve_stationary">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="NJSYw7t7SDYz" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="bdKsMbk7DfeK" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="CNMRZqZ3W54l" type="QrKa2i0MwQ99" value="" name="simulation"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="vlrf7QTi1lZL" type="QrKa2i0MwQ99" value="" name="equation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="162XB6G6p8jx" name="solve_spectral">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="Xha10QQOAvC6" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="WCdXyCsLUJrQ" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="OkXqw4qxAqTJ" type="QrKa2i0MwQ99" value="" name="simulation"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="xjNmp7hLJLqF" type="QrKa2i0MwQ99" value="" name="equation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="z027rVQoEmY2" name="solve_bloch">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="s6Tj3ZaR3pyS" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="tGLAZCQ6ty6r" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="OWFXRPdPQfUH" type="QrKa2i0MwQ99" value="" name="simulation"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="8v3NfbNYpigO" type="QrKa2i0MwQ99" value="" name="equation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="Ri2ePBdICMjD" name="Interpreter">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="7GHLT0JYTA6f" comment="Havent defined a class yet.&#xa;" name="sys_of_eq"/>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="8su6D1VKfAsn" name="something_to_solve"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="0b07mvm0s6fc" name="assemble_sys_of_eq">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="EqhIpLrwb8H2" type="5DjNRskqi4Qi" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="FardDMuKFxfs" name="__init__">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="NSdaPISwKsG3" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="Y2QMk6ibBBKE" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="ivdliaEv83YL" type="QrKa2i0MwQ99" value="" name="vectorial"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="xye6AyKstxea" name="build_QM_dirichlet_eq">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="pR3iPfGuTmYK" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="XqVft4zFWapu" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="tIoD84E32s9A" type="QrKa2i0MwQ99" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="qVZK5PCwf0Al" name="build_static_EM_eq">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="d6cG6k099nEM" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="4On5FwF4MGkj" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="v1dMn9hbcGtg" type="QrKa2i0MwQ99" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="hRQ3iAmbBOyw" name="build_harmonic_EM_eq">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="A4dKSZGxEm36" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="XfX8tRoXVOlb" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="9liGYucGM2J2" type="QrKa2i0MwQ99" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="BrdgEMFN8ydg" name="build_EM_bloch_eq">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="fo5lmiSdvMnA" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="qFuCHCCPGqjg" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="P0dckfivWJbk" type="QrKa2i0MwQ99" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="W0amoJSBH4l1" name="global_stiffness_matrix">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter kind="return" xmi.id="hdQxfCyMdvYM" type="QrKa2i0MwQ99"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="jTwDkVwOK194" type="QrKa2i0MwQ99" value="" name="self"/>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="iZhduToQRODF" type="QrKa2i0MwQ99" value="" name="simulation"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="5DjNRskqi4Qi" comment="&quot;&quot;&quot;&#xa;Instances from simulation class will act as a container for the overal problem definition of the simulation. It shall include information about:&#xa;        * The Domain and its discretization.&#xa;        * Options and configuration.&#xa;        *Type of simulations and solvers to be used.&#xa;&quot;&quot;&quot;" name="Simulation">
+       <UML:Classifier.feature>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="kw6QMjWmXtiW" type="nQ2joBsib2OH" initialValue="'EM'" name="sim_type"/>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="3cRYV74rRuKL" type="QrKa2i0MwQ99" initialValue="'Stationary'" name="time_dependency "/>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="Xl9WVoQeoI0l" type="MiVyeMguUda0" initialValue="2" name="dimension"/>
+        <UML:Attribute visibility="private" isSpecification="false" xmi.id="hDRzWYeXA53e" type="nQ2joBsib2OH" name="Domain"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="xtCI75MAvcBq" type="uJPdRw91rGcP" initialValue="'Dir'-'Bloch'" name="bc_type"/>
+        <UML:Attribute visibility="public" isSpecification="false" xmi.id="rzRum5TnlJBN" type="YjsNzTmQvypP" name="body_parameter"/>
+        <UML:Operation visibility="public" isSpecification="false" isQuery="false" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="9reTfmSFgSf6" name="read_solver_input">
+         <UML:BehavioralFeature.parameter>
+          <UML:Parameter visibility="private" isSpecification="false" xmi.id="iTSTlep7p6rz" type="QrKa2i0MwQ99" value="" comment="Filename referes to the common name for all input files." name="filename"/>
+         </UML:BehavioralFeature.parameter>
+        </UML:Operation>
+       </UML:Classifier.feature>
+      </UML:Class>
      </UML:Namespace.ownedElement>
      <XMI.extension xmi.extender="umbrello">
       <diagrams>
-       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="class diagram" font="Sans Serif,9,-1,0,50,0,0,0,0,0" canvasheight="715" canvaswidth="1693" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="100" xmi.id="ZqlcaeqyxmfJ" documentation="" showscope="1" snapgrid="0" showatts="1" type="1">
+       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="class diagram" font="Sans Serif,9,-1,0,50,0,0,0,0,0" canvasheight="715" canvaswidth="2125" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="100" xmi.id="ZqlcaeqyxmfJ" documentation="" showscope="1" snapgrid="0" showatts="1" type="1">
         <widgets>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="162" showattsigs="601" showstereotype="1" y="81" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="373" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="5DjNRskqi4Qi" showscope="1" height="49" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="258" showattsigs="601" showstereotype="1" y="215" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="237" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="nQ2joBsib2OH" showscope="1" height="49" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="162" showattsigs="601" showstereotype="1" y="81" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="373" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="5DjNRskqi4Qi" showscope="1" height="70" showopsigs="601"/>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="0" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="0" showpubliconly="1" showpackage="1" x="225" showattsigs="601" showstereotype="1" y="216" showattributes="1" font="Sans Serif,9,-1,5,75,0,0,0,0,0" width="277" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="nQ2joBsib2OH" showscope="1" height="81" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="319" showattsigs="601" showstereotype="1" y="368" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="152" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="FNrDTwlW9Urb" showscope="1" height="35" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="153" showattsigs="601" showstereotype="1" y="369" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="110" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="KcR0gpiTDiA1" showscope="1" height="35" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="373" showattsigs="601" showstereotype="1" y="484" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="345" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="t1jS37jGTYSw" showscope="1" height="105" showopsigs="601"/>
          <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="0" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="0" showpubliconly="1" showpackage="1" x="519" showattsigs="601" showstereotype="1" y="370" showattributes="1" font="Sans Serif,9,-1,5,75,0,0,0,0,0" width="110" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="UDTehID1uc2Z" showscope="1" height="35" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="610" showattsigs="601" showstereotype="1" y="84" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="293" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="Ri2ePBdICMjD" showscope="1" height="35" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="972" showattsigs="601" showstereotype="1" y="88" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="171" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="RSUuzwpT7G5o" showscope="1" height="35" showopsigs="601"/>
-         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="0" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="0" showpubliconly="1" showpackage="1" x="1223" showattsigs="601" showstereotype="1" y="83" showattributes="1" font="Sans Serif,9,-1,5,75,0,0,0,0,0" width="404" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="YGnTsn0HU2tt" showscope="1" height="35" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="610" showattsigs="601" showstereotype="1" y="84" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="401" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="Ri2ePBdICMjD" showscope="1" height="145" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="1" showpackage="1" x="1053" showattsigs="601" showstereotype="1" y="86" showattributes="1" font="Sans Serif,9,-1,0,75,0,0,0,0,0" width="619" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="RSUuzwpT7G5o" showscope="1" height="127" showopsigs="601"/>
+         <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="0" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="0" showpubliconly="1" showpackage="1" x="1717" showattsigs="601" showstereotype="1" y="87" showattributes="1" font="Sans Serif,9,-1,5,75,0,0,0,0,0" width="404" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="YGnTsn0HU2tt" showscope="1" height="35" showopsigs="601"/>
          <classwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="0" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="0" showpubliconly="0" showpackage="1" x="96" showattsigs="601" showstereotype="1" y="492" showattributes="1" font="Sans Serif,9,-1,5,75,0,0,0,0,0" width="251" isinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="MjoEmOHszN3V" showscope="1" height="70" showopsigs="601"/>
         </widgets>
         <messages/>
         <associations>
-         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="nQ2joBsib2OH" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="5DjNRskqi4Qi" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="kw6QMjWmXtiW" changeabilityB="900" type="510">
+         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="nQ2joBsib2OH" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="5DjNRskqi4Qi" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="kw6QMjWmXtiW" changeabilityB="900" type="510">
           <linepath>
-           <startpoint startx="433" starty="130"/>
-           <endpoint endx="433" endy="215"/>
+           <startpoint startx="331" starty="151"/>
+           <endpoint endx="331" endy="216"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="402" showstereotype="1" y="228" text="sim_type" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="66" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="crHaJVLsvbby" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="300" showstereotype="1" y="229" text="sim_type" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="+" role="710" width="72" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="WTINAZLyM5Kd" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="KcR0gpiTDiA1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="4" totalcountb="2" widgetaid="nQ2joBsib2OH" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="O1tW5u8F0bp1" changeabilityB="900" type="510">
           <linepath>
-           <startpoint startx="263" starty="264"/>
+           <startpoint startx="263" starty="297"/>
            <endpoint endx="263" endy="369"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="217" showstereotype="1" y="335" text="nodes" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="48" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="Qqw7Gei7iY3v" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="217" showstereotype="1" y="335" text="nodes" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="48" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="1SENw6zzaeHg" height="18"/>
          </assocwidget>
          <assocwidget indexa="2" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="FNrDTwlW9Urb" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="4" totalcountb="2" widgetaid="nQ2joBsib2OH" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="9Sj91Z8OGdH2" changeabilityB="900" type="510">
           <linepath>
-           <startpoint startx="434" starty="264"/>
-           <endpoint endx="434" endy="368"/>
+           <startpoint startx="331" starty="297"/>
+           <endpoint endx="331" endy="368"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="368" showstereotype="1" y="334" text="elements" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="68" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="yM02ljSMajwt" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="265" showstereotype="1" y="334" text="elements" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="68" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="rMuy0qxUIFrS" height="18"/>
          </assocwidget>
          <assocwidget indexa="2" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="t1jS37jGTYSw" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="3" totalcountb="2" widgetaid="FNrDTwlW9Urb" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="sR5uxE23Kve5" changeabilityB="900" type="510">
           <linepath>
            <startpoint startx="415" starty="403"/>
            <endpoint endx="415" endy="484"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="353" showstereotype="1" y="450" text="triangles" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="65" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="CFj5qI3E8yKM" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="353" showstereotype="1" y="450" text="triangles" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="65" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="oDQ8GkjFBxb7" height="18"/>
          </assocwidget>
          <assocwidget indexa="3" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="UDTehID1uc2Z" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="4" totalcountb="2" widgetaid="nQ2joBsib2OH" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="86M2xcgvwihX" changeabilityB="900" type="510">
           <linepath>
-           <startpoint startx="495" starty="264"/>
+           <startpoint startx="502" starty="297"/>
            <endpoint endx="519" endy="370"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="515" showstereotype="1" y="332" text="boundaries" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="79" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="c2RJbUCXoAZa" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="515" showstereotype="1" y="332" text="boundaries" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="79" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="4Y6cDMJ2iB0g" height="18"/>
          </assocwidget>
-         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="MjoEmOHszN3V" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="3" totalcountb="2" widgetaid="FNrDTwlW9Urb" visibilityA="1" visibilityB="1" usefillcolor="101" fillcolor="#000000" changeabilityA="900" xmi.id="Udrj3XWH2cbX" changeabilityB="900" type="510">
+         <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="MjoEmOHszN3V" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="3" totalcountb="2" widgetaid="FNrDTwlW9Urb" visibilityA="1" visibilityB="1" usefillcolor="1" fillcolor="#000000" changeabilityA="900" xmi.id="Udrj3XWH2cbX" changeabilityB="900" type="510">
           <linepath>
            <startpoint startx="319" starty="403"/>
            <endpoint endx="319" endy="492"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="223" showstereotype="1" y="458" text="paralelograms" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="99" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="PJ0pWtTyXKha" height="32"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="223" showstereotype="1" y="458" text="paralelograms" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="-" role="710" width="99" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="1xAHA1jxCA3Q" height="18"/>
          </assocwidget>
-         <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="168" widgetaid="5DjNRskqi4Qi" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="YjsNzTmQvypP" widgetbid="Ri2ePBdICMjD" totalcountb="2" type="512" textcolor="none" usefillcolor="0" linewidth="none">
+         <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="1" widgetaid="5DjNRskqi4Qi" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="YjsNzTmQvypP" widgetbid="Ri2ePBdICMjD" totalcountb="2" type="512" textcolor="none" usefillcolor="0" linewidth="none">
           <linepath>
-           <startpoint startx="535" starty="84"/>
-           <endpoint endx="610" endy="84"/>
+           <startpoint startx="535" starty="91"/>
+           <endpoint endx="610" endy="91"/>
           </linepath>
          </assocwidget>
-         <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="168" widgetaid="Ri2ePBdICMjD" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="dxs9cnBX7TPz" widgetbid="RSUuzwpT7G5o" totalcountb="2" type="512" textcolor="none" usefillcolor="0" linewidth="none">
+         <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="1" widgetaid="Ri2ePBdICMjD" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="dxs9cnBX7TPz" widgetbid="RSUuzwpT7G5o" totalcountb="2" type="512" textcolor="none" usefillcolor="0" linewidth="none">
           <linepath>
-           <startpoint startx="903" starty="88"/>
-           <endpoint endx="972" endy="88"/>
+           <startpoint startx="1011" starty="88"/>
+           <endpoint endx="1053" endy="88"/>
           </linepath>
          </assocwidget>
-         <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="168" widgetaid="RSUuzwpT7G5o" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="UXOcylbR1Cn2" widgetbid="YGnTsn0HU2tt" totalcountb="2" type="512" textcolor="none" usefillcolor="0" linewidth="none">
+         <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="1" widgetaid="RSUuzwpT7G5o" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="UXOcylbR1Cn2" widgetbid="YGnTsn0HU2tt" totalcountb="2" type="512" textcolor="none" usefillcolor="0" linewidth="none">
           <linepath>
-           <startpoint startx="1143" starty="88"/>
-           <endpoint endx="1223" endy="88"/>
+           <startpoint startx="1672" starty="113"/>
+           <endpoint endx="1717" endy="113"/>
           </linepath>
          </assocwidget>
         </associations>
        </diagram>
-       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="sequence diagram" font="Sans Serif,9,-1,0,50,0,0,0,0,0" canvasheight="1324" canvaswidth="1936" localid="A3T9DGCnsVYs" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="55" xmi.id="wSCggC1ay67Z" documentation="" showscope="1" snapgrid="0" showatts="1" type="3">
+       <diagram showopsig="1" linecolor="#ff0000" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="sequence diagram" font="Sans Serif,9,-1,0,50,0,0,0,0,0" canvasheight="873" canvaswidth="1655" localid="JrISeTEjX1ZS" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#ffff00" zoom="55" xmi.id="wSCggC1ay67Z" documentation="" showscope="1" snapgrid="0" showatts="1" type="3">
         <widgets>
          <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="606" decon="0" showstereotype="1" y="80" font="Sans Serif,9,-1,0,50,0,1,0,0,0" localid="iDk1CsH5o05z" width="68" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="nQ2joBsib2OH" height="32" drawasactor="0"/>
          <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" instancename="Me" x="56" decon="0" showstereotype="1" y="48" font="Sans Serif,9,-1,0,50,0,1,0,0,0" localid="7Fcl2GDiUvhe" width="67" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="nrjtRupk50ZF" height="32" drawasactor="0"/>
@@ -300,7 +389,7 @@
          <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="830" decon="0" showstereotype="1" y="112" font="Sans Serif,9,-1,0,50,0,1,0,0,0" localid="Z7C6h8Xh2VA8" width="78" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="FNrDTwlW9Urb" height="32" drawasactor="0"/>
          <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="1310" decon="0" showstereotype="1" y="112" font="Sans Serif,9,-1,0,50,0,1,0,0,0" localid="WEXi3i4xRgoz" width="89" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="UDTehID1uc2Z" height="32" drawasactor="0"/>
          <combinedFragmentwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="723" showstereotype="1" y="234" font="Sans Serif,9,-1,0,50,0,0,0,0,0" CombinedFragmenttype="7" combinedFragmentname="Triangles in dict?" width="462" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="mvhS3aDQFdcJ" documentation="" height="133">
-          <floatingdashlinewidget linecolor="none" usesdiagramfillcolor="1" maxY="367" minY="234" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="723" showstereotype="1" y="289" text="Squares in dict?" font="Sans Serif,9,-1,0,50,0,0,0,0,0" width="462" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="3jHofAQOSEzf" height="0"/>
+          <floatingdashlinewidget linecolor="none" usesdiagramfillcolor="1" maxY="367" minY="234" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="0" showstereotype="1" y="289" text="Squares in dict?" font="Sans Serif,9,-1,0,50,0,0,0,0,0" width="462" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="3jHofAQOSEzf" height="0"/>
          </combinedFragmentwidget>
          <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="944" decon="0" showstereotype="1" y="144" font="Sans Serif,9,-1,0,50,0,1,0,0,0" localid="J05QwPkXQCqz" width="75" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="t1jS37jGTYSw" height="32" drawasactor="0"/>
          <objectwidget linecolor="#ff0000" usesdiagramfillcolor="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="1062" decon="0" showstereotype="1" y="144" font="Sans Serif,9,-1,0,50,0,1,0,0,0" localid="pBqqmRNb4g6C" width="167" isinstance="0" multipleinstance="0" usefillcolor="1" fillcolor="#ffff00" xmi.id="MjoEmOHszN3V" height="32" drawasactor="0"/>
@@ -308,10 +397,10 @@
         </widgets>
         <messages>
          <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="uJgUKv6cOPMj" textid="C1t5cApejQOF" operation="9reTfmSFgSf6" linewidth="none" textcolor="none" seqnum="1" usesdiagramusefillcolor="1" x="89" showstereotype="1" y="112" widgetaid="7Fcl2GDiUvhe" font="Sans Serif,9,-1,0,50,0,0,0,0,0" width="282" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="9reTfmSFgSf6" height="423" sequencemessagetype="1000">
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="94" showstereotype="1" y="94" text="1: add_ingredients(msh_filename : string)" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="259" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="C1t5cApejQOF" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="94" showstereotype="1" y="94" text="1: read_solver_input(filename : string)" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="238" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="C1t5cApejQOF" height="18"/>
          </messagewidget>
          <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="iDk1CsH5o05z" textid="rQgdieOPrqPL" operation="KvraY6chGDlx" linewidth="none" textcolor="none" seqnum="2" usesdiagramusefillcolor="1" x="363" showstereotype="1" y="121" widgetaid="uJgUKv6cOPMj" font="Sans Serif,9,-1,0,50,0,0,0,0,0" width="285" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="KvraY6chGDlx" height="255" sequencemessagetype="1000">
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="374" showstereotype="1" y="103" text="2: read_mesh_file(filename : string)" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="222" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="rQgdieOPrqPL" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="374" showstereotype="1" y="103" text="2: read_mesh_file(msh_filename : string)" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="253" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="rQgdieOPrqPL" height="18"/>
          </messagewidget>
          <messagewidget linecolor="none" usesdiagramfillcolor="1" widgetbid="lykZzpZmhGd6" textid="6Y0yeeasSGAH" operation="0b07mvm0s6fc" linewidth="none" textcolor="none" seqnum="4" usesdiagramusefillcolor="1" x="89" showstereotype="1" y="637" widgetaid="7Fcl2GDiUvhe" font="Sans Serif,9,-1,0,50,0,0,0,0,0" width="1352" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="0b07mvm0s6fc" height="82" sequencemessagetype="1000">
           <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="94" showstereotype="1" y="619" text="4: assemble_sys_of_eq(simulation : Simulation)" font="Sans Serif,9,-1,0,50,0,0,0,0,0" pretext="" role="704" width="292" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="6Y0yeeasSGAH" height="18"/>
@@ -362,7 +451,7 @@
   </UML:Model>
  </XMI.content>
  <XMI.extensions xmi.extender="umbrello">
-  <docsettings viewid="wSCggC1ay67Z" uniqueid="y2w4PP9XQahc" documentation=""/>
+  <docsettings viewid="ZqlcaeqyxmfJ" uniqueid="hdQxfCyMdvYM" documentation=""/>
   <listview>
    <listitem open="1" type="800" id="Views">
     <listitem open="1" type="821" id="Component View"/>
@@ -370,76 +459,93 @@
     <listitem open="1" type="836" id="Entity Relationship Model"/>
     <listitem open="1" type="801" id="Logical View">
      <listitem open="1" type="813" id="lpfoqehAcmYZ"/>
-     <listitem open="1" type="813" id="UDTehID1uc2Z">
+     <listitem open="0" type="813" id="UDTehID1uc2Z">
       <listitem open="0" type="815" id="0K4ldcs8oPIj"/>
       <listitem open="0" type="814" id="mbFAAynxwtHd"/>
       <listitem open="0" type="814" id="o06Kh94QnJa6"/>
       <listitem open="0" type="814" id="XEZCv7Zw1Z0Q"/>
      </listitem>
      <listitem open="0" type="807" id="ZqlcaeqyxmfJ" label="class diagram"/>
-     <listitem open="1" type="830" id="Datatypes">
+     <listitem open="0" type="830" id="Datatypes">
+      <listitem open="1" type="829" id="j63BWOny4WML"/>
       <listitem open="1" type="829" id="bcNZO0sijLhL"/>
       <listitem open="1" type="829" id="UQ9Ie1ECpzoP"/>
       <listitem open="1" type="829" id="Gz15wnTYNo7m"/>
       <listitem open="1" type="829" id="hNDAznATBHlp"/>
       <listitem open="1" type="829" id="MiVyeMguUda0"/>
       <listitem open="1" type="829" id="pGx0YgnofpsZ"/>
+      <listitem open="1" type="829" id="18nrFfqwjr8D"/>
       <listitem open="0" type="810" id="wSCggC1ay67Z" label="sequence diagram"/>
+      <listitem open="1" type="829" id="FtCIPYdp549E"/>
       <listitem open="1" type="829" id="nxUWI9pyV28U"/>
       <listitem open="1" type="829" id="QrKa2i0MwQ99"/>
+      <listitem open="1" type="829" id="RYTKBTzsxPLi"/>
       <listitem open="1" type="829" id="aL7y9Cku9CQS"/>
       <listitem open="1" type="829" id="wo7Zbz8BIE9P"/>
-      <listitem open="1" type="829" id="KDQpFWJ2mG0K"/>
+      <listitem open="0" type="829" id="KDQpFWJ2mG0K"/>
      </listitem>
      <listitem open="1" type="813" id="8S77jJOe3SEZ"/>
-     <listitem open="1" type="813" id="nQ2joBsib2OH">
+     <listitem open="0" type="813" id="nQ2joBsib2OH">
       <listitem open="0" type="814" id="86M2xcgvwihX"/>
       <listitem open="0" type="814" id="9Sj91Z8OGdH2"/>
       <listitem open="0" type="814" id="O1tW5u8F0bp1"/>
       <listitem open="0" type="815" id="ukesaBv1S87k"/>
       <listitem open="0" type="815" id="KvraY6chGDlx"/>
      </listitem>
-     <listitem open="1" type="813" id="FNrDTwlW9Urb">
+     <listitem open="0" type="813" id="FNrDTwlW9Urb">
       <listitem open="0" type="815" id="FKQaG5fWQe0U"/>
       <listitem open="0" type="814" id="86vdnNgvFnUy"/>
       <listitem open="0" type="814" id="WXraIcbrhlwO"/>
       <listitem open="0" type="814" id="Udrj3XWH2cbX"/>
       <listitem open="0" type="814" id="sR5uxE23Kve5"/>
      </listitem>
-     <listitem open="1" type="813" id="Ri2ePBdICMjD">
+     <listitem open="0" type="813" id="Ri2ePBdICMjD">
+      <listitem open="0" type="815" id="FardDMuKFxfs"/>
       <listitem open="0" type="815" id="0b07mvm0s6fc"/>
+      <listitem open="0" type="815" id="BrdgEMFN8ydg"/>
+      <listitem open="0" type="815" id="hRQ3iAmbBOyw"/>
+      <listitem open="0" type="815" id="xye6AyKstxea"/>
+      <listitem open="0" type="815" id="qVZK5PCwf0Al"/>
+      <listitem open="0" type="815" id="W0amoJSBH4l1"/>
       <listitem open="0" type="814" id="8su6D1VKfAsn"/>
       <listitem open="0" type="814" id="7GHLT0JYTA6f"/>
      </listitem>
      <listitem open="1" type="813" id="fWoMvDZLQatK"/>
      <listitem open="1" type="813" id="r3g2VrgqaS4L"/>
-     <listitem open="1" type="813" id="KcR0gpiTDiA1">
+     <listitem open="0" type="813" id="KcR0gpiTDiA1">
       <listitem open="0" type="815" id="grkhdUS1QtgW"/>
       <listitem open="0" type="814" id="HiIkyQ1XQDhX"/>
       <listitem open="0" type="814" id="QwTe7FfDnd9R"/>
      </listitem>
      <listitem open="1" type="813" id="cAIjKnTehZNo"/>
-     <listitem open="1" type="813" id="YGnTsn0HU2tt">
+     <listitem open="0" type="813" id="YGnTsn0HU2tt">
       <listitem open="0" type="815" id="Zv7dZDqox3Hs"/>
      </listitem>
-     <listitem open="1" type="813" id="5DjNRskqi4Qi">
-      <listitem open="0" type="815" id="9reTfmSFgSf6"/>
+     <listitem open="0" type="813" id="5DjNRskqi4Qi">
+      <listitem open="0" type="814" id="xtCI75MAvcBq"/>
+      <listitem open="0" type="814" id="rzRum5TnlJBN"/>
       <listitem open="0" type="814" id="Xl9WVoQeoI0l"/>
       <listitem open="0" type="814" id="hDRzWYeXA53e"/>
+      <listitem open="0" type="815" id="9reTfmSFgSf6"/>
       <listitem open="0" type="814" id="kw6QMjWmXtiW"/>
       <listitem open="0" type="814" id="3cRYV74rRuKL"/>
      </listitem>
-     <listitem open="1" type="813" id="RSUuzwpT7G5o">
+     <listitem open="0" type="813" id="RSUuzwpT7G5o">
+      <listitem open="0" type="815" id="S7hoa3L4pZd9"/>
+      <listitem open="0" type="815" id="X66STS8VYuMn"/>
       <listitem open="0" type="814" id="9myYSmXITTaG"/>
+      <listitem open="0" type="815" id="z027rVQoEmY2"/>
+      <listitem open="0" type="815" id="162XB6G6p8jx"/>
+      <listitem open="0" type="815" id="WgV1Hsh6jOao"/>
       <listitem open="0" type="815" id="XYZPCZHq0Z4V"/>
      </listitem>
-     <listitem open="1" type="813" id="MjoEmOHszN3V">
+     <listitem open="0" type="813" id="MjoEmOHszN3V">
       <listitem open="0" type="815" id="EV6JXF6nhVJA"/>
       <listitem open="0" type="814" id="rJDohGKfF41r"/>
       <listitem open="0" type="814" id="sbiPWNRMQ6Ov"/>
       <listitem open="0" type="814" id="x4jVVoqM728m"/>
      </listitem>
-     <listitem open="1" type="813" id="t1jS37jGTYSw">
+     <listitem open="0" type="813" id="t1jS37jGTYSw">
       <listitem open="0" type="815" id="g0WTA5144vWn"/>
       <listitem open="0" type="815" id="7g0Gzy6ibGz9"/>
       <listitem open="0" type="815" id="jdAGXA8Fecdf"/>
@@ -456,7 +562,19 @@
    </listitem>
   </listview>
   <codegeneration>
-   <codegenerator language="C++"/>
+   <codegenerator language="Python">
+    <sourcecode value=":&#xa;n_sol=g.shape[0]&#xa;j=0&#xa;if vectorial:&#xa;  from numpy import zeros&#xa;  vec_field=zeros((n_sol/2,2))&#xa;  for i in range(n_sol):&#xa;    if i not in remove:&#xa;      g[i]=dir_solution[j]&#xa;      j=j+1&#xa;&#xa;&#xa;  for i in range(0,n_sol,2):&#xa;    if i==0:&#xa;      vec_field[0]=[g[i],g[i+1]]&#xa;&#xa;    else:&#xa;      vec_field[i/2]=[g[i],g[i+1]]&#xa;&#xa;&#xa;  return vec_field&#xa;&#xa;else:&#xa;  for i in range(n_sol):&#xa;    if i not in remove:&#xa;      g[i]=dir_solution[j]&#xa;      j=j+1&#xa;&#xa;&#xa;  return g&#xa;&#xa;" id="X66STS8VYuMn"/>
+    <sourcecode value=":&#xa;The other build solution method was good for cases where we had&#xa;a dirichlet vector.This method is implemented for the&#xa;explicit solution where I already have known and discovered&#xa;values in the same vector.&#xa;The problem is assumed vectorial&#xa;n_sol=solution.shape[0]&#xa;from numpy import zeros&#xa;vec_field=zeros((n_sol/2,2))&#xa;for i in range(0,n_sol,2):&#xa;  if i==0:&#xa;    vec_field[0]=[solution[i],solution[i+1]]&#xa;&#xa;  else:&#xa;    vec_field[i/2]=[solution[i],solution[i+1]]&#xa;&#xa;&#xa;return vec_field&#xa;" id="S7hoa3L4pZd9"/>
+    <sourcecode value=":&#xa;from scipy.linalg import solve&#xa;g=equation['sol_vec']&#xa;remove=equation['dir_positions']&#xa;dir_solution=solve(equation['left_side'],equation['right_side'])&#xa;print'Solving...'&#xa;if equation['vectorial']:&#xa;  solution=self.build_solution(dir_solution,g,remove,True)&#xa;&#xa;else:&#xa;  solution=self.build_solution(dir_solution,g,remove)&#xa;&#xa;return solution&#xa;" id="WgV1Hsh6jOao"/>
+    <sourcecode value=":&#xa;This method solves for the eigen-values(lam)and eigen_vectors&#xa;(:&#xa;  u&#xa;)of an equation in the frequency domain of the form:&#xa;  [K]:&#xa;    u&#xa;  =lam[M]:&#xa;    u&#xa;  .&#xa;&#xa;from numpy import zeros&#xa;from scipy.linalg import eigh,eigvalsh&#xa;n=simulation.domain.nodes.n&#xa;solver_param=simulation.solver_param&#xa;g=equation['sol_vec']&#xa;remove=equation['dir_positions']&#xa;print'Solving eigenvalue problem...\n'&#xa;if'y'in solver_param[0]and'n'in solver_param[1]:&#xa;  n_vals=int(solver_param[2])&#xa;  v=eigvalsh(equation['left_side'],equation['right_side'],\&#xa;  eigvals=(0,n_vals-1))print'The Eigenvalues are:\n',v&#xa;  return v&#xa;&#xa;elif'y'in solver_param[0]and'y'in solver_param[1]:&#xa;  n_vals=int(solver_param[2])&#xa;  n_vects=int(solver_param[3])&#xa;  n_solutions=max(n_vals,n_vects)&#xa;  v,dir_solution=eigh(equation['left_side'],equation['right_side'],\&#xa;  eigvals=(0,n_solutions-1))if equation['vectorial']:&#xa;    solution=[]&#xa;    for i in range(n_vects):&#xa;      solution.append(self.build_solution(dir_solution[:,i],g,remove,True))&#xa;&#xa;&#xa;  else:&#xa;    solution=zeros((n,n_vects))&#xa;    for i in range(n_vects):&#xa;      solution[:,i]=self.build_solution(dir_solution[:,i],g,remove)&#xa;&#xa;&#xa;  return v,solution&#xa;&#xa;elif'n'in solver_param[0]and'y'in solver_param[1]:&#xa;  n_vects=int(solver_param[3])&#xa;  v,dir_solution=eigh(equation['left_side'],equation['right_side'],\&#xa;  eigvals=(0,n_vects-1))if equation['vectorial']:&#xa;    solution=zeros((n/2,n_vects))&#xa;    for i in range(n_vects):&#xa;      solution[:,i]=self.build_solution(dir_solution[:,i],g,remove,True)&#xa;&#xa;&#xa;  else:&#xa;    solution=zeros((n,n_vects))&#xa;    for i in range(n_vects):&#xa;      solution[:,i]=self.build_solution(dir_solution[:,i],g,remove)&#xa;&#xa;&#xa;  return solution&#xa;&#xa;else:&#xa;  raise IOError('If you dont want anything why do you solve?')&#xa;&#xa;" id="162XB6G6p8jx"/>
+    <sourcecode value=":&#xa;This method solves a 2D bloch periodic condition problem&#xa;given an equation and that was interpreted used an instance of&#xa;the Interpreter Class.&#xa;Right now I'm testing it for solution of EM probleems with ;Bloch periodicity such as those encountered in perfect&#xa;photonic crystals.&#xa;Parameters:&#xa;  -----------&#xa;  simulation:An instance of class Simulation&#xa;  from which all the information about the domain and problem conditions will be extracted.The method read_solver_input()must have been called with an appropiate input file in order to extract information such as solver parameters from which the wave number is extracted.equation:Output of one methods of an instance from&#xa;  class Interpreter().Initialy only the output from method:build_EM_bloch_eq(self,simulation)works.Future implementation of a simmilar method for QM is pending.Returns:&#xa;    --------&#xa;    k_mesh:A simple triangular mesh made from x and y values&#xa;    of the wavenumber.energy:Set of eigenvalues assigned for each of the pairs&#xa;    (k_x,k_y)in the k_mesh.&#xa;  from numpy import zeros,pi,linspace&#xa;  from scipy.linalg import eigvalsh bloch_multiplication=simulation.domain.boundaries.bloch_multiplication bloch_sum=simulation.domain.boundaries.bloch_sum ref_im_mul=equation['ref_im_mul']stif=equation['left_side']mass=equation['right_side']analysis_param=simulation.solver_param nodes=simulation.domain.nodes.coords analysis_param=simulation.solver_param analysis_param=simulation.solver_param nk_x=int(analysis_param[4])nk_y=int(analysis_param[5])k_max=pi/float(analysis_param[6])k_min=-k_max k_range_x=linspace(k_min,k_max,num=nk_x)k_range_y=linspace(k_min,k_max,num=nk_y)n_vals=int(analysis_param[2])energy=zeros((nk_x*nk_y,n_vals))i=0 print'Calculating each of the ',nk_x*nk_y,\' points in k plane...\n'for k_x in k_range_x:&#xa;    for k_y in k_range_y:&#xa;      new_stif,new_mass=bloch_multiplication(k_x,\&#xa;      k_y,nodes,\ref_im_mul,stif.copy(),\mass.copy())new_stif,new_mass=bloch_sum(ref_im_mul,new_stif,new_mass)&#xa;      vals=eigvalsh(new_stif,new_mass,eigvals=(0,n_vals-1))&#xa;      for val in range(0,n_vals):&#xa;        energy[i,val]=vals[val]&#xa;&#xa;      print i+1,' points out of :',nk_x*nk_y,'\n'&#xa;      i=i+1&#xa;&#xa;&#xa;  k_mesh=self.meshtr2D(k_min,k_max,k_min,k_max,nk_x,nk_y)&#xa;  return k_mesh,energy def solve_bloch_Brillouin(self,simulation,equation):&#xa;    This method solves a 2D bloch periodic condition problem&#xa;    given an equation and that was interpreted used an instance of&#xa;    the Interpreter Class.&#xa;    Right now I'm testing it for solution of EM probleems with ;Bloch periodicity such as those encountered in perfect&#xa;    photonic crystals.&#xa;    Parameters:&#xa;      -----------&#xa;      simulation:An instance of class Simulation&#xa;      from which all the information about the domain and problem conditions will be extracted.The method read_solver_input()must have been called with an appropiate input file in order to extract information such as solver parameters from which the wave number is extracted.equation:Output of one methods of an instance from&#xa;      class Interpreter().Initialy only the output from method:build_EM_bloch_eq(self,simulation)works.Future implementation of a simmilar method for QM is pending.Returns:&#xa;        --------&#xa;        k_mesh:A simple triangular mesh made from x and y values&#xa;        of the wavenumber.energy:Set of eigenvalues assigned for each of the pairs&#xa;        (k_x,k_y)in the k_mesh.&#xa;      from numpy import zeros,pi&#xa;      from scipy.linalg import eigvalsh bloch_multiplication=simulation.domain.boundaries.bloch_multiplication bloch_sum=simulation.domain.boundaries.bloch_sum ref_im_mul=equation['ref_im_mul']stif=equation['left_side']mass=equation['right_side']analysis_param=simulation.solver_param nodes=simulation.domain.nodes.coords analysis_param=simulation.solver_param analysis_param=simulation.solver_param nk_x=int(analysis_param[4])nk_y=int(analysis_param[5])assert nk_x==nk_y,&quot;Must be the same number of divisions&quot;k_max=pi/float(analysis_param[6])k_coords=self.mesh_BrillouinZone(k_max,k_max,nk_x,nk_y)print'k_coords.shape[0]',k_coords.shape[0]n_vals=int(analysis_param[2])energy=zeros((k_coords.shape[0],n_vals))i=0 print'Calculating each of the ',k_coords.shape[0],\' points in k plane...\n'for k in k_coords:&#xa;        k_x=k[0]&#xa;        k_y=k[1]&#xa;        new_stif,new_mass=bloch_multiplication(k_x,\&#xa;        k_y,nodes,\ref_im_mul,stif.copy(),\mass.copy())new_stif,new_mass=bloch_sum(ref_im_mul,new_stif,new_mass)&#xa;        vals=eigvalsh(new_stif,new_mass,eigvals=(0,n_vals-1))&#xa;        for val in range(0,n_vals):&#xa;          energy[i,val]=vals[val]&#xa;&#xa;        print i+1,' points out of :',k_coords.shape[0],'\n'&#xa;        i=i+1&#xa;&#xa;      return k_coords,energy&#xa;      def substract_1(self,matrix):&#xa;        Substracts the number 1 from node and element positions&#xa;        as to convert gmsh base 1 numbering to vtk zero base.&#xa;        Parameter:&#xa;        matrix:Arbitrary size array that may represent elements or nodes from which the number one has to be extracted.Returns:&#xa;          matrix:Input matrix where the number 1 has been substracted&#xa;          from each position.&#xa;&#xa;      n_rows=matrix.shape[0]&#xa;      n_cols=matrix.shape[1]for i in range(n_rows):&#xa;        for j in range(1,n_cols):&#xa;          matrix[i,j]=matrix[i,j]-1&#xa;&#xa;&#xa;      return matrix&#xa;      def meshtr2D(self,xmin,xmax,ymin,ymax,nxpoints,nypoints):&#xa;        Generate a 2D mesh where the points are equally spaced.&#xa;        Parameters:&#xa;          -----------&#xa;          xmin:initial value of the rectangular domain over x axis&#xa;          xmax:final value of the rectangular domain over x axis&#xa;          ymin:initial value of the rectangular domain over y axis&#xa;          ymax:final value of the rectangular domain over y axis&#xa;          nxpoints:Number of divisions over x&#xa;          nypoints:Number of divisions over y&#xa;          Returns:&#xa;            --------&#xa;            coords:numpy array like matrix of the discretized domain with shape Nx Ny&#xa;            elems:numpy array like matrix of the relations between nodes.&#xa;            Raises:&#xa;              -------&#xa;              Last modification:date 21/10/2011&#xa;&#xa;            &quot;    ;from numpy import zeros coordx,elem=self.mesh1D(xmin,xmax,nxpoints)coordy,elem=self.mesh1D(ymin,ymax,nypoints)npoints=nxpoints*nypoints coords=zeros((npoints,2),dtype=float)cont=0 for j in range(0,nypoints):&#xa;              for i in range(0,nxpoints):&#xa;                coords[cont,0]=coordx[i]&#xa;                coords[cont,1]=coordy[j]&#xa;                cont=cont+1&#xa;&#xa;&#xa;            nelems=2*(nxpoints-1)*(nypoints-1)&#xa;            elems=zeros((nelems,3))cont=0 for j in range(0,nypoints-1):&#xa;              for i in range(0,nxpoints-1):&#xa;                elems[cont,0]=j*nxpoints+i&#xa;                elems[cont,1]=j*nxpoints+i+1&#xa;                elems[cont,2]=nxpoints+j*nxpoints+i+1&#xa;                elems[cont+1,0]=j*nxpoints+i&#xa;                elems[cont+1,1]=nxpoints+j*nxpoints+i+1&#xa;                elems[cont+1,2]=nxpoints+j*nxpoints+i&#xa;                cont=cont+2&#xa;&#xa;&#xa;            return coords,elems&#xa;            def mesh1D(self,xmin,xmax,npoints):&#xa;              Generate a 1D mesh where the points ares equally spaced.&#xa;              Parameters:&#xa;                -----------&#xa;                xmin:coordinate of the beginning of the line segment&#xa;                xmax:coordinate of the end of the line segment&#xa;                npoints:number of subdivisions&#xa;                Returns:&#xa;                  --------&#xa;                  coords:numpy array like vector of the discretized domain with lenght N&#xa;                  elems:numpy array like vector of the relations between nodes.&#xa;                  Raises:&#xa;&#xa;                  -------&#xa;                  Last modification:date 21/10/2011 from numpy import linspace,zeros coords=linspace(xmin,xmax,npoints,endpoint=True)elems=zeros((npoints-1,2),dtype=int)for i in range(0,npoints-1):&#xa;                    elems[i,0]=i&#xa;                    elems[i,1]=i+1&#xa;&#xa;                  return coords,elems&#xa;                  def mesh_BrillouinZone(self,xmax,ymax,nxpoints,nypoints):&#xa;                    This functions returns the contour of the Brillouin zone for a&#xa;                    square shaped Brillouin zone.&#xa;                    from numpy import zeros&#xa;                    coordx,line_x=self.mesh1D(0,xmax,nxpoints)&#xa;                    coordy,line_y=self.mesh1D(0,ymax,nypoints)&#xa;                    assert nxpoints==nypoints&#xa;                    npoints=3*nxpoints-1&#xa;                    coords=zeros((npoints,2),dtype=float)&#xa;                    coords[:nxpoints,0]=coordx&#xa;                    coords[nxpoints:nypoints+nxpoints,0]=coordx[-1]&#xa;                    coords[nxpoints:nypoints+nxpoints,1]=coordy&#xa;                    coords[2*nxpoints:-1,0]=coordx[-2:0:-1]&#xa;                    coords[2*nxpoints:-1,1]=coordy[-2:0:-1]&#xa;                    coords[-1]=coords[0]&#xa;                    return coords" id="z027rVQoEmY2"/>
+    <sourcecode value=":&#xa;Tell the interpreter if the formulation of the problem will be&#xa;scalar or vectorial in boolean logic.&#xa;Default value is True.&#xa;self.vectorial=vectorial&#xa;" id="FardDMuKFxfs"/>
+    <sourcecode value=":&#xa;print'Building matrices...\n'&#xa;simulation.domain.read_bc_file(simulation.bc_filename)&#xa;reg_filename=simulation.bc_filename.split('.bc')[0]&#xa;simulation.domain.read_regions_file(reg_filename)&#xa;stif=self.global_stiffness_matrix(simulation)&#xa;[stif_d,d,remove,g]=self.dirichlet_vector(simulation,stif)&#xa;mass_d=self.global_mass_matrix(simulation,remove)&#xa;v_d=self.global_potential_matrix(simulation,remove)&#xa;equation=:&#xa;  'left_side':stif_d+v_d,'right_side':mass_d,\&#xa;  'sol_vec':g,'dir_positions':remove&#xa;return equation&#xa;" id="xye6AyKstxea"/>
+    <sourcecode value=":&#xa;simulation.domain.read_bc_file(simulation.bc_filename)&#xa;print'Building matrices...\n'&#xa;simulation.domain.read_bc_file(simulation.bc_filename)&#xa;reg_filename=simulation.bc_filename.split('.bc')[0]&#xa;simulation.domain.read_regions_file(reg_filename)&#xa;print'stiffness....'&#xa;stif=self.global_stiffness_matrix(simulation)&#xa;print'Performing dirichlet values substitution and stiffness reduction'&#xa;[stif_d,d,remove,g]=self.dirichlet_vector(simulation,stif)&#xa;n_nodes=stif_d.shape[0]&#xa;print'building newman vector'&#xa;q=self.newman_vector(simulation,remove,n_nodes)&#xa;equation=:&#xa;  'left_side':stif_d,'right_side':-d-q,\&#xa;  'sol_vec':g,'dir_positions':remove,'vectorial':self.vectorial&#xa;return equation&#xa;" id="qVZK5PCwf0Al"/>
+    <sourcecode value=":&#xa;simulation.domain.read_bc_file(simulation.bc_filename)&#xa;print'Building matrices...\n'&#xa;simulation.domain.read_bc_file(simulation.bc_filename)&#xa;reg_filename=simulation.bc_filename.split('.bc')[0]&#xa;simulation.domain.read_regions_file(reg_filename)&#xa;stif=self.global_stiffness_matrix(simulation)&#xa;[stif_d,d,remove,g]=self.dirichlet_vector(simulation,stif)&#xa;mass_d=self.global_mass_matrix(simulation,remove)&#xa;equation=:&#xa;  'left_side':stif_d,'right_side':mass_d,\&#xa;  'sol_vec':g,'dir_positions':remove,'vectorial':self.vectorial&#xa;return equation&#xa;" id="hRQ3iAmbBOyw"/>
+    <sourcecode value=":&#xa;Form the equation to solve for a Bloch boundary simulation.&#xa;Bloch boundaries must be matched and have the same number of nodes.&#xa;The user must state in the.bc file the image and references&#xa;physical entities and interpret with a-sign if they are mirrored.&#xa;Boundaries have been previously defined as vectorial.&#xa;from numpy import array,asarray,vstack&#xa;print'Building matrices...\n'&#xa;simulation.domain.read_bc_file(simulation.bc_filename)&#xa;reg_filename=simulation.bc_filename.split('.bc')[0]&#xa;simulation.domain.read_regions_file(reg_filename)&#xa;stif=self.global_stiffness_matrix(simulation)&#xa;mass=self.global_mass_matrix(simulation)&#xa;stif=asarray(stif,dtype=complex)&#xa;mass=asarray(mass,dtype=complex)&#xa;ref_im=self.reference_image_bloch_vectors(simulation)&#xa;ref_im_aux=ref_im[0]&#xa;for bl in range(1,len(ref_im)):&#xa;  ref_im_aux=vstack((ref_im_aux,ref_im[bl]))&#xa;&#xa;for corner in list(ref_im_aux[:,0]):&#xa;  if list(ref_im_aux[:,0]).count(corner)==2:&#xa;    break&#xa;&#xa;&#xa;for corner2 in list(ref_im_aux[:,1]):&#xa;  if list(ref_im_aux[:,1]).count(corner2)==2:&#xa;    break&#xa;&#xa;&#xa;im_mul=list(set(list(ref_im_aux[:,1])))&#xa;ref_mul=[]&#xa;for i in im_mul:&#xa;  ref_mul.append(list(ref_im_aux[:,0])[list(ref_im_aux[:,1]).index(i)])&#xa;&#xa;ref_im_mul=array([ref_mul,im_mul]).T&#xa;if self.vectorial:&#xa;  ref_im_mul[list(ref_im_mul[:,1]).index(corner2),0]=corner&#xa;  ref_im_mul[list(ref_im_mul[:,1]).index(corner2+1),0]=corner+1&#xa;&#xa;equation=:&#xa;  'left_side':stif,'right_side':mass,\&#xa;  'ref_im_mul':ref_im_mul,'vectorial':self.vectorial&#xa;return equation&#xa;" id="BrdgEMFN8ydg"/>
+    <sourcecode value=":&#xa;Funtion for the assembly of the global stiffnes matrix of a&#xa;simulation file.&#xa;Parameters:&#xa;  -----------&#xa;  simulation:Instance of class Simulation()which contains all&#xa;  of the information needed for an analysis.Read more about the structure of this class somewhere.Returns:&#xa;    --------&#xa;    glo_stif:Matrix like array of size(n_nodes,n_nodes).Represents&#xa;    the global stiffness matrix of the system from numpy import zeros&#xa;    vectorial=self.vectorial&#xa;    nodes_coords=simulation.domain.nodes.coords&#xa;    n_nodes=simulation.domain.nodes.n&#xa;    if vectorial:&#xa;      glo_stif=zeros((2*n_nodes,2*n_nodes))&#xa;&#xa;    else:&#xa;      glo_stif=zeros((n_nodes,n_nodes))&#xa;&#xa;    for region in simulation.domain.regions:&#xa;      all_elements=region.elements&#xa;      for el_class in all_elements:&#xa;        elements=all_elements[el_class]&#xa;        if vectorial:&#xa;          n_elements=elements.n_elements&#xa;          el_set=elements.el_set&#xa;          if el_set==[]:&#xa;            break&#xa;&#xa;          else:&#xa;            for el in range(n_elements):&#xa;              lo_stif=elements.build_local_stiffness(nodes_coords,el)&#xa;              if simulation.sim_type=='EM':&#xa;                mu=region.material_prop['mu']&#xa;                lo_stif=1.0/mu*lo_stif&#xa;&#xa;              elif simulation.sim_type=='QM':&#xa;                h=region.material_prop['h']&#xa;                m=region.material_prop['m']&#xa;                lo_stif=h/(2.*m)*lo_stif&#xa;&#xa;              else:&#xa;                raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)&#xa;&#xa;              for i in range(1,lo_stif.shape[0]/2+1):&#xa;                for j in range(1,lo_stif.shape[0]/2+1):&#xa;                glo_stif[2*(el_set[el,i]-1),2*(el_set[el,j]-1)]=\glo_stif[2*(el_set[el,i]-1),2*(el_set[el,j]-1)]+\lo_stif[2*(i-1),2*(j-1)]glo_stif[2*(el_set[el,i]-1)+1,2*(el_set[el,j]-1)+1]=\glo_stif[2*(el_set[el,i]-1)+1,2*(el_set[el,j]-1)+1]+\lo_stif[2*(i-1)+1,2*(j-1)+1]&#xa;&#xa;&#xa;&#xa;        else:&#xa;          n_elements=elements.n_elements&#xa;          el_set=elements.el_set&#xa;          if el_set==[]:&#xa;            break&#xa;&#xa;          else:&#xa;            for el in range(n_elements):&#xa;              lo_stif=elements.build_local_stiffness(nodes_coords,el)&#xa;              if simulation.sim_type=='EM':&#xa;                mu=region.material_prop['mu']&#xa;                lo_stif=1.0/mu*lo_stif&#xa;&#xa;              elif simulation.sim_type=='QM':&#xa;                h=region.material_prop['h']&#xa;                m=region.material_prop['m']&#xa;                lo_stif=h/(2.*m)*lo_stif&#xa;&#xa;              else:&#xa;                raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)&#xa;&#xa;              for i in range(1,lo_stif.shape[0]+1):&#xa;                for j in range(1,lo_stif.shape[0]+1):&#xa;                  glo_stif[el_set[el,i]-1,el_set[el,j]-1]=\&#xa;                  glo_stif[el_set[el,i]-1,el_set[el,j]-1]+\&#xa;                  lo_stif[i-1,j-1]&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;    return glo_stif&#xa;&#xa;  def dirichlet_vector(self,simulation,glo_stif):&#xa;    This function computes the d vector associated to Dirichlet&#xa;    boundary conditions on certain nodes of the domain.&#xa;    Parameters:&#xa;      -----------&#xa;      simulation:Instance of Simulation()which contains many of the&#xa;      characteristics of the problem definition.glo_stiff:matrix like array of size(n_nodes,n_nodes)called&#xa;      the stiffness matrix of the system.vectorial:Indicates if the simulation has to be defined as scalar or&#xa;      vectorial.Returns:&#xa;        --------&#xa;        glo_stif_d:global stiffness matrix reduced by removing the rows and&#xa;        columns asociated with the dirichlet conditions.d:Vector associated with siffness matrix over dirichlet nodes.&#xa;        remove:List with the numbers of columns to be removed.&#xa;        g:&#xa;        from numpy import zeros,dot,delete&#xa;        assert'lines'in simulation.domain.elements.__dict__&#xa;        vectorial=self.vectorial&#xa;        bc_lines=simulation.domain.elements.lines.el_set&#xa;        dirichlet=simulation.domain.boundaries.dirichlet&#xa;        n_nodes=glo_stif.shape[0]&#xa;        n_lines=simulation.domain.elements.lines.n_elements&#xa;        nodes_line=bc_lines.shape[1]&#xa;        remove=[]&#xa;        g=zeros(n_nodes)&#xa;        if vectorial:&#xa;          for tag in dirichlet:&#xa;            for ln in range(n_lines):&#xa;              if bc_lines[ln,0]==int(tag):&#xa;                for node in bc_lines[ln,1:nodes_line]:&#xa;                  node-=1&#xa;                  xvalue=dirichlet[tag][0][0]&#xa;                  yvalue=dirichlet[tag][0][1]&#xa;                  if type(xvalue)==str:&#xa;                    from math import sqrt&#xa;                    from numpy import isnan&#xa;                    x=simulation.domain.nodes.coords[node,0]&#xa;                    y=simulation.domain.nodes.coords[node,1]&#xa;                    if isnan(eval(xvalue)):&#xa;                    xvalue=0 print'value has been reassigned due to \division by zero'else:&#xa;                      xvalue=eval(xvalue)&#xa;&#xa;                    if isnan(eval(yvalue)):&#xa;                    yvalue=0 print'value has been reassigned due to \division by zero'else:&#xa;                      yvalue=eval(yvalue)&#xa;&#xa;&#xa;                  g[2*node]=xvalue&#xa;                  g[2*node+1]=yvalue&#xa;                  if 2*node not in remove:&#xa;                    remove.append(2*node)&#xa;                    remove.append(2*node+1)&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;        else:&#xa;        g=zeros(n_nodes)for tag in dirichlet:&#xa;          value=dirichlet[tag][0][0]&#xa;          for ln in range(n_lines):&#xa;            if bc_lines[ln,0]==int(tag):&#xa;              g[bc_lines[ln,1]-1]=value&#xa;              g[bc_lines[ln,2]-1]=value&#xa;              if bc_lines[ln,1]-1 not in remove:&#xa;                remove.append(bc_lines[ln,1]-1)&#xa;&#xa;              if bc_lines[ln,2]-1 not in remove:&#xa;                remove.append(bc_lines[ln,2]-1)&#xa;&#xa;&#xa;&#xa;&#xa;        print'performing matrix multiplication'&#xa;        d=dot(glo_stif,g)&#xa;        d=delete(d,remove)&#xa;        print'removing rows'&#xa;        glo_stif=delete(glo_stif,remove,0)&#xa;        print'remocing columns'&#xa;        glo_stif=delete(glo_stif,remove,1)&#xa;        print'done removing columns'&#xa;        return glo_stif,d,remove,g&#xa;&#xa;      def newman_vector(self,simulation,remove,n_nodes):&#xa;      This function computes the q vector associated to Newman boundary conditions on certain nodes of the domain.Parameters:&#xa;        -----------&#xa;        simulation:Instance of class Simulation()which contains all&#xa;        of the information needed for an analysis.Read more about the structure of this class somewhere.remove:List with the numbers of columns to be removed.&#xa;        Returns:&#xa;          --------&#xa;          q:Newman vector defined by...either static values or a&#xa;          function defined by an expresion on the bc file.from numpy import zeros,dot,delete&#xa;          vectorial=self.vectorial&#xa;          assert'lines'in simulation.domain.elements.__dict__&#xa;          bc_lines=simulation.domain.elements.lines.el_set&#xa;          lo_newman=simulation.domain.elements.lines.local_newman&#xa;          newman=simulation.domain.boundaries.newman&#xa;          n_lines=simulation.domain.elements.lines.n_elements&#xa;          nodes_line=bc_lines.shape[1]&#xa;          nodes=simulation.domain.nodes.coords&#xa;          q=zeros(n_nodes)&#xa;          if vectorial:&#xa;            for tag in newman:&#xa;              for ln in range(n_lines):&#xa;                if bc_lines[ln,0]==int(tag):&#xa;                  lo_q=lo_newman(q,nodes,newman,tag,ln,vectorial)&#xa;                  count=0&#xa;                  for node in bc_lines[ln,1:nodes_line]:&#xa;                    q[2*(node-1)]=lo_q[count]&#xa;                    q[2*(node-1)+1]=lo_q[count]&#xa;                    count+=1&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;          else:&#xa;          for tag in newman:&#xa;            for ln in range(n_lines):&#xa;              if bc_lines[ln,0]==int(tag):&#xa;                lo_q=lo_newman(q,nodes,newman,tag,ln)&#xa;                for node in bc_lines[ln,1:nodes_line]:&#xa;                  q[bc_lines[ln,1]-1]=lo_q[count]&#xa;&#xa;&#xa;&#xa;&#xa;          return q&#xa;&#xa;        def global_mass_matrix(self,simulation,*remove):&#xa;          funtion for the assembly of the global mass matrix.&#xa;          Parameters:&#xa;            -----------&#xa;            simulation:Instance of class Simulation()which contains all&#xa;            of the information needed for an analysis.Read more about the structure of this class somewhere.remove:List with the numbers of columns to be removed&#xa;            Returns:&#xa;              --------&#xa;              glo_mass:Global mass matrix where the dirichlet positions have&#xa;              been removed.vectorial=self.vectorial&#xa;              from numpy import zeros,delete&#xa;              nodes_coords=simulation.domain.nodes.coords&#xa;              n_nodes=simulation.domain.nodes.n&#xa;              if vectorial:&#xa;                glo_mass=zeros((2*n_nodes,2*n_nodes))&#xa;&#xa;              else:&#xa;                glo_mass=zeros((n_nodes,n_nodes))&#xa;&#xa;              for region in simulation.domain.regions:&#xa;                all_elements=region.elements&#xa;                for el_class in all_elements:&#xa;                  elements=all_elements[el_class]&#xa;                  if vectorial:&#xa;                    n_elements=elements.n_elements&#xa;                    el_set=elements.el_set&#xa;                    if el_set==[]:&#xa;                      break&#xa;&#xa;                    else:&#xa;                      for el in range(n_elements):&#xa;                        lo_mass=elements.local_mass_matrix(nodes_coords,el)&#xa;                        if simulation.sim_type=='EM':&#xa;                          epsilon=region.material_prop['epsilon']&#xa;                          lo_mass=epsilon*lo_mass&#xa;&#xa;                        elif simulation.sim_type=='QM':&#xa;                          pass&#xa;&#xa;                        else:&#xa;                          raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)&#xa;&#xa;                        for i in range(1,lo_mass.shape[0]/2+1):&#xa;                          for j in range(1,lo_mass.shape[0]/2+1):&#xa;                          glo_mass[2*(el_set[el,i]-1),2*(el_set[el,j]-1)]=\glo_mass[2*(el_set[el,i]-1),2*(el_set[el,j]-1)]+\lo_mass[2*(i-1),2*(j-1)]glo_mass[2*(el_set[el,i]-1)+1,2*(el_set[el,j]-1)+1]=\glo_mass[2*(el_set[el,i]-1)+1,2*(el_set[el,j]-1)+1]+\lo_mass[2*(i-1)+1,2*(j-1)+1]&#xa;&#xa;&#xa;&#xa;                  else:&#xa;                    n_elements=elements.n_elements&#xa;                    el_set=elements.el_set&#xa;                    if el_set==[]:&#xa;                      break&#xa;&#xa;                    else:&#xa;                      for el in range(n_elements):&#xa;                        lo_mass=elements.local_mass_matrix(nodes_coords,el)&#xa;                        if simulation.sim_type=='EM':&#xa;                          epsilon=region.material_prop['epsilon']&#xa;                          lo_mass=epsilon*lo_mass&#xa;&#xa;                        elif simulation.sim_type=='QM':&#xa;                          pass&#xa;&#xa;                        for i in range(1,lo_mass.shape[0]+1):&#xa;                          for j in range(1,lo_mass.shape[0]+1):&#xa;                          glo_mass[el_set[el,i]-1,el_set[el,j]-1]=\glo_mass[el_set[el,i]-1,el_set[el,j]-1]+\lo_mass[i-1,j-1]&#xa;&#xa;                      else:&#xa;                        raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;              glo_mass_d=delete(glo_mass,remove,0)&#xa;              glo_mass_d=delete(glo_mass_d,remove,1)&#xa;              return glo_mass_d&#xa;&#xa;            def lumped_mass_matrix(self,simulation,*remove):&#xa;              funtion for the assembly of the global lumped mass matrix.&#xa;              A diagonal matrix is built from the trace of the consistent mass&#xa;              matrix defined above.&#xa;              Parameters:&#xa;                -----------&#xa;                simulation:Instance of class Simulation()which contains all&#xa;                of the information needed for an analysis.Read more about the structure of this class somewhere.remove:List with the numbers of columns to be removed&#xa;                Returns:&#xa;                  --------&#xa;                  glo_mass:Global lumped mass matrix where the dirichlet positions have&#xa;                  been removed.vectorial=self.vectorial&#xa;                  from numpy import zeros,delete&#xa;                  nodes_coords=simulation.domain.nodes.coords&#xa;                  n_nodes=simulation.domain.nodes.n&#xa;                  if vectorial:&#xa;                    glo_mass=zeros((2*n_nodes,1))&#xa;&#xa;                  else:&#xa;                    glo_mass=zeros((n_nodes,1))&#xa;&#xa;                  m=0.0&#xa;                  s=0.0&#xa;                  for region in simulation.domain.regions:&#xa;                    all_elements=region.elements&#xa;                    for el_class in all_elements:&#xa;                      elements=all_elements[el_class]&#xa;                      if vectorial:&#xa;                        n_elements=elements.n_elements&#xa;                        el_set=elements.el_set&#xa;                        if el_set==[]:&#xa;                          break&#xa;&#xa;                        else:&#xa;                          for el in range(n_elements):&#xa;                            lo_mass=elements.local_mass_matrix(nodes_coords,el)&#xa;                            if simulation.sim_type=='EM':&#xa;                              epsilon=region.material_prop['epsilon']&#xa;                              lo_mass=epsilon*lo_mass&#xa;&#xa;                            elif simulation.sim_type=='QM':&#xa;                              pass&#xa;&#xa;                            else:&#xa;                              raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)&#xa;&#xa;                            for i in range(1,lo_mass.shape[0]/2+1):&#xa;                              for j in range(1,lo_mass.shape[0]/2+1):&#xa;                                m+=lo_mass[2*(i-1),2*(j-1)]+lo_mass[2*(i-1)+1,2*(j-1)+1]&#xa;                                if i==j:&#xa;                                glo_mass[2*(el_set[el,i]-1),0]+=\lo_mass[2*(i-1),2*(j-1)]glo_mass[2*(el_set[el,i]-1)+1,0]+=\lo_mass[2*(i-1)+1,2*(j-1)+1]s+=lo_mass[2*(i-1),2*(j-1)]+lo_mass[2*(i-1)+1,2*(j-1)+1]&#xa;&#xa;&#xa;&#xa;&#xa;                      else:&#xa;                        n_elements=elements.n_elements&#xa;                        el_set=elements.el_set&#xa;                        if el_set==[]:&#xa;                          break&#xa;&#xa;                        else:&#xa;                          for el in range(n_elements):&#xa;                            lo_mass=elements.local_mass_matrix(nodes_coords,el)&#xa;                            if simulation.sim_type=='EM':&#xa;                              epsilon=region.material_prop['epsilon']&#xa;                              lo_mass=epsilon*lo_mass&#xa;&#xa;                            elif simulation.sim_type=='QM':&#xa;                              pass&#xa;&#xa;                            for i in range(1,lo_mass.shape[0]+1):&#xa;                              for j in range(1,lo_mass.shape[0]+1):&#xa;                              m+=lo_mass[i-1,j-1]if i==j:&#xa;                                glo_mass[el_set[el,i]-1,0]+=\&#xa;                                lo_mass[i-1,j-1]&#xa;                                s+=lo_mass[i-1,j-1]&#xa;&#xa;&#xa;&#xa;                          else:&#xa;                            raise NotImplementedError('%s Not a simulation type'%simulation.sim_type)&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;                  glo_mass*=m/s&#xa;                  glo_mass_d=delete(glo_mass,remove,0)&#xa;                  glo_mass_d=delete(glo_mass_d,remove,1)&#xa;                  return glo_mass_d&#xa;&#xa;                def reference_image_bloch_vectors(self,simulation):&#xa;                  This function loads the lines of the boundary and the list that contains&#xa;                  bloch periodicity conditions.It builds a list of arrays that relate&#xa;                  image nodes with their corresponding reference nodes.&#xa;                  Paprameters:&#xa;                    -----------&#xa;                    bc_lines:Array of line elements.&#xa;                    bloch:List of bloch conditions as read by a'.bc'file.&#xa;                    Returns:&#xa;                      --------&#xa;                      ref_im:Each array in the list'ref_im',has in it's first column the ;reference node and on it's second column the image node for that particular reference node.from numpy import array,zeros,vstack,append&#xa;                      bloch=simulation.domain.boundaries.bloch&#xa;                      bc_lines=simulation.domain.elements.lines.el_set&#xa;                      order=simulation.domain.elements.lines.order&#xa;                      vectorial=simulation.domain.elements.lines.vectorial&#xa;                      lines_dict=:&#xa;&#xa;&#xa;                      for ln in bc_lines:&#xa;                        if str(ln[0])not in lines_dict:&#xa;                          lines_dict[str(ln[0])]=array(ln[1:])&#xa;&#xa;                        else:&#xa;                          lines_dict[str(ln[0])]=vstack((lines_dict[str(ln[0])],array(ln[1:])))&#xa;&#xa;&#xa;                      ref_im=[]&#xa;                      for bl in bloch:&#xa;                        try:&#xa;                          lines_dict[str(bl[0])].shape==lines_dict[str(bl[1])].shape&#xa;&#xa;                        except:&#xa;                          raise ValueError,'Matching boundaries must have the same \;number of elements'&#xa;                        if order==1:&#xa;                          if vectorial:&#xa;                            ref_im.append(zeros((2*lines_dict[str(bl[0])].shape[0]+1,2),dtype=int))&#xa;&#xa;                          else:&#xa;                            ref_im.append(zeros((lines_dict[str(bl[0])].shape[0]+1,2),dtype=int))&#xa;&#xa;&#xa;                        elif order==2:&#xa;                          if vectorial:&#xa;                            ref_im.append(zeros((2*2*lines_dict[str(bl[0])].shape[0]+2,2),dtype=int))&#xa;&#xa;                          else:&#xa;                            ref_im.append(zeros((2*lines_dict[str(bl[0])].shape[0]+1,2),dtype=int))&#xa;&#xa;&#xa;                        else:&#xa;                          raise NotImplementedError,'No higher order support yet'&#xa;&#xa;&#xa;                      tags=lines_dict.keys()&#xa;                      ref_im_dicts=:&#xa;&#xa;&#xa;                      i=0&#xa;                      lines=:&#xa;&#xa;&#xa;                      for bl in bloch:&#xa;                        ref_im_dict=:&#xa;&#xa;&#xa;                        for tag in tags:&#xa;                          if str(bl[0])==tag:&#xa;                            nodes_iter1=range(lines_dict[tag].shape[1])&#xa;                            ln_iter_1=range(lines_dict[tag].shape[0])&#xa;                            if bl[2]*bl[3]==-1:&#xa;                              ln_iter_2=tuple(ln_iter_1[::-1])&#xa;                              nodes_iter2=tuple(nodes_iter1[::-1])&#xa;&#xa;                            else:&#xa;                              ln_iter_2=tuple(ln_iter_1)&#xa;                              nodes_iter2=tuple(nodes_iter1)&#xa;&#xa;                            nodes_iter1=tuple(nodes_iter1)&#xa;                            ln_iter_1=tuple(ln_iter_1)&#xa;                            for(ln1,ln2)in zip(ln_iter_1,ln_iter_2):&#xa;                              l1=lines_dict[tag][ln1]&#xa;                              l1=append([l1[0]],[l1[2:],[l1[1]]])&#xa;                              l2=lines_dict[str(bl[1])][ln2]&#xa;                              l2=append([l2[0]],[l2[2:],[l2[1]]])&#xa;                              for j1,j2 in zip(nodes_iter1,nodes_iter2):&#xa;                                tag1=l1[j1]&#xa;                                tag2=l2[j2]&#xa;                                if tag1 not in ref_im_dict.keys():&#xa;                                  ref_im_dict[tag1]=tag2&#xa;                                  if tag not in lines:&#xa;                                    lines[tag]=0&#xa;&#xa;                                  else:&#xa;                                    lines[tag]+=1&#xa;&#xa;                                  if vectorial:&#xa;                                    ref_im[i][2*lines[tag]]=[2*(tag1-1),2*(tag2-1)]&#xa;                                    ref_im[i][2*lines[tag]+1]=[2*tag1-1,2*tag2-1]&#xa;&#xa;                                  else:&#xa;                                    ref_im[i][lines[tag]]=[tag1,tag2]&#xa;&#xa;&#xa;&#xa;&#xa;                            tags.pop(tags.index(tag))&#xa;&#xa;&#xa;                        ref_im_dicts[i]=ref_im_dict&#xa;                        i+=1&#xa;&#xa;                      return ref_im" id="W0amoJSBH4l1"/>
+   </codegenerator>
   </codegeneration>
  </XMI.extensions>
 </XMI>

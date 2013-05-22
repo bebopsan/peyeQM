@@ -3860,7 +3860,7 @@ $Solver input
 2
 Dir
 
-Harm_Elec
+EM
 Stationary
 [y, y, 15, 15, 20, 20, 2]
 circular_waveguide.bc

@@ -34,7 +34,7 @@ from Interpreter import Interpreter
 from Solver import Solver
 from write import write_vtk, write_solver_input 
 
-filename = 'unit_cell'
+filename = 'line'
 write_solver_input(filename +'.msh',dimension = 2, bc_type = 'Bloch', \
 parameter = [], eq = 'EM', sol_type = 'Stationary',analysis_param \
 = ['y', 'y', 15, 15, 11, 11, 1], bc_filename = filename +'.bc')  
@@ -48,8 +48,8 @@ simu.domain.read_regions_file(reg_filename)
 node_coords = simu.domain.nodes.coords
 
 
-dt = 0.01 
-n_timesteps = 200
+dt = 0.1 
+n_timesteps = 50
 times = range(2, n_timesteps)
 
 dofs_past = []
@@ -59,6 +59,7 @@ dofs_future = []
 inter = Interpreter(vectorial =True)
 mass = inter.lumped_mass_matrix(simu)
 mass = mass[:,0]
+print sum(mass)
 for node in range(node_coords.shape[0]):
     dofs_past.append(DOF(node, simu, comp = 0, t = 0 * dt))
     dofs_past.append(DOF(node, simu, comp = 1, t = 0 * dt))
@@ -68,7 +69,7 @@ for node in range(node_coords.shape[0]):
     dofs_future.append(DOF(node, simu, comp = 1, t = 2 * dt))
 
 snapshot = [dofs_past, dofs_present, dofs_future]
-simu.
+
 from numpy import zeros, append, array
 solver = Solver()
 quads = solver.substract_1(simu.domain.elements.quads.el_set)
@@ -87,19 +88,18 @@ for n in times:
             Fi = E_present.find_surrounding_elements(snapshot[1], simu)
             F = -Fi + 1.0/(dt**2)*mass[dof]*(2*E_present.value - E_past.value)
             snapshot[2][dof].value = dt**2/mass[dof] * F
-            if snapshot[2][dof].node_id+1 == 91:
-                print snapshot[2][dof].value, snapshot[1][dof].s_elements 
-                print 'Fi',Fi, mass[dof]
+
         snapshot[0][dof] = E_present
         snapshot[1][dof] =  E_future
         field = append(field, snapshot[2][dof].value)
+        #print 'snapshot[2]['+str(dof)+'].value',snapshot[2][dof].value
         field_past = append(field, snapshot[0][dof].value)
         field_present =  append(field, snapshot[2][dof].value)
         
     field = solver.build_solution_2(field)
     field3[:,0:2] = field
     field = field3
-    write_vtk(filename+'_a' +str(n)+'.vtk', 'MyTitle', 'UNSTRUCTURED_GRID' ,simu.domain.nodes.coords,\
+    write_vtk(filename+'_' +str(n)+'.vtk', 'MyTitle', 'UNSTRUCTURED_GRID' ,simu.domain.nodes.coords,\
                quads, ['VECTORS', ['sol'], [field]])
 
 #    print n, n*dt    
@@ -131,5 +131,5 @@ for n in times:
 #               triangles, ['SCALARS', ['sol'], [energy[:,i]]])
 #
 from inform import inform
-inform('done runing time simulation ')
+#inform('done runing time simulation ')
 print 'Finished.'

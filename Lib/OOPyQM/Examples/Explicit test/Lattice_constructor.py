@@ -27,23 +27,23 @@ from gmsh_library import *
 
 blc = Point(0,0,0) #Bottom left corner
 
-a = 1 # unit cell width
+a = 2 # unit cell width
 cc = Point(0, a/2.,a/2.) # circle center
 
-phys_tag_outside = 30
-phys_tag_inside = 31
+phys_tag_outside = 100
+# phys_tag_inside = 31
 
-pt = [phys_tag_outside, phys_tag_inside] # physical tags
+pt = [phys_tag_outside, None]#, phys_tag_inside] # physical tags
 
-sketch = [['0','0','0'],['0','0','0'],['0','0','0']]
+sketch = [['0','0','0','0','0','0','0','0','0']]
 c = Properties_bag('circle', origin = cc, r = 0.1)
 e = Properties_bag('empty')
 d = {'1': c,'0':e}
 
-domain =  Grid(blc, a, sketch, d, phys_tags = pt, transfinite = (1,1))
+domain =  Grid(blc, a, sketch, d, phys_tags = pt, transfinite = (2,1))
 domain.define_boundary()
 
-f = open('unit_cell.geo','w')
+f = open('line.geo','w')
 f.write(domain.__str__())
 f.close
 
