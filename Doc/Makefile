@@ -158,6 +158,6 @@ gh-pages:
 	cd $(BUILDDIR)
 	git add -A 
 	git commit -m "Updated the documentation"
-	git push origin gh-pages
+	git push gh-pages
 	@echo "The HTML pages have been uploaded to peyeQM"
 
