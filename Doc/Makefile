@@ -156,6 +156,9 @@ gh-pages:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)"
 	cd $(BUILDDIR)
+	git status
+	git branch
+	git pull
 	git add -A 
 	git commit -m "Updated the documentation"
 	git push
