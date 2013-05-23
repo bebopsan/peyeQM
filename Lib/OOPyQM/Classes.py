@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 """ Classes module specifications.
+.. module:: Classes
+    :platform: Unix, Windows
+    :synopsis: Holds class definitions for preprocessing stage of peyeQM
+.. moduleauthor:: Santiago Echeverri <santiag77e@gmail.com>
+.. moduleauthor:: Nicolás Guarín <nicoguaro@gmail.com>
 
 Module Classes holds many of the classes used by PeYeQM to
 define the instances necessary for the initial statement
@@ -15,22 +20,33 @@ below.
 It has
     - Definition of the problem. 
     - Details about the context of the solution.
+
+.. autoclass:: Simulation
+    :members:
+
 Domain()
 --------
 Representation of the physical domain of a simulation. 
 It has:
     - Information about regions and their discretization
     - definitions of elements, nodes and boundary conditions
-
+.. autoclass:: Domain
+    :members:
 Region()
 --------
 A region is an object that allows the identification of different material 
 properties according to a previous subdivision of the Domain.
 
+.. autoclass:: Region
+    :members:
+
 Nodes()
 -------
 Class Nodes represents the coordinates of the points that result from 
 a discretization of a given domain. 
+
+.. autoclass:: Nodes
+    :members:
 
 Elements()
 ----------
@@ -41,11 +57,18 @@ Current supported elements are:
     - Lines
     - Triangles
     - Quadrilaterals
+    
+.. autoclass:: Elements
+    :members:
+
 Lines()
 -------
 An instance of class Lines() is a container of line elements. 
 This class also defines common operations and attributes that 
 involve line elements.
+
+.. autoclass:: Lines
+    :members:
 
 Triangles()
 -----------
@@ -53,16 +76,25 @@ An instance of class Triangles() is a container of triangular elements.
 This class also defines common operations and attributes that 
 involve triangular elements.
 
+.. autoclass:: Triangles
+    :members:
+
 Quadrilaterals()
 ----------------
 An instance of class Quadrilaterals() is a container of QUAD elements. 
 This class also defines common operations and attributes that 
 involve QUAD elements.
 
+.. autoclass:: Quadrialterals
+    :members:
+
 Boundaries()
 ------------
 This class acts as a container of boundaries and their attributes.
 Boundaries of a domain are the objects where edge conditions are stated.
+
+.. autoclass:: Boundaries
+    :members:
 
 DOF()
 -----
@@ -70,6 +102,8 @@ DOF is a class that was defined for transient simulations only.
 A DOF represents a degree of freedom in a dynamic problem, and has the 
 necessary attributes and methods for a time dependant algorithm
 
+.. autoclass:: DOF
+    :members:
 """
 __author__ = ['Santiago Echeverri Chacón']
 
