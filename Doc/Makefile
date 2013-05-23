@@ -151,3 +151,13 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+gh-pages:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)"
+	cd $(BUILDDIR)
+	git add -A 
+	git commit -m "Updated the documentation"
+	git push origin gh-pages
+	@echo "The HTML pages have been uploaded to peyeQM"
+
