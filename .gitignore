@@ -10,6 +10,12 @@
 *.toc
 *.bak
 *.gz
+
 # Folder #
 ##########
 doc/*
+
+
+# Python #
+##########
+*.pyc
